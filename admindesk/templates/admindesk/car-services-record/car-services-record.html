@@ -1,0 +1,293 @@
+{% extends "admindesk/admin-base.html" %}
+{% load static %}
+{% block content %}
+<div class="container mt-5">
+  <div class="page-inner">
+    <h2>Car Services Management</h2>
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <button class="btn btn-primary" id="addServiceButton">Add Service</button>
+      <div>
+        <button class="btn btn-outline-secondary" id="filterPending">Pending</button>
+        <button class="btn btn-outline-secondary" id="filterComplete">Complete</button>
+        <button class="btn btn-outline-secondary" id="clearFilter">Clear Filter</button>
+      </div>
+    </div>
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th>Car ID</th>
+          <th>Emp ID</th>
+          <th>Service Type</th>
+          <th>Service Date</th>
+          <th>Cost</th>
+          <th>Description</th>
+          <th>Status</th>
+          <th>Confirm Date</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody id="serviceTableBody">
+        <!-- Sample Data -->
+        <tr data-service-id="1" data-status="Complete">
+          <td>101</td>
+          <td>501</td>
+          <td>Oil Change</td>
+          <td>2023-12-01</td>
+          <td>$50</td>
+          <td>Changed engine oil</td>
+          <td>Complete</td>
+          <td>2023-12-02</td>
+          <td>
+            <i class="fas fa-edit text-warning edit-service" style="cursor: pointer;" title="Edit"></i>
+            <i class="fas fa-trash text-danger ms-2 delete-service" style="cursor: pointer;" title="Delete"></i>
+          </td>
+        </tr>
+        <tr data-service-id="2" data-status="Pending">
+          <td>102</td>
+          <td>502</td>
+          <td>Tire Rotation</td>
+          <td>2023-12-10</td>
+          <td>$30</td>
+          <td>Rotated all tires</td>
+          <td>Pending</td>
+          <td>-</td>
+          <td>
+            <i class="fas fa-edit text-warning edit-service" style="cursor: pointer;" title="Edit"></i>
+            <i class="fas fa-trash text-danger ms-2 delete-service" style="cursor: pointer;" title="Delete"></i>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+<div class="modal fade" id="addServiceModal" tabindex="-1" aria-labelledby="addServiceModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="addServiceModalLabel">Add New Service</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form id="addServiceForm">
+          <div class="mb-3">
+            <label for="addCarId" class="form-label">Car ID</label>
+            <input type="text" class="form-control" id="addCarId" required />
+          </div>
+          <div class="mb-3">
+            <label for="addEmpId" class="form-label">Emp ID</label>
+            <input type="text" class="form-control" id="addEmpId" required />
+          </div>
+          <div class="mb-3">
+            <label for="addServiceType" class="form-label">Service Type</label>
+            <input type="text" class="form-control" id="addServiceType" required />
+          </div>
+          <div class="mb-3">
+            <label for="addServiceDate" class="form-label">Service Date</label>
+            <input type="date" class="form-control" id="addServiceDate" required />
+          </div>
+          <div class="mb-3">
+            <label for="addCost" class="form-label">Cost</label>
+            <input type="number" class="form-control" id="addCost" required />
+          </div>
+          <div class="mb-3">
+            <label for="addDescription" class="form-label">Description</label>
+            <textarea class="form-control" id="addDescription" required></textarea>
+          </div>
+          <div class="mb-3">
+            <label for="addStatus" class="form-label">Status</label>
+            <select class="form-control" id="addStatus" required>
+              <option value="Complete">Complete</option>
+              <option value="Pending">Pending</option>
+            </select>
+          </div>
+          <button type="submit" class="btn btn-primary">Add Service</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Edit Service Modal -->
+<div class="modal fade" id="editServiceModal" tabindex="-1" aria-labelledby="editServiceModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="editServiceModalLabel">Edit Service</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form id="editServiceForm">
+          <div class="mb-3">
+            <label for="editCarId" class="form-label">Car ID</label>
+            <input type="text" class="form-control" id="editCarId" required />
+          </div>
+          <div class="mb-3">
+            <label for="editEmpId" class="form-label">Emp ID</label>
+            <input type="text" class="form-control" id="editEmpId" required />
+          </div>
+          <div class="mb-3">
+            <label for="editServiceType" class="form-label">Service Type</label>
+            <input type="text" class="form-control" id="editServiceType" required />
+          </div>
+          <div class="mb-3">
+            <label for="editServiceDate" class="form-label">Service Date</label>
+            <input type="date" class="form-control" id="editServiceDate" required />
+          </div>
+          <div class="mb-3">
+            <label for="editCost" class="form-label">Cost</label>
+            <input type="number" class="form-control" id="editCost" required />
+          </div>
+          <div class="mb-3">
+            <label for="editDescription" class="form-label">Description</label>
+            <textarea class="form-control" id="editDescription" required></textarea>
+          </div>
+          <div class="mb-3">
+            <label for="editStatus" class="form-label">Status</label>
+            <select class="form-control" id="editStatus" required>
+              <option value="Complete">Complete</option>
+              <option value="Pending">Pending</option>
+            </select>
+          </div>
+          <button type="submit" class="btn btn-primary">Save Changes</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Delete Confirmation Modal -->
+<div class="modal fade" id="deleteServiceModal" tabindex="-1" aria-labelledby="deleteServiceModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="deleteServiceModalLabel">Confirm Delete</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <p>Are you sure you want to delete this service record?</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No</button>
+        <button type="button" class="btn btn-danger" id="confirmDeleteService">Yes</button>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+$(document).ready(function () {
+  let selectedServiceId = null;
+
+  // Filter Services
+  $("#filterPending").click(function () {
+    $("#serviceTableBody tr").hide().filter("[data-status='Pending']").show();
+  });
+
+  $("#filterComplete").click(function () {
+    $("#serviceTableBody tr").hide().filter("[data-status='Complete']").show();
+  });
+
+  $("#clearFilter").click(function () {
+    $("#serviceTableBody tr").show();
+  });
+
+  // Edit Service
+  $(".edit-service").click(function () {
+    const row = $(this).closest("tr");
+    selectedServiceId = row.data("service-id");
+    $("#editCarId").val(row.find("td:nth-child(1)").text());
+    $("#editEmpId").val(row.find("td:nth-child(2)").text());
+    $("#editServiceType").val(row.find("td:nth-child(3)").text());
+    $("#editServiceDate").val(row.find("td:nth-child(4)").text());
+    $("#editCost").val(row.find("td:nth-child(5)").text());
+    $("#editDescription").val(row.find("td:nth-child(6)").text());
+    $("#editStatus").val(row.find("td:nth-child(7)").text());
+    $("#editServiceModal").modal("show");
+  });
+
+  $("#editServiceForm").submit(function (e) {
+    e.preventDefault();
+    const row = $(`tr[data-service-id='${selectedServiceId}']`);
+    row.find("td:nth-child(1)").text($("#editCarId").val());
+    row.find("td:nth-child(2)").text($("#editEmpId").val());
+    row.find("td:nth-child(3)").text($("#editServiceType").val());
+    row.find("td:nth-child(4)").text($("#editServiceDate").val());
+    row.find("td:nth-child(5)").text($("#editCost").val());
+    row.find("td:nth-child(6)").text($("#editDescription").val());
+    row.find("td:nth-child(7)").text($("#editStatus").val());
+    row.find("td:nth-child(8)").text($("#editStatus").val() === "Complete" ? new Date().toISOString().split("T")[0] : "-");
+    $("#editServiceModal").modal("hide");
+  });
+
+  // Delete Service
+  $(".delete-service").click(function () {
+    selectedServiceId = $(this).closest("tr").data("service-id");
+    $("#deleteServiceModal").modal("show");
+  });
+
+  $("#confirmDeleteService").click(function () {
+    $(`tr[data-service-id='${selectedServiceId}']`).remove();
+    $("#deleteServiceModal").modal("hide");
+  });
+});
+$(document).ready(function () {
+  let serviceIdCounter = 3; // Example initial counter for new service IDs
+
+  // Open Add Service Modal
+  $("#addServiceButton").click(function () {
+    $("#addServiceModal").modal("show");
+  });
+
+  // Handle Add Service Form Submission
+  $("#addServiceForm").submit(function (e) {
+    e.preventDefault();
+
+    // Get form values
+    const carId = $("#addCarId").val();
+    const empId = $("#addEmpId").val();
+    const serviceType = $("#addServiceType").val();
+    const serviceDate = $("#addServiceDate").val();
+    const cost = $("#addCost").val();
+    const description = $("#addDescription").val();
+    const status = $("#addStatus").val();
+    const confirmDate = status === "Complete" ? new Date().toISOString().split("T")[0] : "-";
+
+    // Append new row to the table
+    $("#serviceTableBody").append(`
+      <tr data-service-id="${serviceIdCounter}" data-status="${status}">
+        <td>${carId}</td>
+        <td>${empId}</td>
+        <td>${serviceType}</td>
+        <td>${serviceDate}</td>
+        <td>${cost}</td>
+        <td>${description}</td>
+        <td>${status}</td>
+        <td>${confirmDate}</td>
+        <td>
+          <i class="fas fa-edit text-warning edit-service" style="cursor: pointer;" title="Edit"></i>
+          <i class="fas fa-trash text-danger ms-2 delete-service" style="cursor: pointer;" title="Delete"></i>
+        </td>
+      </tr>
+    `);
+
+    // Increment service ID counter
+    serviceIdCounter++;
+
+    // Reset form and close modal
+    $("#addServiceForm")[0].reset();
+    $("#addServiceModal").modal("hide");
+  });
+
+  // Add dynamically created edit and delete events
+  $(document).on("click", ".edit-service", function () {
+    // Same edit functionality from earlier
+  });
+
+  $(document).on("click", ".delete-service", function () {
+    // Same delete functionality from earlier
+  });
+});
+</script>
+{% endblock %}

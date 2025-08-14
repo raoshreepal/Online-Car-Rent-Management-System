@@ -1,0 +1,462 @@
+{% extends "base.html" %}
+<link href="https://fonts.googleapis.com/css?family=Poppins:200,300,400,500,600,700,800&display=swap" rel="stylesheet">
+<title>Employee Dashboard</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    {% load static %}
+    <!-- END nav -->
+    {% block head %} 
+	<style>
+		.suggestions-list {
+      max-height: 300px;
+      overflow-y: auto;
+      position: absolute;
+      background-color: white;
+      width: 100%;
+      box-shadow: 0px 4px 6px rgba(0,0,0,0.1);
+      z-index: 9999;
+      transform: scale(1.05); /* Slightly scale the input field */
+
+      margine-left:50px;
+      border-radius:5PX;
+  }
+  #car-suggestions::-webkit-scrollbar {
+    width: 4px; /* Width of the scrollbar */
+    
+}
+
+#car-suggestions::-webkit-scrollbar-track {
+    background: #f1f1f1; /* Background of the scrollbar track */
+    border-radius: 5px; /* Rounded corners for the track */
+}
+
+#car-suggestions::-webkit-scrollbar-thumb {
+    background: #888; /* Color of the scrollbar thumb */
+    border-radius: 5px; /* Rounded corners for the thumb */
+}
+
+#car-suggestions::-webkit-scrollbar-thumb:hover {
+    background: #555; /* Color of the thumb on hover */
+}
+  
+  .suggestion-item {
+      padding: 10px;
+      display: flex;
+      align-items: center;
+      cursor: pointer;
+  }
+  
+  .suggestion-item:hover {
+      background-color: #f1f1f1;
+  }
+  
+  .suggestion-image {
+      width: 50px;
+      height: 50px;
+      object-fit: cover;
+      margin-right: 10px;
+  }
+  
+  .suggestion-info {
+      flex-grow: 1;
+  }
+  
+  .suggestion-info h5 {
+      margin: 0;
+  }
+  
+  .suggestion-info p {
+      margin: 2px 0;
+  }
+  
+  .search-container {
+      position: relative;
+  }
+  
+  /* Initial styles for the input field */
+#search-car {
+    border-radius: 20px;
+    width: 500px;
+    padding: 10px 15px;
+    border-bottom: 2px solid #ddd; /* Light border by default */
+    background-color: transparent; /* Transparent background */
+    transition: all 0.3s ease; /* Smooth transition for scaling and border */
+    outline: none; /* Remove default outline */
+}
+
+/* On focus styles */
+#search-car:focus {
+    border: 2px solid #007bff; /* Blue border when focused */
+    background-color: transparent; /* Ensure background stays transparent */
+    box-shadow: 0 4px 8px rgba(0, 123, 255, 0.2); /* Add a light shadow effect */
+}
+
+/* Remove the border on top, left, and right, and only show the bottom border */
+#search-car:focus {
+    border-left: none;
+    border-top: none;
+    border-right: none;
+    border-bottom: 2px solid #007bff; /* Blue bottom border */
+}
+
+</style>
+{% endblock %}
+    {% block content %}
+    <div class="hero-wrap ftco-degree-bg" style="background-image: url('{% static 'images/bg_1.jpg' %}');" data-stellar-background-ratio="0.5">
+          <div class="overlay"></div>
+      <div class="container">
+        <div class="row no-gutters slider-text justify-content-start align-items-center justify-content-center">
+          <div class="col-md-6 d-flex flex-column align-items-center">
+            <div class="search-container p-4 shadow-lg bg-white rounded-4" style="max-width: 500px; width: 100%;">
+            
+              <h3 class="text-center mb-3 fw-bold text-primary">
+                
+                {% if user.is_authenticated %}
+                    Hey {{ user.username }} <br>
+                {% endif %}
+                Search Your  Car
+            </h3>
+            
+                <div class="form-group">
+                    <label for="search-car" class="form-label fw-semibold">Search  Car Model Name </label>
+                    <div class="input-group">
+                        <input type="text" class="form-control rounded-pill px-3" 
+                               id="search-car" placeholder="Type car model..." 
+                               style="height: 45px; border: 2px solid #007bff;">
+                    </div>
+                </div>
+                <!-- Suggestions List -->
+                <div id="car-suggestions" class="suggestions-list mt-2 bg-light p-2 rounded" style="display:none;">
+                    <!-- Suggestions will appear here -->
+                </div>
+            </div>
+        </div>
+        
+
+            <!-- Display Cars Section -->
+          
+            
+        </div>
+      </div>
+    </div>
+
+    <section class="ftco-section ftco-no-pt bg-light">
+      <div class="container">
+          <div class="row no-gutters">
+              <!-- Search Bar Section -->
+           
+          </div>
+      </div>
+  </section>
+  
+    <!-- Car Selection Modal -->
+
+
+    <section class="ftco-section ftco-no-pt bg-light">
+    	<div class="container">
+    		<div class="row justify-content-center">
+          <div class="col-md-12 heading-section text-center ftco-animate mb-5">
+          	<span class="subheading">What we offer</span>
+            <h2 class="mb-2">Available Vehicles</h2>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-12">
+            <div class="carousel-car owl-carousel">
+              {% for car in car_records %}
+                <div class="item">
+                  <div class="car-wrap rounded ftco-animate">
+                    <div class="img rounded d-flex align-items-end" style="background-image: url('{{ car.image }}');"></div>
+                    <div class="text">
+                      <h2 class="mb-0"><a href="#">{{car.model}}</a></h2>
+                      <div class="d-flex mb-3">
+                        <span class="cat">{{car.make}}</span>
+                        <p class="price ml-auto">₹ {{car.price_per_hour}} <span>/hour</span></p>
+                      </div>
+                      <p class="d-flex mb-0 d-block">
+                        <a href="{% url 'car_booking' car.id %}" class="btn btn-primary py-2 mr-1">Book now</a>
+                        <a href="{% url 'car-single' car.id %}" class="btn btn-secondary py-2 ml-1">Details</a>
+                        
+                        <button
+                          class="btn  py-2 mr-1 save-car-btn"
+                          data-car-id="{{ car.id }}"
+                          data-save-url="{% url 'save_car' car_id=0 %}"
+                          >
+                          {% if car.is_saved %}
+                          <!-- Display saved icon -->
+                          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-bookmark-check-fill" viewBox="0 0 16 16">
+                              <path fill-rule="evenodd" d="M2 15.5V2a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v13.5a.5.5 0 0 1-.74.439L8 13.069l-5.26 2.87A.5.5 0 0 1 2 15.5m8.854-9.646a.5.5 0 0 0-.708-.708L7.5 7.793 6.354 6.646a.5.5 0 1 0-.708.708l1.5 1.5a.5.5 0 0 0 .708 0z"/>
+                          </svg>
+                          {% else %}
+                          <!-- Display unsaved icon -->
+                          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-bookmark" viewBox="0 0 16 16">
+                              <path d="M2 2a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v13.5a.5.5 0 0 1-.777.416L8 13.101l-5.223 2.815A.5.5 0 0 1 2 15.5zm2-1a1 1 0 0 0-1 1v12.566l4.723-2.482a.5.5 0 0 1 .554 0L13 14.566V2a1 1 0 0 0-1-1z"/>
+                          </svg>
+                          {% endif %}
+                  
+                      </button>
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              {% endfor %}
+            </div>
+          </div>
+        </div>
+        <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+
+        <!-- Favorite count display -->
+      
+    	</div>
+    </section>
+    <section class="ftco-counter ftco-section img bg-light" id="section-counter">
+			<div class="overlay"></div>
+    	<div class="container">
+    		<div class="row">
+          <div class="col-md-6 col-lg-3 justify-content-center counter-wrap ftco-animate">
+            <div class="block-18">
+              <div class="text text-border d-flex align-items-center">
+                <strong class="number" data-number="60">0</strong>
+                <span>Year <br>Experienced</span>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-6 col-lg-3 justify-content-center counter-wrap ftco-animate">
+            <div class="block-18">
+              <div class="text text-border d-flex align-items-center">
+                <strong class="number" data-number="{{total_cars}}">0</strong>
+                <span>Total <br>Cars</span> 
+              </div>
+            </div>
+          </div>
+          <div class="col-md-6 col-lg-3 justify-content-center counter-wrap ftco-animate">
+            <div class="block-18">
+              <div class="text text-border d-flex align-items-center">
+                <strong class="number" data-number="{{total_users}}">0</strong>
+                <span>Happy <br>Customers</span>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-6 col-lg-3 justify-content-center counter-wrap ftco-animate">
+            <div class="block-18">
+              <div class="text d-flex align-items-center">
+                <strong class="number" data-number="{{car_counts}}">0</strong>
+                <span>Total <br>Car Models</span>
+              </div>
+            </div>
+          </div>
+        </div>
+    	</div>
+    </section>	
+    {% comment %} <section class="ftco-section ftco-about">
+			<div class="container">
+				<div class="row no-gutters">
+					<div class="col-md-6 p-md-5 img img-2 d-flex justify-content-center align-items-center" style="background-image: url('{% static 'images/about.jpg'%}'%);">
+					</div>
+					<div class="col-md-6 wrap-about ftco-animate">
+	          <div class="heading-section heading-section-white pl-md-5">
+	          	<span class="subheading">About us</span>
+	            <h2 class="mb-4">Welcome to Carbook</h2>
+
+	            <p>A small river named Duden flows by their place and supplies it with the necessary regelialia. It is a paradisematic country, in which roasted parts of sentences fly into your mouth.</p>
+	            <p>On her way she met a copy. The copy warned the Little Blind Text, that where it came from it would have been rewritten a thousand times and everything that was left from its origin would be the word "and" and the Little Blind Text should turn around and return to its own, safe country. A small river named Duden flows by their place and supplies it with the necessary regelialia. It is a paradisematic country, in which roasted parts of sentences fly into your mouth.</p>
+	            <p><a href="{% url 'pricing'%}" class="btn btn-primary py-3 px-4">Search Vehicle</a></p>
+	          </div>
+					</div>
+				</div>
+			</div>
+		</section> {% endcomment %}
+
+		<section class="ftco-section">
+			<div class="container">
+				<div class="row justify-content-center mb-5">
+          <div class="col-md-7 text-center heading-section ftco-animate">
+          	<span class="subheading">Services</span>
+            <h2 class="mb-3">Our Latest Services</h2>
+          </div>
+        </div>
+				<div class="row">
+					<div class="col-md-3">
+						<div class="services services-2 w-100 text-center">
+            	<div class="icon d-flex align-items-center justify-content-center"><span class="flaticon-wedding-car"></span></div>
+            	<div class="text w-100">
+                <h3 class="heading mb-2">Wedding Ceremony</h3>
+                <p>A small river named Duden flows by their place and supplies it with the necessary regelialia.</p>
+              </div>
+            </div>
+					</div>
+					<div class="col-md-3">
+						<div class="services services-2 w-100 text-center">
+            	<div class="icon d-flex align-items-center justify-content-center"><span class="flaticon-transportation"></span></div>
+            	<div class="text w-100">
+                <h3 class="heading mb-2">City Transfer</h3>
+                <p>A small river named Duden flows by their place and supplies it with the necessary regelialia.</p>
+              </div>
+            </div>
+					</div>
+					<div class="col-md-3">
+						<div class="services services-2 w-100 text-center">
+            	<div class="icon d-flex align-items-center justify-content-center"><span class="flaticon-car"></span></div>
+            	<div class="text w-100">
+                <h3 class="heading mb-2">Airport Transfer</h3>
+                <p>A small river named Duden flows by their place and supplies it with the necessary regelialia.</p>
+              </div>
+            </div>
+					</div>
+					<div class="col-md-3">
+						<div class="services services-2 w-100 text-center">
+            	<div class="icon d-flex align-items-center justify-content-center"><span class="flaticon-transportation"></span></div>
+            	<div class="text w-100">
+                <h3 class="heading mb-2">Whole City Tour</h3>
+                <p>A small river named Duden flows by their place and supplies it with the necessary regelialia.</p>
+              </div>
+            </div>
+					</div>
+				</div>
+			</div>
+		</section>
+    <section class="ftco-section testimony-section bg-light">
+      <div class="container">
+        <div class="row justify-content-center mb-5">
+          <div class="col-md-7 text-center heading-section ftco-animate">
+          	<span class="subheading">Testimonial</span>
+            <h2 class="mb-3">Happy Clients</h2>
+          </div>
+        </div>
+        <div class="row ftco-animate">
+          <div class="col-md-12">
+            <div class="carousel-testimony owl-carousel ftco-owl">
+              {% for feedback in feedbacks%}
+              <div class="item">
+                <div class="testimony-wrap rounded text-center py-4 pb-5">
+
+                  <div class="user-img mb-2" 
+         style="background-image: url('{{ feedback.car.user.image.url }}'); "
+                  >
+                  </div>
+                  <div class="text pt-4">
+                    <p class="mb-4">{{feedback.comments}}</p>
+                    <p class="name">{{feedback.car.user.username}}</p>
+                    <span class="position">{{feedback.car.car.model}}</span>
+                  </div>
+                </div>
+              </div>
+              {% endfor %}
+              {% comment %} <div class="item">
+                <div class="testimony-wrap rounded text-center py-4 pb-5">
+                  <div class="user-img mb-2" style="background-image: url('{% static 'images/person_2.jpg'%}')">
+                  </div>
+                  <div class="text pt-4">
+                    <p class="mb-4">Far far away, behind the word mountains, far from the countries Vokalia and Consonantia, there live the blind texts.</p>
+                    <p class="name">Roger Scott</p>
+                    <span class="position">Interface Designer</span>
+                  </div>
+                </div>
+              </div>
+              <div class="item">
+                <div class="testimony-wrap rounded text-center py-4 pb-5">
+                  <div class="user-img mb-2" style="background-image: url('{% static 'images/person_3.jpg' %}')">
+                  </div>
+                  <div class="text pt-4">
+                    <p class="mb-4">Far far away, behind the word mountains, far from the countries Vokalia and Consonantia, there live the blind texts.</p>
+                    <p class="name">Roger Scott</p>
+                    <span class="position">UI Designer</span>
+                  </div>
+                </div>
+              </div>
+              <div class="item">
+                <div class="testimony-wrap rounded text-center py-4 pb-5">
+                  <div class="user-img mb-2" style="background-image: url(' {% static 'images/person_1.jpg'%}')">
+                  </div>
+                  <div class="text pt-4">
+                    <p class="mb-4">Far far away, behind the word mountains, far from the countries Vokalia and Consonantia, there live the blind texts.</p>
+                    <p class="name">Roger Scott</p>
+                    <span class="position">Web Developer</span>
+                  </div>
+                </div>
+              </div>
+              <div class="item">
+                <div class="testimony-wrap rounded text-center py-4 pb-5">
+                  <div class="user-img mb-2" style="background-image: url('{% static 'images/person_1.jpg'%}')">
+                  </div>
+                  <div class="text pt-4">
+                    <p class="mb-4">Far far away, behind the word mountains, far from the countries Vokalia and Consonantia, there live the blind texts.</p>
+                    <p class="name">Roger Scott</p>
+                    <span class="position">System Analyst</span>
+                  </div>
+                </div>
+              </div> {% endcomment %}
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+		<section class="ftco-section ftco-intro" style="background-image: url('{% static 'images/bg_3_1.jpeg'%} ');">
+			<div class="overlay"></div>
+			<div class="container">
+				<div class="row justify-content-end">
+					<div class="col-md-6 heading-section heading-section-white ftco-animate">
+            <h2 class="mb-3">Do You Want To Earn With Us? So Don't Be Late.</h2>
+            <a href="#" class="btn btn-primary btn-lg">Become A Driver</a>
+          </div>
+				</div>
+			</div>
+		</section>
+
+
+   
+
+    <section class="ftco-section">
+      <div class="container">
+        <div class="row justify-content-center mb-5">
+          <div class="col-md-7 heading-section text-center ftco-animate">
+          	<span class="subheading"></span>
+            <h2>Top Reating</h2>
+          </div>
+        </div>
+        <div class="row d-flex">
+          {% for feed in top_rating %}
+
+          <div class="col-md-4 d-flex ftco-animate">
+          	<div class="blog-entry justify-content-end">
+              <a href="{% url 'car-single' feed.car.car.id %}" class="block-20"
+              style="background-image: url('{{ feed.car.car.image.url }}');">
+           </a>
+                         </a>
+              <div class="text pt-4">
+              	<div class="meta mb-3">
+                  <div><a href="{% url 'car-single' feed.car.car.id %}">{{feed.created_at}}</a></div><br>
+                  <div><a href="{% url 'car-single' feed.car.car.id %}">Us{{feed.car.car.model}}</a></div><br>
+                  <div><a href="{% url 'car-single' feed.car.car.id %}" class="meta-chat"><span class="icon-chat"></span> {{feed.rating}}</a></div>
+                </div>
+                <h3 class="heading mt-2"><a href="{% url 'car-single' feed.car.car.id %}">{{feed.comments}}</a></h3>
+                <p><a href="{% url 'car-single' feed.car.car.id %}" class="btn btn-primary">Read more</a></p>
+              </div>
+            </div>
+          </div>
+          {% endfor %}
+          
+        </div>
+      </div>
+    </section>	
+
+    <!-- loader -->
+    
+    
+    {% endblock  %}
+  
+
+  {% block extra_scripts  %}
+  <script>
+    var availablecar="{% url 'availablecar' %}";
+  </script>
+  <!-- Add jQuery (required by Bootstrap) -->
+<script src="{% static 'js/user-booking.js' %}"></script>
+<script src="{% static 'js/save_car.js' %}"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<!-- Add Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>
+
+ 
+{% endblock %}

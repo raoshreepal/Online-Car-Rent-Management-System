@@ -1,0 +1,142 @@
+{% extends 'base.html' %}
+
+{% load static %}
+{% block title%}All Cars{% endblock%}
+
+{% block head %}
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+<link href="https://fonts.googleapis.com/css?family=Poppins:200,300,400,500,600,700,800&display=swap" rel="stylesheet">
+<style>
+	.slick-prev, .slick-next {
+		background-color: #007bff;
+		color: #fff;
+		border-radius: 50%;
+		padding: 10px;
+		z-index: 1;
+	}
+	
+	.slick-prev {
+		left: 10px;
+	}
+	
+	.slick-next {
+		right: 10px;
+	}
+	
+</style>
+{% endblock%}
+     {% block content %}
+    <section class="hero-wrap hero-wrap-2 js-fullheight" style="background-image: url('{% static 'images/car-slider.jpeg'%}');" data-stellar-background-ratio="0.5">      <div class="overlay"></div>
+      <div class="container">
+        <div class="row no-gutters slider-text js-fullheight align-items-end justify-content-start">
+          <div class="col-md-9 ftco-animate pb-5">
+          	<p class="breadcrumbs"><span class="mr-2"><a href="{% url 'home'%}">Home <i class="ion-ios-arrow-forward"></i></a></span> <span>Cars <i class="ion-ios-arrow-forward"></i></span></p>
+            <h1 class="mb-3 bread">Choose Your Car</h1>
+          </div>
+        </div>
+      </div>
+    </section>
+	<section class="ftco-section bg-light">
+    	<div class="container">
+				<div class="car-slider container">
+					<div class="row">
+						{% for car in car_records %}
+							<div class="col-md-4 car-item">
+								<div class="car-wrap rounded ftco-animate">
+									<div class="img rounded d-flex align-items-end" style="background-image: url('{{ car.image }}');">
+										<!-- Favorite Icon -->
+										<a href="#" class="favorite-icon" data-car-id="{{ car.id }}">
+											{% if car in user.profile.favorites.all %}
+												<i class="fa fa-heart"></i>
+											{% else %}
+												<i class="fa fa-heart-o"></i>
+											{% endif %}
+										</a>
+									</div>
+									<div class="text">
+										<h2 class="mb-0"><a href="{% url 'car-single' car.id %}">{{ car.model }}</a></h2>
+										<div class="d-flex mb-3">
+											<span class="cat">{{ car.make }}</span>
+											<p class="price ml-auto">₹{{ car.price_per_hour }} <span>/Hour</span></p>
+											
+										</div>
+										{% if car.status and car.status  != "available" %}
+										<p class="price ml-auto"> Not available</p>
+										{% endif %}
+										<p class="d-flex mb-0 d-block">
+											{% if car.status and car.status  == "available" %}
+											<a href="{% url 'car_booking' car.id %}" class="btn btn-primary py-2 mr-1">Book now</a>
+										{% else %}
+										{% endif %}
+																				
+
+											<a href="{% url 'car-single' car.id %}" class="btn btn-secondary py-2 ml-1">Details</a>
+											<button
+												class="btn py-2 mr-1 save-car-btn"
+												data-car-id="{{ car.id }}"
+												data-save-url="{% url 'save_car' car_id=car.id %}"
+												data-is-saved="{% if car.is_saved %}true{% else %}false{% endif %}">
+												{% if car.is_saved %}
+													<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-bookmark-check-fill" viewBox="0 0 16 16">
+														<path fill-rule="evenodd" d="M2 15.5V2a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v13.5a.5.5 0 0 1-.74.439L8 13.069l-5.26 2.87A.5.5 0 0 1 2 15.5m8.854-9.646a.5.5 0 0 0-.708-.708L7.5 7.793 6.354 6.646a.5.5 0 1 0-.708.708l1.5 1.5a.5.5 0 0 0 .708 0z"/>
+													</svg>
+												{% else %}
+													<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-bookmark" viewBox="0 0 16 16">
+														<path d="M2 2a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v13.5a.5.5 0 0 1-.777.416L8 13.101l-5.223 2.815A.5.5 0 0 1 2 15.5zm2-1a1 1 0 0 0-1 1v12.566l4.723-2.482a.5.5 0 0 1 .554 0L13 14.566V2a1 1 0 0 0-1-1z"/>
+													</svg>
+												{% endif %}
+											</button>
+										</p>
+									</div>
+								</div>
+							</div>
+						{% endfor %}
+					</div>
+				</div>
+			
+			
+    		<div class="row mt-5">
+
+        </div>
+    	</div>
+    </section>
+    
+{% endblock %}
+{% block extra_scripts %}
+{% comment %} <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> {% endcomment %}
+<script src="{% static 'js/save_car.js' %}"></script>
+
+<!-- Add Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+	$(document).ready(function(){
+		$('.car-slider').slick({
+			infinite: true,  // Loop through the cars
+			slidesToShow: 5,  // Show 5 cars at a time
+			slidesToScroll: 1,  // Scroll 1 car at a time
+			prevArrow: '<button type="button" class="slick-prev">Previous</button>',  // Left navigation button
+			nextArrow: '<button type="button" class="slick-next">Next</button>',  // Right navigation button
+			responsive: [
+				{
+					breakpoint: 1024,  // On medium screens
+					settings: {
+						slidesToShow: 3,  // Show 3 cars
+						slidesToScroll: 1
+					}
+				},
+				{
+					breakpoint: 768,  // On smaller screens
+					settings: {
+						slidesToShow: 1,  // Show 1 car
+						slidesToScroll: 1
+					}
+				}
+			]
+		});
+	});
+	
+</script>
+ 
+{% endblock %}

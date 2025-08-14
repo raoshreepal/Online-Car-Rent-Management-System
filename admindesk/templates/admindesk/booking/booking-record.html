@@ -1,0 +1,207 @@
+{% extends "admindesk/admin-base.html" %}
+{% load static %}
+{% block title %}Report{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="page-inner">
+
+  <h2>Reports</h2>
+  <div id="reportTabs">
+    <ul class="nav nav-tabs">
+      <li class="nav-item">
+        <a class="nav-link active" href="#bookingReports">Booking Reports</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="#revenueReports">Revenue Reports</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="#serviceReports">Service Reports</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="#employeeReports">Employee Performance Reports</a>
+      </li>
+    </ul>
+    <div class="tab-content mt-3">
+      <!-- Booking Reports -->
+      <div id="bookingReports" class="tab-pane fade show active">
+        <h3>Booking Reports</h3>
+        <input type="text" id="searchBooking" class="form-control mb-3" placeholder="Search by ID" />
+        <table class="table table-striped" id="bookingTable">
+          <thead>
+            <tr>
+              <th>Booking ID</th>
+              <th>Customer Name</th>
+              <th>Car</th>
+              <th>Date</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- Sample Data -->
+            <tr>
+              <td>1</td>
+              <td>John Doe</td>
+              <td>Toyota Corolla</td>
+              <td>2025-01-01</td>
+              <td>Confirmed</td>
+            </tr>
+            <tr>
+              <td>2</td>
+              <td>Jane Smith</td>
+              <td>Honda Civic</td>
+              <td>2025-01-02</td>
+              <td>Pending</td>
+            </tr>
+          </tbody>
+        </table>
+        <button class="btn btn-primary" id="printBookingReport">Print Report</button>
+      </div>
+      <!-- Revenue Reports -->
+      <div id="revenueReports" class="tab-pane fade">
+        <h3>Revenue Reports</h3>
+        <input type="text" id="searchRevenue" class="form-control mb-3" placeholder="Search by ID" />
+        <table class="table table-striped" id="revenueTable">
+          <thead>
+            <tr>
+              <th>Revenue ID</th>
+              <th>Amount</th>
+              <th>Date</th>
+              <th>Source</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- Sample Data -->
+            <tr>
+              <td>1</td>
+              <td>₹ 500</td>
+              <td>2025-01-01</td>
+              <td>Booking</td>
+            </tr>
+            <tr>
+              <td>2</td>
+              <td>₹ 200</td>
+              <td>2025-01-02</td>
+              <td>Service</td>
+            </tr>
+          </tbody>
+        </table>
+        <button class="btn btn-primary" id="printRevenueReport">Print Report</button>
+      </div>
+      <!-- Service Reports -->
+      <div id="serviceReports" class="tab-pane fade">
+        <h3>Service Reports</h3>
+        <input type="text" id="searchService" class="form-control mb-3" placeholder="Search by ID" />
+        <table class="table table-striped" id="serviceTable">
+          <thead>
+            <tr>
+              <th>Service ID</th>
+              <th>Car</th>
+              <th>Service Type</th>
+              <th>Date</th>
+              <th>Cost</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- Sample Data -->
+            <tr>
+              <td>1</td>
+              <td>Toyota Corolla</td>
+              <td>Oil Change</td>
+              <td>2025-01-01</td>
+              <td>$50</td>
+            </tr>
+            <tr>
+              <td>2</td>
+              <td>Honda Civic</td>
+              <td>Brake Repair</td>
+              <td>2025-01-02</td>
+              <td>$150</td>
+            </tr>
+          </tbody>
+        </table>
+        <button class="btn btn-primary" id="printServiceReport">Print Report</button>
+      </div>
+      <!-- Employee Performance Reports -->
+      <div id="employeeReports" class="tab-pane fade">
+        <h3>Employee Performance Reports</h3>
+        <input type="text" id="searchEmployee" class="form-control mb-3" placeholder="Search by ID" />
+        <table class="table table-striped" id="employeeTable">
+          <thead>
+            <tr>
+              <th>Employee ID</th>
+              <th>Name</th>
+              <th>Performance</th>
+              <th>Ratings</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- Sample Data -->
+            <tr>
+              <td>1</td>
+              <td>John Worker</td>
+              <td>Excellent</td>
+              <td>5</td>
+            </tr>
+            <tr>
+              <td>2</td>
+              <td>Jane Assistant</td>
+              <td>Good</td>
+              <td>4</td>
+            </tr>
+          </tbody>
+        </table>
+        <button class="btn btn-primary" id="printEmployeeReport">Print Report</button>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+$(document).ready(function () {
+  // Tabs functionality
+  $("#reportTabs .nav-link").click(function (e) {
+    e.preventDefault();
+    $("#reportTabs .nav-link").removeClass("active");
+    $(this).addClass("active");
+    $(".tab-pane").removeClass("show active");
+    $($(this).attr("href")).addClass("show active");
+  });
+
+  // Search functionality
+  function searchTable(inputId, tableId) {
+    $(`#${inputId}`).on("input", function () {
+      const searchTerm = $(this).val().toLowerCase();
+      $(`#${tableId} tbody tr`).each(function () {
+        const text = $(this).text().toLowerCase();
+        $(this).toggle(text.includes(searchTerm));
+      });
+    });
+  }
+
+  searchTable("searchBooking", "bookingTable");
+  searchTable("searchRevenue", "revenueTable");
+  searchTable("searchService", "serviceTable");
+  searchTable("searchEmployee", "employeeTable");
+
+  // Print report functionality
+  function printReport(buttonId, tableId) {
+    $(`#${buttonId}`).click(function () {
+      const tableContent = $(`#${tableId}`).html();
+      const newWindow = window.open("", "_blank");
+      newWindow.document.write(`<html><body><h1>Report</h1><table>${tableContent}</table></body></html>`);
+      newWindow.document.close();
+      newWindow.print();
+    });
+  }
+
+  printReport("printBookingReport", "bookingTable");
+  printReport("printRevenueReport", "revenueTable");
+  printReport("printServiceReport", "serviceTable");
+  printReport("printEmployeeReport", "employeeTable");
+});
+</script>
+{% endblock %}

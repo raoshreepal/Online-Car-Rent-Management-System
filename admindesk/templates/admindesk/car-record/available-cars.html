@@ -1,0 +1,155 @@
+{% extends "admindesk/admin-base.html" %}
+{% load static %}
+{% block title %}Car Management{% endblock%}
+{% block content %}
+<div class="container mt-5">
+  <div class="page-inner">
+    <h2>Car Management</h2>
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <input type="text" class="form-control w-50" id="searchBar" placeholder="Search by car number or status..." />
+      <button class="btn btn-primary" id="addCarButton">Add Car</button>
+    </div>
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th>Car ID</th>
+          <th>Image</th>
+          <th>Number</th>
+          <th>Make</th>
+          <th>Model</th>
+          <th>Year</th>
+          <th>Mileage</th>
+          <th>Status</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody id="carTableBody">
+        <!-- Sample Car Data -->
+        <tr data-car-id="1">
+          <td>1</td>
+          <td><img src="https://via.placeholder.com/100" alt="Car Image" class="img-thumbnail" /></td>
+          <td>ABC123</td>
+          <td>Toyota</td>
+          <td>Corolla</td>
+          <td>2020</td>
+          <td>15,000 KM</td>
+          <td>Available</td>
+          <td>
+            <i class="fas fa-eye text-primary view-car" style="cursor: pointer;" title="View"></i>
+            <i class="fas fa-edit text-warning ms-2 edit-car" style="cursor: pointer;" title="Edit"></i>
+            <i class="fas fa-trash text-danger ms-2 delete-car" style="cursor: pointer;" title="Delete"></i>
+          </td>
+        </tr>
+        <!-- More Rows Dynamically Added -->
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Add Car Modal -->
+<div class="modal fade" id="addCarModal" tabindex="-1" aria-labelledby="addCarModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="addCarModalLabel">Add New Car</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form id="addCarForm">
+          <div class="mb-3">
+            <label for="addCarNumber" class="form-label">Number</label>
+            <input type="text" class="form-control" id="addCarNumber" required />
+          </div>
+          <div class="mb-3">
+            <label for="addCarMake" class="form-label">Make</label>
+            <input type="text" class="form-control" id="addCarMake" required />
+          </div>
+          <div class="mb-3">
+            <label for="addCarModel" class="form-label">Model</label>
+            <input type="text" class="form-control" id="addCarModel" required />
+          </div>
+          <div class="mb-3">
+            <label for="addCarYear" class="form-label">Year</label>
+            <input type="number" class="form-control" id="addCarYear" required />
+          </div>
+          <div class="mb-3">
+            <label for="addCarMileage" class="form-label">Mileage</label>
+            <input type="text" class="form-control" id="addCarMileage" required />
+          </div>
+          <div class="mb-3">
+            <label for="addCarStatus" class="form-label">Status</label>
+            <select class="form-control" id="addCarStatus" required>
+              <option value="Available">Available</option>
+              <option value="Confirm">Confirm</option>
+              <option value="Pending">Pending</option>
+            </select>
+          </div>
+          <button type="submit" class="btn btn-primary">Add Car</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+$(document).ready(function () {
+  let selectedCarId = null;
+
+  // Search Functionality
+  $("#searchBar").on("input", function () {
+    const query = $(this).val().toLowerCase();
+    $("#carTableBody tr").each(function () {
+      const number = $(this).find("td:nth-child(3)").text().toLowerCase();
+      const status = $(this).find("td:nth-child(8)").text().toLowerCase();
+      if (number.includes(query) || status.includes(query)) {
+        $(this).show();
+      } else {
+        $(this).hide();
+      }
+    });
+  });
+
+  // Add Car
+  $("#addCarButton").click(function () {
+    $("#addCarModal").modal("show");
+  });
+
+  $("#addCarForm").submit(function (e) {
+    e.preventDefault();
+    const carNumber = $("#addCarNumber").val();
+    const carMake = $("#addCarMake").val();
+    const carModel = $("#addCarModel").val();
+    const carYear = $("#addCarYear").val();
+    const carMileage = $("#addCarMileage").val();
+    const carStatus = $("#addCarStatus").val();
+    const newCarId = $("#carTableBody tr").length + 1;
+
+    $("#carTableBody").append(`
+      <tr data-car-id="${newCarId}">
+        <td>${newCarId}</td>
+        <td><img src="https://via.placeholder.com/100" alt="Car Image" class="img-thumbnail" /></td>
+        <td>${carNumber}</td>
+        <td>${carMake}</td>
+        <td>${carModel}</td>
+        <td>${carYear}</td>
+        <td>${carMileage}</td>
+        <td>${carStatus}</td>
+        <td>
+          <i class="fas fa-eye text-primary view-car" style="cursor: pointer;" title="View"></i>
+          <i class="fas fa-edit text-warning ms-2 edit-car" style="cursor: pointer;" title="Edit"></i>
+          <i class="fas fa-trash text-danger ms-2 delete-car" style="cursor: pointer;" title="Delete"></i>
+        </td>
+      </tr>
+    `);
+
+    // Close Modal
+    $("#addCarModal").modal("hide");
+    $("#addCarForm")[0].reset();
+  });
+
+  // Other functionalities (View, Edit, Delete) remain as previously defined
+});
+</script>
+{% endblock %}

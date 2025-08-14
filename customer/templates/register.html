@@ -1,0 +1,195 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}User Register{% endblock%}
+
+{% block head %}
+<style>
+#id_password1,
+#id_password2 {
+    border-radius: 4px; /* Apply rounded corners */
+    border: 1px solid #ccc; /* Add border */
+    padding: 10px; /* Add padding */
+    font-size: 16px; /* Increase font size */
+}
+
+
+</style>
+{% endblock %}
+<title>Carbook - Registration</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+{% comment %} <link href="https://fonts.googleapis.com/css?family=Poppins:200,300,400,500,600,700,800&display=swap" rel="stylesheet"> {% endcomment %}
+{% block content %}
+
+<!-- Hero section with background image -->
+<section class="hero-wrap hero-wrap-2 " style="background-image: url('{% static 'images/bg_3_1.jpeg' %}');" data-stellar-background-ratio="0.5">
+  <div class="overlay"></div>
+  <div class="container">
+    <div class="row no-gutters slider-text js-fullheight align-items-end justify-content-start">
+      <div class="col-md-9 ftco-animate pb-5">
+        <p class="breadcrumbs"><span class="mr-2"><a href="{% url 'home'%}">Home <i class="ion-ios-arrow-forward"></i></a></span> <span>Register <i class="ion-ios-arrow-forward"></i></span></p>
+        <h1 class="mb-3 bread">Register</h1>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Registration Form Section -->
+<!-- Registration Form Section -->
+<section class="ftco-section contact-section">
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-md-20">
+        <form action="{% url 'register' %}" method="POST" id="register-user" enctype="multipart/form-data" class="bg-light p-5 contact-form">
+          {% csrf_token %}
+          
+          <!-- First Row: First Name & Last Name -->
+          <div class="form-row">
+            <div class="col-md-6 form-group">
+                  <label for="first_name">First Name</label>
+                  {{ form.first_name }}
+                  {% if form.first_name.errors %}
+                      <ul class="error-list">
+                          {% for error in form.first_name.errors %}
+                              <li class="error">{{ error }}</li>
+                          {% endfor %}
+                      </ul>
+                  {% endif %}
+              </div>
+              <div class="col-md-6 form-group">
+                  <label for="last_name">Last Name</label>
+                  {{ form.last_name }}
+                  {% if form.last_name.errors %}
+                      <ul class="error-list">
+                          {% for error in form.last_name.errors %}
+                              <li class="error">{{ error }}</li>
+                          {% endfor %}
+                      </ul>
+                  {% endif %}
+              </div>
+          </div>
+      
+          <!-- Second Row: Username & Email -->
+          <div class="form-row">
+              <div class="col-md-6 form-group">
+                  <label for="username">Username</label>
+                  {{ form.username }}
+                  {% if form.username.errors %}
+                      <ul class="error-list">
+                          {% for error in form.username.errors %}
+                              <li class="error">{{ error }}</li>
+                          {% endfor %}
+                      </ul>
+                  {% endif %}
+              </div>
+              <div class="col-md-6 form-group">
+                <label for="email">Email</label>
+                  {{ form.email }}
+                  {% if form.email.errors %}
+                      <ul class="error-list">
+                          {% for error in form.email.errors %}
+                              <li class="error">{{ error }}</li>
+                          {% endfor %}
+                      </ul>
+                  {% endif %}
+              </div>
+          </div>
+      
+          <!-- Third Row: Phone Number & Image -->
+          <div class="form-row">
+              <div class="col-md-6 form-group">
+                  <label for="phone_number">Phone Number</label>
+                  {{ form.phone_number }}
+                  {% if form.phone_number.errors %}
+                      <ul class="error-list">
+                          {% for error in form.phone_number.errors %}
+                              <li class="error">{{ error }}</li>
+                          {% endfor %}
+                      </ul>
+                  {% endif %}
+              </div>
+              <div class="col-md-6 form-group">
+                  <label for="image">Image</label>
+                  {{ form.image }}
+                  {% if form.image.errors %}
+                      <ul class="error-list">
+                          {% for error in form.image.errors %}
+                              <li class="error">{{ error }}</li>
+                          {% endfor %}
+                      </ul>
+                  {% endif %}
+              </div>
+          </div>
+      
+          <!-- Fourth Row: Role -->
+          <div class="form-row">
+              <div class="col-md-6 form-group">
+                  <label for="role">Role</label>
+                  {{ form.role }}
+                  {% if form.role.errors %}
+                      <ul class="error-list">
+                          {% for error in form.role.errors %}
+                              <li class="error">{{ error }}</li>
+                          {% endfor %}
+                      </ul>
+                  {% endif %}
+              </div>
+         
+      
+          <!-- Fifth Row: Gender -->
+          
+              <div class="col-md-6 form-group">
+                  <label for="gender">Gender</label>
+                  {{ form.gender }}
+                  {% if form.gender.errors %}
+                      <ul class="error-list">
+                          {% for error in form.gender.errors %}
+                              <li class="error">{{ error }}</li>
+                          {% endfor %}
+                      </ul>
+                  {% endif %}
+              </div>
+          </div>
+      
+          <!-- Sixth Row: Password & Confirm Password -->
+          <div class="form-row">
+              <div class="col-md-6 form-group">
+                  <label for="password1">Password</label>
+                  {{ form.password1 }}  <!-- This is the password field -->
+                  {% if form.password1.errors %}
+                      <ul class="error-list">
+                          {% for error in form.password1.errors %}
+                              <li class="error">{{ error }}</li>
+                          {% endfor %}
+                      </ul>
+                  {% endif %}
+              </div>
+              <div class="col-md-6 form-group">
+                  <label for="password2">Confirm Password</label>
+                  {{ form.password2 }}  <!-- This is the confirm password field -->
+                  {% if form.password2.errors %}
+                      <ul class="error-list">
+                          {% for error in form.password2.errors %}
+                              <li class="error">{{ error }}</li>
+                          {% endfor %}
+                      </ul>
+                  {% endif %}
+              </div>
+          </div>
+      
+          <!-- Submit Button -->
+          <div class="form-row">
+              <div class="col-md-12 form-group text-center">
+                  <button type="submit" class="btn btn-primary btn-block">Register</button>
+              </div>
+          </div>
+      </form>
+      
+      </div>
+    </div>
+  </div>
+</section>
+
+
+{% endblock %}

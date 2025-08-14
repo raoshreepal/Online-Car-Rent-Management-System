@@ -1,0 +1,88 @@
+{% extends "employee/employee-base.html" %}
+{% load static %}
+{% block title %}Add Car Services{% endblock %}
+{% block content %}
+<div class="container mt-5">
+    <div class="page-inner">
+        <div class="page-header">
+            <h3 class="fw-bold mb-3">Add Car Service</h3>
+            <ul class="breadcrumbs mb-3">
+                <li class="nav-home">
+                    <a href="#">
+                        <img src="{% static 'img/dashboard.png' %}" alt="Home Icon" width="30" height="30">
+                    </a>
+                </li>
+                <li class="separator">
+                    <i class="icon-arrow-right"></i>
+                </li>
+                <li class="nav-item">
+                    <a href="#">Car Services Record</a>
+                </li>
+                <li class="separator">
+                    <i class="icon-arrow-right"></i>
+                </li>
+                <li class="nav-item">
+                    <a href="#">Add Car Service</a>
+                </li>
+            </ul>
+        </div>
+        {% if messages %}
+        <div class="container mt-3">
+            {% for message in messages %}
+                <div class="alert {% if message.tags %}alert-{{ message.tags }}{% endif %}" role="alert">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <!-- Add Car Service Form -->
+        <div class="card">
+            <div class="card-body">
+                <h4 class="card-title mb-3">Add New Car Service</h4>
+                <form method="POST" action="#">
+                   {% csrf_token %}
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="car_id" class="form-label">Car ID</label>
+                            {{form.car}}
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="employee_id" class="form-label">Employee ID</label>
+                            {{form.employee}}
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="service_type" class="form-label">Service Type</label>
+                            {{form.service_type}}
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="service_date" class="form-label">Service Date</label>
+                            {{form.service_date}}
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="cost" class="form-label">Service Cost</label>
+                                {{form.cost}}
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="status" class="form-label">Status</label>
+                           {{form.status}}
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="description" class="form-label">Description</label>
+                            {{form.description}}
+                        </div>
+                        
+                    </div>
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

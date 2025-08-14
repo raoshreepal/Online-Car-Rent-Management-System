@@ -1,0 +1,70 @@
+{% extends 'employee/main.employee_base.html' %}
+{% block title %}Customer Feedback{% endblock %}
+{% block content %}
+
+<div class="container">
+    <h2>Customer Feedback</h2>
+
+    <!-- Table to Display Customer Feedback -->
+    <div class="table-container">
+        <table id="feedbackTable" class="table table-bordered table-striped">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>User ID</th>
+                    <th>Employee ID</th>
+                    <th>Booking ID</th>
+                    <th>Feedback</th>
+                    <th>Rating</th>
+                    <th>Feedback Date</th>
+                </tr>
+            </thead>
+            <tbody id="feedbackTableBody">
+                <!-- Rows will be dynamically added here -->
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+    // Random data generator for customer feedback
+    const feedbackData = [];
+    const totalFeedbacks = 15;  // Total number of feedback records for demonstration
+
+    for (let i = 1; i <= totalFeedbacks; i++) {
+        feedbackData.push({
+            userId: 'USER' + (1000 + i),
+            employeeId: 'EMP' + (1000 + i),
+            bookingId: 'BOOK' + (1000 + i),
+            feedback: (i % 5 === 0) ? 'Great service!' : 'Needs improvement.',  // Alternating feedback
+            rating: (i % 5) + 1,  // Ratings from 1 to 5
+            feedbackDate: new Date().toISOString().slice(0, 10),  // Today's date as feedback date
+        });
+    }
+
+    // Function to render the feedback table
+    function renderTable() {
+        const tableBody = document.getElementById('feedbackTableBody');
+        tableBody.innerHTML = '';  // Clear previous rows
+
+        // Loop through the feedback data and populate the table
+        feedbackData.forEach((feedback, index) => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${index + 1}</td>
+                <td>${feedback.userId}</td>
+                <td>${feedback.employeeId}</td>
+                <td>${feedback.bookingId}</td>
+                <td>${feedback.feedback}</td>
+                <td>${feedback.rating}</td>
+                <td>${feedback.feedbackDate}</td>
+            `;
+            tableBody.appendChild(row);
+        });
+    }
+
+    // Initialize the feedback table
+    renderTable();
+</script>
+
+{% endblock %}

@@ -1,0 +1,403 @@
+{% extends "admindesk/admin-base.html" %}
+{% load static %}
+{% block content %}
+<div class="container">
+    <div class="page-inner">
+      <div class="page-header">
+        <h3 class="fw-bold mb-3">Dashboard</h3>
+        <ul class="breadcrumbs mb-3">
+          <li class="nav-home">
+            <a href="#">
+              <i class="icon-home"></i>
+            </a>
+          </li>
+          <li class="separator">
+            <i class="icon-arrow-right"></i>
+          </li>
+          <li class="nav-item">
+            <a href="#">User Management</a>
+          </li>
+        </ul>
+      </div>
+  
+      <h2>Employee Management</h2>
+      <ul class="nav nav-tabs" id="employeeManagementTabs" role="tablist">
+        <li class="nav-item">
+          <a class="nav-link active" id="view-employees-tab" data-bs-toggle="tab" href="#view-employees" role="tab" aria-controls="view-employees" aria-selected="true">View All Employees</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" id="add-employee-tab" data-bs-toggle="tab" href="#add-employee" role="tab" aria-controls="add-employee" aria-selected="false">Add Employee</a>
+        </li>
+      </ul>
+  
+      <div class="tab-content mt-4" id="employeeManagementTabsContent">
+        <!-- View All Employees -->
+        <div class="tab-pane fade show active" id="view-employees" role="tabpanel" aria-labelledby="view-employees-tab">
+          <h4 class="card-title">All Employees</h4>
+          <table class="table table-striped mt-3">
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Contact</th>
+                <th>Role</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="employeeTableBody">
+              {% for emp in employee %}
+              <tr>
+                <td>{{emp.username}}</td>
+                <td>{{emp.email}}</td>
+                <td>{{emp.phone_number}}</td>
+                <td>{{emp.role}}</td>
+               <!-- Table with icons for view and edit -->
+                  <td>
+                    <i class="fas fa-eye text-primary view-details-icon" style="cursor: pointer;" title="View Details" data-id="{{emp.id}}"></i>
+                    <i class="fas fa-edit text-warning edit-details-icon ms-2" style="cursor: pointer;" title="Edit Details" data-id="{{ emp.id }}"></i>
+                  </td>
+
+                  <!-- Bootstrap Modal for displaying details -->
+                  <div class="modal fade" id="employeeDetailsModal" tabindex="-1" aria-labelledby="employeeDetailsModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                      <div class="modal-content">
+                        <div class="modal-header">
+                          <h5 class="modal-title" id="employeeDetailsModalLabel">Employee Details</h5>
+                          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                          <p><strong>Name:</strong> <span id="empName"></span></p>
+                          <p><strong>Email:</strong> <span id="empEmail"></span></p>
+                          <p><strong>Phone:</strong> <span id="empPhone"></span></p>
+                          <p><strong>Booking:</strong> <span id="empBooking"></span></p>
+                          <p><strong>Services:</strong> <span id="empServices"></span></p>
+                        </div>
+                        <div class="modal-footer">
+                          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+              </tr>
+              {% endfor %}
+             
+            </tbody>
+          </table>
+        </div>
+  
+        <div class="tab-pane fade" id="add-employee" role="tabpanel" aria-labelledby="add-employee-tab">
+          <h4 class="card-title">Add New Employee</h4>
+          <form method="POST" enctype="multipart/form-data"> <!-- Add POST method and enctype for file uploads -->
+              {% csrf_token %}
+              <div class="row">
+                  <!-- First Name -->
+                  <div class="col-md-6">
+                      <div class="form-group">
+                          <label for="employeeFirstName">First Name</label>
+                          {{ add_employee.first_name }}  <!-- Form field for first name -->
+                          {% if add_employee.first_name.errors %}
+                              <div class="text-danger">
+                                  {% for error in add_employee.first_name.errors %}
+                                      <p>{{ error }}</p>
+                                  {% endfor %}
+                              </div>
+                          {% endif %}
+                      </div>
+                  </div>
+      
+                  <!-- Last Name -->
+                  <div class="col-md-6">
+                      <div class="form-group">
+                          <label for="employeeLastName">Last Name</label>
+                          {{ add_employee.last_name }}  <!-- Form field for last name -->
+                          {% if add_employee.last_name.errors %}
+                              <div class="text-danger">
+                                  {% for error in add_employee.last_name.errors %}
+                                      <p>{{ error }}</p>
+                                  {% endfor %}
+                              </div>
+                          {% endif %}
+                      </div>
+                  </div>
+              </div>
+      
+              <div class="row mt-3">
+                  <!-- Username -->
+                  <div class="col-md-6">
+                      <div class="form-group">
+                          <label for="employeeUsername">Username</label>
+                          {{ add_employee.username }}  <!-- Form field for username -->
+                          {% if add_employee.username.errors %}
+                              <div class="text-danger">
+                                  {% for error in add_employee.username.errors %}
+                                      <p>{{ error }}</p>
+                                  {% endfor %}
+                              </div>
+                          {% endif %}
+                      </div>
+                  </div>
+      
+                  <!-- Email -->
+                  <div class="col-md-6">
+                      <div class="form-group">
+                          <label for="employeeEmail">Email</label>
+                          {{ add_employee.email }}  <!-- Form field for email -->
+                          {% if add_employee.email.errors %}
+                              <div class="text-danger">
+                                  {% for error in add_employee.email.errors %}
+                                      <p>{{ error }}</p>
+                                  {% endfor %}
+                              </div>
+                          {% endif %}
+                      </div>
+                  </div>
+              </div>
+      
+              <div class="row mt-3">
+                  <!-- Phone Number -->
+                  <div class="col-md-6">
+                      <div class="form-group">
+                          <label for="employeePhone">Contact Number</label>
+                          {{ add_employee.phone_number }}  <!-- Form field for phone number -->
+                          {% if add_employee.phone_number.errors %}
+                              <div class="text-danger">
+                                  {% for error in add_employee.phone_number.errors %}
+                                      <p>{{ error }}</p>
+                                  {% endfor %}
+                              </div>
+                          {% endif %}
+                      </div>
+                  </div>
+      
+                  <!-- Role -->
+                  <div class="col-md-6">
+                      <div class="form-group">
+                          <label for="employeeRole">Role</label>
+                          {{ add_employee.role }}  <!-- Form field for role -->
+                          {% if add_employee.role.errors %}
+                              <div class="text-danger">
+                                  {% for error in add_employee.role.errors %}
+                                      <p>{{ error }}</p>
+                                  {% endfor %}
+                              </div>
+                          {% endif %}
+                      </div>
+                  </div>
+              </div>
+      
+              <div class="row mt-3">
+                  <!-- Upload Image -->
+                  <div class="col-md-6">
+                      <div class="form-group">
+                          <label for="employeeImage">Upload Image</label>
+                          {{ add_employee.image }}  <!-- Form field for image upload -->
+                          {% if add_employee.image.errors %}
+                              <div class="text-danger">
+                                  {% for error in add_employee.image.errors %}
+                                      <p>{{ error }}</p>
+                                  {% endfor %}
+                              </div>
+                          {% endif %}
+                      </div>
+                  </div>
+      
+                  <!-- Password -->
+                  <div class="col-md-6">
+                      <div class="form-group">
+                          <label for="employeePassword">Enter Password</label>
+                          {{ add_employee.password1 }}  <!-- Form field for password -->
+                          {% if add_employee.password1.errors %}
+                              <div class="text-danger">
+                                  {% for error in add_employee.password1.errors %}
+                                      <p>{{ error }}</p>
+                                  {% endfor %}
+                              </div>
+                          {% endif %}
+                      </div>
+                  </div>
+              </div>
+      
+              <div class="row mt-3">
+                  <!-- Confirm Password -->
+                  <div class="col-md-6">
+                      <div class="form-group">
+                          <label for="employeeConfirmPassword">Confirm Password</label>
+                          {{ add_employee.password2 }}  <!-- Form field for password confirmation -->
+                          {% if add_employee.password2.errors %}
+                              <div class="text-danger">
+                                  {% for error in add_employee.password2.errors %}
+                                      <p>{{ error }}</p>
+                                  {% endfor %}
+                              </div>
+                          {% endif %}
+                      </div>
+                  </div>
+              </div>
+      
+              <!-- Submit Button -->
+              <button type="submit" class="btn btn-primary mt-3">Add Employee</button>
+          </form>
+      </div>
+      <div class="modal fade" id="editEmployeeModal" tabindex="-1" aria-labelledby="editEmployeeLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editEmployeeLabel">Edit Employee Details</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="editEmployeeForm">
+                      {% csrf_token %}
+                        <input type="hidden" id="emp_id" name="emp_id">
+                        
+                        <div class="mb-3">
+                            <label class="form-label">First Name</label>
+                            <input type="text" class="form-control" id="fname" name="fname" required>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label">Last Name</label>
+                            <input type="text" class="form-control" id="lname" name="lname" required>
+                        </div>
+    
+                        <div class="mb-3">
+                            <label class="form-label">Username</label>
+                            <input type="text" class="form-control" id="uname" name="username" required>
+                        </div>
+    
+                        <div class="mb-3">
+                            <label class="form-label">Email</label>
+                            <input type="email" class="form-control" id="emailid" name="email" required>
+                        </div>
+    
+                        <div class="mb-3">
+                            <label class="form-label">Contact</label>
+                            <input type="text" class="form-control" id="contact" name="contact" required>
+                        </div>
+    
+                        <div class="mb-3">
+                            <label class="form-label">Role</label>
+                            <select class="form-control" id="role" name="role">
+                                <option value="admin">Admin</option>
+                                <option  value="employee" selected> Employee</option>
+                                <option value="customer">User</option>
+
+                            </select>
+                        </div>
+    
+                        <div class="mb-3">
+                            <label class="form-label">Gender</label>
+                            <select class="form-control" id="gender" name="gender">
+                                <option value="male">Male</option>
+                                <option value="female">Female</option>
+                                <option value="other">other</option>
+                            </select>
+                        </div>
+    
+                        <div class="mb-3">
+                            <label class="form-label">Profile Image</label>
+                            <input type="file" class="form-control" id="image" name="image">
+                        </div>
+    
+                        <button type="submit" class="btn btn-primary">Update</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+      </div>
+    </div>
+  </div>
+  
+    {% endblock %}
+{% block extra_scripts %}
+<script>
+  $(document).ready(function() {
+    // Click on the view details icon
+    $('.view-details-icon').click(function() {
+      var empId = $(this).data('id');  // Get employee ID from data-id attribute
+  
+      // AJAX request to fetch employee details
+      $.ajax({
+        url: "{% url 'eployee_all_details'%}",  // URL to get employee details
+        method: 'GET',
+        data: { id: empId },
+        success: function(response) {
+          // Assuming response contains employee details and related bookings and services
+          $('#empName').text(response.name);
+          $('#empEmail').text(response.email);
+          $('#empPhone').text(response.phone);
+          $('#empBooking').text(response.booking);
+          $('#empServices').text(response.services);
+  
+          // Show the Bootstrap modal
+          $('#employeeDetailsModal').modal('show');
+        },
+        error: function(xhr, status, error) {
+          alert('Error fetching employee details');
+        }
+      });
+    });
+  
+    // Click on the edit details icon (similar to view details)
+    $(".edit-details-icon").click(function() {
+      let empId = $(this).data("id");
+
+      $.ajax({
+          url: "{% url 'get_employee_details' %}",  // Django URL for fetching employee data
+          type: "GET",
+          data: { emp_id: empId },
+          success: function(response) {
+              if (response.success) {
+                  $("#emp_id").val(response.data.id);
+                  $("#fname").val(response.data.fname);
+                  $("#lname").val(response.data.lname);
+                  $("#uname").val(response.data.username);
+                  $("#emailid").val(response.data.email);
+                  $("#contact").val(response.data.contact);
+                  $("#role").val(response.data.role);
+                  $("#gender").val(response.data.gender);
+
+                  // Show the Modal
+                  $("#editEmployeeModal").modal("show");
+              }
+          }
+      });
+  });
+
+  // Submit Form to Update Employee Details
+  $("#editEmployeeForm").submit(function(e) {
+      e.preventDefault();
+
+      let formData = new FormData(this);
+      
+      $.ajax({
+          url: "{% url 'update_employee'%}",
+          type: "POST",
+          data: formData,
+          processData: false,
+          contentType: false,
+          success: function(response) {
+              if (response.success) {
+                  $("#editEmployeeModal").modal("hide");
+                  
+                  // Highlight the updated row
+                  let row = $("i[data-id='" + response.data.id + "']").closest("tr");
+                  row.addClass("table-success");
+
+                  // Show success message
+                  alert("Employee updated successfully!");
+                  
+                  // Reload or update table dynamically
+                  setTimeout(function() {
+                    location.reload();
+                }, 2000); // Reloads after 2 seconds (2000 milliseconds)
+                              }
+          }
+      });
+  });
+  });
+  
+</script>
+{% endblock%}

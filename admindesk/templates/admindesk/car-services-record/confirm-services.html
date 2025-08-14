@@ -1,0 +1,83 @@
+{% extends "admindesk/admin-base.html" %}
+{% load static %}
+{% block title %}Confirm Services{% endblock %}
+{% block content %}
+<div class="container mt-5">
+    <div class="page-inner">
+      <div class="page-header">
+        <h3 class="fw-bold mb-3">Confirm car services</h3>
+        <ul class="breadcrumbs mb-3">
+          <li class="nav-home">
+            <a href="#">
+              <img src="{% static 'img/dashboard.png' %}" alt="Home Icon" width="30" height="30">
+            </a>
+          </li>
+          <li class="separator">
+            <i class="icon-arrow-right"></i>
+          </li>
+          <li class="nav-item">
+            <a href="#">Car Services Record</a>
+          </li>
+          <li class="separator">
+            <i class="icon-arrow-right"></i>
+          </li>
+          <li class="nav-item">
+            <a href="#">confirm Services </a>
+          </li>
+        </ul>
+      </div>
+  
+      <div class="card">
+        <div class="card-body">
+            <h4 class="card-title mb-3">Confirmed Car Services</h4>
+            <!-- Table displaying the confirmed car services -->
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Service ID</th>
+                        <th>Car ID</th>
+                        <th>admin ID</th>
+                        <th>Service Cost</th>
+                        <th>Description</th>
+                        <th>Status</th>
+                        <th>Confirmation Date</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Example Data -->
+                    <tr>
+                        <td>1</td>
+                        <td>101</td>
+                        <td>1001</td>
+                        <td>$200</td>
+                        <td>Oil Change</td>
+                        <td><span class="badge bg-success">Confirmed</span></td>
+                        <td>2025-01-02</td>
+                    </tr>
+                    <tr>
+                        <td>2</td>
+                        <td>102</td>
+                        <td>1002</td>
+                        <td>$150</td>
+                        <td>Brake Repair</td>
+                        <td><span class="badge bg-success">Confirmed</span></td>
+                        <td>2025-01-05</td>
+                    </tr>
+                    <tr>
+                        <td>3</td>
+                        <td>103</td>
+                        <td>1003</td>
+                        <td>$300</td>
+                        <td>Transmission Repair</td>
+                        <td><span class="badge bg-success">Confirmed</span></td>
+                        <td>2025-01-08</td>
+                    </tr>
+                    <!-- Add more rows dynamically as per the data -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+  
+    </div>
+  </div>
+{% endblock %}

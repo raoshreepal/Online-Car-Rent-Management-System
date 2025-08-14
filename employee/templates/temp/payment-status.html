@@ -1,0 +1,94 @@
+{% extends 'employee/main.employee_base.html' %}
+{% block title %}Payment Status{% endblock %}
+{% block content %}
+
+<div class="container">
+    <h2>Payment Status</h2>
+
+    <!-- Table to Display Payment Status -->
+    <div class="table-container">
+        <table id="paymentStatusTable" class="table table-bordered table-striped">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>User ID</th>
+                    <th>User Name</th>
+                    <th>Booking ID</th>
+                    <th>Car ID</th>
+                    <th>Service Type</th>
+                    <th>Payment Status</th>
+                    <th>Payment Date</th>
+                    <th>Payments Completed</th> <!-- New column for completed payments -->
+                </tr>
+            </thead>
+            <tbody id="paymentStatusTableBody">
+                <!-- Rows will be dynamically added here -->
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+    // Random data generator for payment status
+    const paymentData = [];
+    const totalPayments = 15;  // Total number of payment records for demonstration
+
+    for (let i = 1; i <= totalPayments; i++) {
+        const paymentStatus = (i % 2 === 0) ? 'Complete' : 'Pending';  // Alternating between Complete and Pending
+        const paymentDate = paymentStatus === 'Complete' ? new Date().toISOString().slice(0, 10) : ''; // Add today's date if Complete
+
+        paymentData.push({
+            userId: 'USER' + (1000 + i),
+            userName: 'User ' + i,
+            bookingId: 'BOOK' + (1000 + i),
+            carId: 'CAR' + (1000 + i),
+            serviceType: (i % 4 === 0) ? 'Oil Change' : (i % 4 === 1) ? 'Tire Rotation' : (i % 4 === 2) ? 'Brake Inspection' : 'Fluid Top-up',
+            paymentStatus: paymentStatus,
+            paymentDate: paymentDate
+        });
+    }
+
+    // Function to render the payment status table
+    function renderTable() {
+        const tableBody = document.getElementById('paymentStatusTableBody');
+        tableBody.innerHTML = '';  // Clear previous rows
+
+        // Loop through the payment data and populate the table
+        paymentData.forEach((payment, index) => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${index + 1}</td>
+                <td>${payment.userId}</td>
+                <td>${payment.userName}</td>
+                <td>${payment.bookingId}</td>
+                <td>${payment.carId}</td>
+                <td>${payment.serviceType}</td>
+                <td>${payment.paymentStatus}</td>
+                <td>${payment.paymentDate || 'N/A'}</td> <!-- Display 'N/A' if no payment date -->
+                <td>${getPaymentAmount(payment.paymentStatus)}</td> <!-- Display payment amount or '-' -->
+            `;
+            tableBody.appendChild(row);
+        });
+    }
+
+    // Function to get the payment amount or '-' based on payment status
+    function getPaymentAmount(status) {
+        if (status === 'Complete') {
+            return '₹ ' + getRandomAmount();  // Display random amount for completed payments
+        } else {
+            return '-';  // Display '-' for pending payments
+        }
+    }
+
+    // Function to generate a random amount (e.g., 200, 500, 1200, etc.)
+    function getRandomAmount() {
+        const amounts = [200, 500, 1200, 300, 1500, 800, 1000];  // Example amounts
+        const randomIndex = Math.floor(Math.random() * amounts.length);
+        return amounts[randomIndex];  // Return a random amount from the list
+    }
+
+    // Initialize the table
+    renderTable();
+</script>
+
+{% endblock %}

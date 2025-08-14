@@ -1,0 +1,90 @@
+{% extends "employee/employee-base.html" %}
+{% load static %}
+{% block title%}button {% endblock %}
+{% block content%}<div class="container">
+  <div class="page-inner">
+    <div class="page-header">
+      <h3 class="fw-bold mb-3">Update Employee Profile</h3>
+      <ul class="breadcrumbs mb-3">
+        <li class="nav-home">
+          <a href="#">
+            <i class="icon-home"></i>
+          </a>
+        </li>
+        <li class="separator">
+          <i class="icon-arrow-right"></i>
+        </li>
+        <li class="nav-item">
+          <a href="#">Dashboard</a>
+        </li>
+        <li class="separator">
+          <i class="icon-arrow-right"></i>
+        </li>
+        <li class="nav-item">
+          <a href="#">Update Profile</a>
+        </li>
+      </ul>
+    </div>
+    <div class="row">
+      <div class="col-md-12">
+        <div class="card">
+          <div class="card-header">
+            <h4 class="card-title">Update Employee Information</h4>
+          </div>
+          <div class="card-body">
+            <form action="#" method="POST" enctype="multipart/form-data">
+              <!-- Employee Profile Image -->
+              <div class="form-group mb-3">
+                <label for="profilePicture">Profile Picture</label>
+                <input type="file" class="form-control" id="profilePicture" name="profile_picture">
+              </div>
+
+              <!-- Employee Name -->
+              <div class="form-group mb-3">
+                <label for="employeeName">Full Name</label>
+                <input type="text" class="form-control" id="employeeName" name="employee_name" value="John Doe" required>
+              </div>
+
+              <!-- Employee Email -->
+              <div class="form-group mb-3">
+                <label for="employeeEmail">Email Address</label>
+                <input type="email" class="form-control" id="employeeEmail" name="employee_email" value="johndoe@example.com" required>
+              </div>
+
+              <!-- Employee Contact -->
+              <div class="form-group mb-3">
+                <label for="employeeContact">Contact Number</label>
+                <input type="text" class="form-control" id="employeeContact" name="employee_contact" value="+1 234 567 890" required>
+              </div>
+
+              <!-- Employee Designation -->
+              <div class="form-group mb-3">
+                <label for="employeeDesignation">Designation</label>
+                <input type="text" class="form-control" id="employeeDesignation" name="employee_designation" value="Software Developer" required>
+              </div>
+
+              <!-- Employee Department -->
+              <div class="form-group mb-3">
+                <label for="employeeDepartment">Department</label>
+                <select class="form-control" id="employeeDepartment" name="employee_department">
+                  <option value="IT" selected>IT</option>
+                  <option value="HR">HR</option>
+                  <option value="Marketing">Marketing</option>
+                  <option value="Sales">Sales</option>
+                </select>
+              </div>
+
+              <!-- Save Button -->
+              <div class="form-group mb-3">
+                <button type="submit" class="btn btn-primary">Save Changes</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+{% endblock%}

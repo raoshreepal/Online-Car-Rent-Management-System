@@ -1,0 +1,79 @@
+{% extends 'employee/main.employee_base.html' %}
+{% block title %}Car Service Status{% endblock %}
+{% block content %}
+
+<div class="container">
+    <h2>Car Service Status</h2>
+
+    <!-- Table to Display Car Services -->
+    <div class="table-container">
+        <table id="carServiceTable" class="table table-bordered table-striped">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Car ID</th>
+                    <th>Employee ID</th>
+                    <th>Service Type</th>
+                    <th>Service Date</th>
+                    <th>Total Cost</th>
+                    <th>Cost Description</th>
+                    <th>Status</th>
+                    <th>Completion Date</th>
+                </tr>
+            </thead>
+            <tbody id="carServiceTableBody">
+                <!-- Rows will be dynamically added here -->
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+    // Random data generator for car services
+    const carServiceData = [];
+    const totalServices = 20;  // Total number of services for demonstration
+
+    for (let i = 1; i <= totalServices; i++) {
+        const status = (i % 2 === 0) ? 'Complete' : 'Pending';  // Alternating between Complete and Pending
+        const completionDate = status === 'Complete' ? new Date().toISOString().slice(0, 10) : ''; // Add today's date if Complete
+
+        carServiceData.push({
+            carId: 'CAR' + (1000 + i),
+            employeeId: 'EMP' + (200 + i),
+            serviceType: (i % 4 === 0) ? 'Oil Change' : (i % 4 === 1) ? 'Tire Rotation' : (i % 4 === 2) ? 'Brake Inspection' : 'Fluid Top-up',
+            serviceDate: '2024-01-' + (i % 31 + 1),  // Random date in January 2024
+            totalCost: (i * 50) + 100,  // Example cost calculation
+            costDescription: 'Service performed for car ' + (1000 + i),
+            status: status,
+            completionDate: completionDate
+        });
+    }
+
+    // Function to render the car service table
+    function renderTable() {
+        const tableBody = document.getElementById('carServiceTableBody');
+        tableBody.innerHTML = '';  // Clear previous rows
+
+        // Loop through the car service data and populate the table
+        carServiceData.forEach((service, index) => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${index + 1}</td>
+                <td>${service.carId}</td>
+                <td>${service.employeeId}</td>
+                <td>${service.serviceType}</td>
+                <td>${service.serviceDate}</td>
+                <td>$${service.totalCost.toFixed(2)}</td>
+                <td>${service.costDescription}</td>
+                <td>${service.status}</td>
+                <td>${service.completionDate || 'N/A'}</td> <!-- Display 'N/A' if no completion date -->
+            `;
+            tableBody.appendChild(row);
+        });
+    }
+
+    // Initialize the table
+    renderTable();
+</script>
+
+{% endblock %}

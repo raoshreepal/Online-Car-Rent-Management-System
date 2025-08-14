@@ -1,0 +1,138 @@
+{% extends "employee/employee-base.html" %}
+{% load static %}
+{% block title %}User Booking{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="page-inner">
+
+        <h2>User Car Bookings</h2>
+
+        <div class="table-responsive" style="max-height: 400px; overflow-y: auto;">
+            <table class="table table-hover">
+                <thead class="thead-light">
+                    <tr>
+                        <th scope="col">Car</th>
+                        <th>User Details</th>
+                        <th scope="col">Pickup Location</th>
+                        <th scope="col">Pickup Dates</th>
+                        <th scope="col">Amount</th>
+                        <th scope="col">Booking Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+
+                    {% for booking in pending_bookings %}
+                    {% if booking.booking_status == "pending"%}
+                        <tr class="align-middle">
+                            <!-- Car Image and Model -->
+                            <td>
+                                <div class="d-flex align-items-center">
+                                    <img src="{{ booking.car.image.url }}" alt="Car Image" class="rounded-circle" style="width: 50px; height: 50px; object-fit: cover;">
+                                    <span class="ms-2">{{ booking.car.model }} <br>{{ booking.car.number }}</span>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="d-flex align-items-center">
+                                    <img src="{{ booking.user.image.url }}" alt="Car Image" class="rounded-circle" style="width: 50px; height: 50px; object-fit: cover;">
+                                    <span class="ms-2">{{ booking.user.username }} {{ booking.user.phone_number }}</span>
+                                </div>
+
+                            </td>
+
+                            <!-- Pickup Location -->
+                            <td>{{ booking.pickup_location }}</td>
+
+                            <!-- Pickup Dates -->
+                            <td>{{ booking.pickup_date }} to {{ booking.drop_date }}</td>
+                            <td>${{ booking.receipt_amount }}</td>
+
+                            <!-- Booking Status -->
+                            <td>
+                                <button class="btn btn-warning confirm-booking" 
+                                        data-booking-id="{{ booking.id }}"
+                                        data-car-id="{{ booking.car.id }}" 
+                                        data-car-model="{{ booking.car.model }}">
+                                    Confirm Booking
+                                </button>
+                            </td>
+                            <div class="modal fade" id="confirmBookingModal" tabindex="-1" aria-labelledby="confirmBookingModalLabel" aria-hidden="true">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="confirmBookingModalLabel">Confirm Booking</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <p>Are you sure you want to confirm the booking for <strong id="carModel"></strong>?</p>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <input type="hidden" >
+                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                            <button type="button" class="btn btn-primary" id="confirmBookingBtn">Confirm</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>                        
+                        </tr>
+                        {% endif %}
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<!-- Hidden Form for CSRF Token -->
+<form id="csrfForm" method="post" style="display:none;">
+    {% csrf_token %}
+</form>
+{% endblock %}
+{% block extra_scripts %}
+<script>
+    var confirm_booking = "{% url 'confirm_booking' %}";
+</script>
+<script>
+    
+    $(document).ready(function () {
+        // Open modal when the "Confirm Booking" button is clicked
+        $('.confirm-booking').click(function () {
+            var bookingId = $(this).data('booking-id');
+            var carId = $(this).data('car-id');
+            var carModel = $(this).data('car-model');
+            
+            // Set car model in the modal
+            $('#carModel').text(carModel);
+    
+            // Show the modal
+            $('#confirmBookingModal').modal('show');
+    
+            // Handle confirm button click inside the modal
+            $('#confirmBookingBtn').click(function () {
+                $.ajax({
+                    url: confirm_booking,  // URL for the confirm booking view
+                    method: 'POST',
+                    data: {
+                        'booking_id': bookingId,
+                        'car_id': carId,
+                        'csrfmiddlewaretoken': $('input[name="csrfmiddlewaretoken"]').val()
+                    },
+                    success: function (response) {
+                        // If the booking is confirmed successfully, update the UI
+                        if (response.status === 'success') {
+                            $('#confirmBookingModal').modal('hide');
+                            alert('Booking confirmed successfully!');
+                            location.reload();  // Reload the page to reflect the changes
+                        } else {
+                            alert('There was an error confirming the booking.');
+                        }
+                    },
+                    error: function () {
+                        alert('An error occurred while confirming the booking.');
+                    }
+                });
+            });
+        });
+    });
+    
+</script>
+{% endblock%}

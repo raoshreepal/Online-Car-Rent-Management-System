@@ -1,0 +1,119 @@
+
+
+<div class="login-container">
+    <h2>Login</h2>
+
+    <!-- Login Form -->
+    <form id="loginForm" onsubmit="return validateForm()">
+        <div class="form-group">
+            <label for="username">Username</label>
+            <input type="text" id="username" class="form-input" placeholder="Enter your username" required>
+        </div>
+
+        <div class="form-group">
+            <label for="password">Password</label>
+            <input type="password" id="password" class="form-input" placeholder="Enter your password" required>
+        </div>
+
+        <button type="submit" class="btn-login">Login <i class="fas fa-sign-in-alt"></i></button>
+    </form>
+    <div class="form-group">
+        <p class="text-center">if you dont have account <a href="{% url 'register' %}"><u>Register</u></a></p>
+      </div>
+      <div class="form-group">
+        <p class="text-center"><a href="#">Forgot Password?</a></p>
+      </div>
+
+    <div class="message" id="errorMessage"></div>
+</div>
+
+<!-- Custom Styles -->
+<style>
+    body {
+        background-color: #f4f7fa;
+        font-family: Arial, sans-serif;
+    }
+
+    .login-container {
+        width: 100%;
+        max-width: 400px;
+        margin: 50px auto;
+        padding: 20px;
+        background-color: white;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    h2 {
+        text-align: center;
+        margin-bottom: 20px;
+        color: #333;
+    }
+
+    .form-group {
+        margin-bottom: 15px;
+    }
+
+    .form-input {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        font-size: 14px;
+    }
+
+    .btn-login {
+        width: 100%;
+        padding: 10px;
+        background-color: #4CAF50;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 16px;
+    }
+
+    .btn-login i {
+        margin-left: 8px;
+    }
+
+    .btn-login:hover {
+        background-color: #45a049;
+    }
+
+    .message {
+        color: red;
+        text-align: center;
+        margin-top: 15px;
+    }
+</style>
+
+<!-- Font Awesome for Icons -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css" />
+
+<script>
+    // Validate the login form
+    function validateForm() {
+        // Get the values from the form fields
+        const username = document.getElementById('username').value;
+        const password = document.getElementById('password').value;
+        const errorMessage = document.getElementById('errorMessage');
+
+        // Basic validation for empty fields
+        if (username === "" || password === "") {
+            errorMessage.textContent = "Both fields are required.";
+            return false;
+        }
+
+        // Example of a simple mock check (In real case, it should be checked from a server)
+        if (username === "admin" && password === "admin123") {
+            errorMessage.textContent = "";
+            alert("Login successful! Redirecting...");
+            // Redirect or perform other login actions here, e.g., window.location.href = "/dashboard";
+            return true;
+        } else {
+            errorMessage.textContent = "Invalid username or password.";
+            return false;
+        }
+    }
+</script>

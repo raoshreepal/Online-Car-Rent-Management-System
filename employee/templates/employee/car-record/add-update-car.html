@@ -1,0 +1,136 @@
+{% extends "employee/employee-base.html" %}
+{% load static %}
+{% block title %}Add and Update Cars{% endblock %}
+{% block content %}
+<div class="container mt-5">
+    <div class="page-inner">
+        <form method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="row">
+                <!-- Car Number, Make, Model -->
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="id_number">Car Number</label>
+                        {{ car_form.number }}
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="id_make">Make</label>
+                        {{ car_form.make }}
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="id_model">Model</label>
+                        {{ car_form.model }}
+                    </div>
+                </div>
+            </div>
+            
+            <div class="row mt-3">
+                <!-- Year, Type, Mileage -->
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="id_year">Year</label>
+                        {{ car_form.year }}
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="id_type">Type</label>
+                        {{ car_form.type }}
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="id_mileage">Mileage</label>
+                        {{ car_form.mileage }}
+                    </div>
+                </div>
+            </div>
+            
+            <div class="row mt-3">
+                <!-- Seats, Price per Hour, Price per Day -->
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="id_seats">Seats</label>
+                        {{ car_form.seats }}
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="id_price_per_hour">Price per Hour</label>
+                        {{ car_form.price_per_hour }}
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="id_discount">Discount</label>
+                        {{ car_form.discount }}
+                    </div>
+                    
+                </div>
+            </div>
+            
+            <div class="row mt-3">
+                <!-- Discount, Price per Month, Car Image -->
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="id_price_per_day">Price per Day</label>
+                        {{ car_form.price_per_day }}
+                    </div>
+                   
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="id_price_per_month">Price per Month</label>
+                        {{ car_form.price_per_month }}
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="id_image">Car Image</label>
+                        {{ car_form.image }}
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label for="id_image">Status</label>
+                    {{ car_form.status }}
+                </div>
+            </div>
+            <div class="row mt-3">
+                <div class="col-md-12">
+                    <button type="submit" class="btn btn-primary btn-block">Submit</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+{% endblock %}
+
+
+{% block extra_scripts %}
+<script>
+    $(document).ready(function() {
+        function calculateDiscountedPrice() {
+            var hourlyPrice = parseFloat($("#price_per_hour").val()) || 0;
+            var hoursPerDay = 20;
+            var discount = parseFloat($("#discount").val()) || 0;
+            
+            var dailyPrice = hourlyPrice * hoursPerDay;
+            var discountedPrice = dailyPrice - (dailyPrice * (discount / 100));
+            var monthlyPrice = discountedPrice * 30;
+            
+            $("#price_per_day").val(discountedPrice.toFixed(2));
+            $("#price_per_month").val(monthlyPrice.toFixed(2));
+        }
+
+        $("#price_per_hour, #discount").on("input", calculateDiscountedPrice);
+    });
+</script>
+
+{% endblock %}

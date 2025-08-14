@@ -1,0 +1,307 @@
+<!-- car_booking.html -->
+{% extends "base.html" %}
+{% load static %}
+{% block head %}
+<link rel="stylesheet" href="{% static 'css/booking.css' %}">
+{% endblock %}
+{% block content %}
+<section class="hero-wrap hero-wrap-2 js-fullheight" style="background-image: url('{% static 'images/onlineBooking.jpeg'%}');" data-stellar-background-ratio="0.5">     
+    <div class="overlay"></div>
+    <div class="container">
+      <div class="row no-gutters slider-text js-fullheight align-items-end justify-content-start">
+        <div class="col-md-9 ftco-animate pb-5">
+            <p class="breadcrumbs"><span class="mr-2"><a href="{% url 'home'%}">Home <i class="ion-ios-arrow-forward"></i></a></span> <span>Cars <i class="ion-ios-arrow-forward"></i></span></p>
+          <h1 class="mb-3 bread">Book Your Car</h1>
+        </div>
+      </div>
+    </div>
+  </section>
+ 
+  
+    <div class=" container-fluid my-5 ">
+        <div class="row justify-content-center ">
+            <div class="col-xl-10">
+                <div class="container mt-5" >
+                    {% if messages %}
+                            {% for message in messages %}
+                                <div class="alert alert-success">
+                                    {{ message }}
+                                </div>
+                            {% endfor %}
+                        {% endif %}
+                    <div class="card shadow-lg"  style="background:transparent; width:%; padding:10px; ">
+
+                {% if show_confirmation %}
+                
+
+                        <div class="card-header bg-primary text-white text-center">
+                            <h3>You  Booked This Car</h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="row align-items-center">
+                                <div class="col-md-4 text-center">
+                                    <img src="{{ booking.car.image.url }}" class="img-fluid rounded" alt="Car Image">
+                                </div>
+                                <div class="col-md-8">
+                                    <p><strong>Car:</strong> {{ booking.car.make }}-{{booking.car.model}}</p>
+                                    <p><strong>Car:</strong> {{ booking.car.number}}</strong></p>
+                                    <p><strong>Booking Status:</strong> <span class="badge bg-info">{{ booking.booking_status }}</span></p>
+                                    <p><strong>Pickup Date & Time:</strong> <i class="fa fa-calendar"></i> {{ booking.pickup_date }} | <i class="fa fa-clock"></i> {{ booking.pickup_time }}</p>
+                                    <p><strong>Drop Date & Time:</strong> <i class="fa fa-calendar"></i> {{ booking.drop_date }} | <i class="fa fa-clock"></i> {{ booking.drop_time }}</p>
+                                    <p><strong>Pickup Location:</strong> <i class="fa fa-map-marker"></i> {{ booking.pickup_location }}</p>
+                                    <p><strong>Receipt Amount:</strong> <span class="text-success fw-bold">₹{{ booking.receipt_amount }}</span></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% elif booking %}
+                    <div class="card mt-4 shadow-sm">
+                        <div class="card-header bg-success text-white">
+                            <h5>Booking Details</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <!-- Car Image -->
+                                <div class="col-md-4">
+                                    <img src="{{ booking.car.image.url }}" alt="Car Image" class="img-fluid rounded">
+                                </div>
+                    
+                                <!-- Booking Details -->
+                                <div class="col-md-8">
+                                    <h5 class="text-primary">{{ booking.car.number }} ({{ booking.car.type }})</h5>
+                                    <p><strong>Car Number:</strong> {{ booking.car.number }}</p>
+                                    <p><strong>Engine Type:</strong> {{ booking.car.type }}</p>
+                                    <hr>
+                                    <p><strong>Pickup Location:</strong> {{ booking.pickup_location }}</p>
+                                    <p><strong>Pickup Date:</strong> {{ booking.pickup_date }}</p>
+                                    <p><strong>Pickup Time:</strong> {{ booking.pickup_time }}</p>
+                                    <p><strong>Drop Date:</strong> {{ booking.drop_date }}</p>
+                                    <p><strong>Drop Time:</strong> {{ booking.drop_time }}</p>
+                                    <p><strong>Total Amount:</strong> ₹{{ booking.receipt_amount }}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                
+                {% else %}
+                    <div class="row justify-content-around" >
+                        <div class="col-md-5">
+                           
+                            <div class="card border-0">
+                                <div class="card-header pb-0">
+                                    <p style="margin-left:200px;"class="card-text text-muted mt-4  space">Car Details</p>
+                                    <hr class="my-0">
+                                </div>
+                                <div class="card-body">
+                                    <div class="row justify-content-between">
+                                        <div class="col-auto mt-0"><p>Company : <b>{{car.make}}</b></p></div>
+                                        <div class="col-auto"><p>Model : <b>{{car.model}}</b> </p></div>
+                                        <div class="col-auto"><p>Type : <b>{{car.type}}</b> </p></div>
+                                        <div class="col-auto"><p>Numner : <b>{{car.number}}</b> </p></div>
+                                        <div class="col-auto"><p>Seats :<b>{{car.seats}} Adult</b> </p></div>
+                                        <div class="col-auto"><p>Year :<b>{{car.year}} </b> </p></div>
+
+
+                                    </div>
+
+                                    <form method="post" class="rounded shadow-sm"id="booking-form">     
+                                        {% csrf_token %}
+                                        <input type="hidden" name="car" value="{{ car.id }}">
+                                        <input type="hidden" name="user" value="{{ user.id }}">
+   
+                                        <input type="hidden" id="price-per-hour" value="{{car.price_per_hour}}">
+                                        <input type="hidden" id="price-per-day" value="{{car.price_per_day}}">                   
+                                        <input type="hidden" id="price-per-month"value="{{car.price_per_month}}">                  
+
+                                      <div class="row mt-4">
+                                            <div class="col" style="text-align:center;"><p  >Booking  Address</p><hr class="mt-0"></div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="NAME" class="">Pickup location </label>
+                                            {{form.pickup_location}}
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="NAME" >Enter City </label>
+                                            {{ form.city }}                       
+                                        </div>
+                                        <div class="row no-gutters">
+                                            <div class="col-sm-6 pr-sm-2">
+                                                <div class="form-group">
+                                                    <label for="NAME" >Enter State</label>
+                                                    {{ form.state }}                                            
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-6">
+                                                <div class="form-group">
+                                                    <label for="NAME" >Select Country</label>
+                                                    {{form.country}}
+                                                </div>
+                                            </div>
+                                            
+                                        </div>
+                                        <div class="row no-gutters">
+                                            <div class="col-sm-6 pr-sm-2">
+                                                <div class="form-group">
+                                                    <label for="NAME" >Pickup date</label>
+                                                    {{ form.pickup_date }}                                            
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-6">
+                                                <div class="form-group">
+                                                    <label for="NAME" >SelectPickup time</label>
+                                                    {{form.pickup_time}}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row no-gutters">
+                                            <div class="col-sm-6 pr-sm-2">
+                                                <div class="form-group">
+                                                    <label for="NAME" >Drop date</label>
+                                                    {{ form.drop_date }}                                            
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-6">
+                                                <div class="form-group">
+                                                    <label for="NAME" >Drop Time</label>
+                                                    {{form.drop_time}}
+                                                </div>
+                                            </div>
+                                        </div>
+                                           
+                                            
+                                        </div>
+                                        <div class="row no-gutters">
+                                                
+                                                
+                                            <div class="row no-gutters">
+                                                <div id="error-message" style="display:none;" class="alert alert-danger"></div>
+                                                <div class="row no-gutters">
+                                                    <div class="col-sm-6 pr-sm-2">
+                                                        <div class="form-group">
+                                                            <label for="NAME"> Total Amount </label>
+                                                            {{ form.receipt_amount }}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        <div class="row mb-md-5">
+                                            <div class="col">
+                                                <div class="col-md-7 col-lg-6 mx-auto">
+                                                    <button type="submit" class="btn btn-block btn-outline-primary btn-lg">Confirm</button>
+                                                </div>
+                                            </div>
+                                        </div>   
+                                        
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-5">
+                            <div class="card border-0 ">
+                                <div class="card-header card-2">
+                                    <p class="card-text text-muted mt-md-4  mb-2 space">Booking Details  </p>
+                                    <hr class="my-2">
+                                </div>
+                                <div class="card-body pt-0">
+                                    <div class="row  justify-content-between">
+                                        <div class="col-auto col-md-7">
+                                            <div class="media flex-column flex-sm-row">
+                                                <img class=" img-fluid" src="{{car.image.url}}" width="100" height="62">
+                                                <div class="media-body  my-auto">
+                                                    <div>
+                                                        <div style="margin-left:10px;">
+                                                        <div class="col">
+                                                        <p class="mb-0"><b>{{car.make}}</b></p>
+                                                        <small class="text-muted">{{car.model}} {{car.year}}</small>
+                                                        <p class="md-0">Seats:  {{car.seats}} | Car Number : <b>{{car.number}}</p>         
+                                                    </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <hr class="my-2">
+                                    <div class="row  justify-content-between">
+                                        <div class="col-auto col-md-7">
+                                            <div class="media flex-column flex-sm-row">
+                                                <img class=" img-fluid " src="{{user.image.url}}" width="62" height="62">
+                                                <div class="media-body  my-auto">
+                                                    <div class="row ">
+                                                        <div class="col" >
+                                                            <div style="margin-left:20px;">
+                                                                <p  class="mb-0" ><b>{{user.first_name}}  {{user.last_name}}</b></p>
+                                                                <small class="text-muted"> Contact Details{{user.phone_number}} Email:{{user.email}} </small>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <hr class="my-2">
+                                   
+                                    <hr class="my-2">
+                                    <div class="booking-receipt" style:"display:none">
+                                        <div class="row ">
+                                            <div class="col">
+                                                <div class="row justify-content-between">
+                                                    <div class="col-4"><p class="mb-1"><b>Booking Rate</b></p></div>
+                                                    <div class="flex-sm-col col-auto"><p class="mb-1"><b id="rate">₹ 0  </b></p></div>
+                                                </div>
+                                               
+                                                <div class="row justify-content-between">
+                                                    <div class="col"><p class="mb-1"><b>Duration</b></p></div>
+                                                    <div class="flex-sm-col col-auto"><p class="mb-1"><b id="duration">0</b></p></div>
+                                                </div>
+                                                
+                                                <div class="row justify-content-between">
+                                                    <div class="col-4"><p ><b>Total</b></p></div>
+                                                    <div class="flex-sm-col col-auto"><p  class="mb-1"><b id="total"> ₹ 0</b></p> </div>
+                                                </div><hr class="my-0">
+                                            </div>
+                                        </div>
+                                        <button id="generateInvoice" class="btn btn-outline-secondary btn-lg" style="display:none;">Generate Invoice</button>
+
+                                    </div>
+                                    
+                                </div>
+                                
+                            </div>
+                             <!-- Display errors if there are any -->
+    
+                        </div>
+                    </div>
+                    {% endif %}
+                    
+            
+            </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<div class="modal" id="errorModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Error</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p id="error-message-content">Some error message here.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+{% block extra_scripts%}
+
+<script src="{% static 'js/user-booking.js' %}"></script>
+
+{% endblock %}

@@ -1,0 +1,93 @@
+
+
+    <style>
+        /* Background and center alignment */
+        body {
+            background-color: #f8f9fa;
+            font-family: 'Arial', sans-serif;
+            color: #333;
+            text-align: center;
+            padding: 50px 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .error-container {
+            max-width: 600px;
+            margin: 0 auto;
+            text-align: center;
+            padding: 30px;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .error-message {
+            font-size: 48px;
+            font-weight: bold;
+            margin-top: 20px;
+        }
+
+        .car-icon {
+            font-size: 100px;
+            margin: 20px;
+            animation: moveCar 3s infinite ease-in-out;
+        }
+
+        /* Car icon animation */
+        @keyframes moveCar {
+            0% {
+                transform: translateX(-50px);
+            }
+            50% {
+                transform: translateX(50px);
+            }
+            100% {
+                transform: translateX(-50px);
+            }
+        }
+
+        .error-description {
+            font-size: 18px;
+            color: #666;
+            margin: 20px 0;
+        }
+
+        .back-home {
+            display: inline-block;
+            background-color: #007bff;
+            color: #fff;
+            padding: 10px 20px;
+            border-radius: 5px;
+            text-decoration: none;
+            font-size: 16px;
+            margin-top: 20px;
+        }
+
+        .back-home:hover {
+            background-color: #0056b3;
+        }
+    </style>
+
+    <div class="error-container">
+        <!-- Car Icon with animation -->
+        <div class="car-icon">
+            🚗
+        </div>
+        <div class="error-message">
+            404
+        </div>
+        <div class="error-description">
+            Oops! The page you're looking for cannot be found.
+        </div>
+        <!-- Back to Home Button -->
+        <form method="post" action="{% url 'error_page_redirect'%}">
+            {% csrf_token %}
+
+            <button type="submit" class="btn back-home"> Go back home</button> 
+       </form>
+
+    </div>

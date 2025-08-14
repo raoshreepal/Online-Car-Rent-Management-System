@@ -1,0 +1,301 @@
+{% extends "employee/employee-base.html" %}
+{% load static %}
+{% block head %}
+<style>
+  #bookingModal .table {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: fixed;
+}
+
+#bookingModal .table thead {
+    position: sticky; /* Fixes the header */
+    top: 0; /* Sticks it to the top */
+    background-color: #f8f9fa; /* Light background for the header */
+    z-index: 10; /* Ensures header stays above the table body */
+}
+
+#bookingModal .table  {
+    display: block;
+    height: 300px; /* Adjust this value based on how much scrollable area you want */
+    overflow-y: auto; /* Enables vertical scrolling */
+    overflow-x: hidden; /* Disables horizontal scrolling */
+}
+
+#bookingModal .table th, #bookingModal .table td {
+    padding: 10px;
+    text-align: left;
+    border: 1px solid #ddd; /* Adds border to cells */
+}
+
+#bookingModal .table th {
+    background-color: #f1f1f1; /* Header background color */
+}
+
+#bookingModal .table td {
+    background-color: #fff; /* Table cell background color */
+}
+
+</style>
+{% endblock %}
+{% block content %}
+<div class="container">
+  <div class="page-inner">
+    <div class="page-header">
+      <h3 class="fw-bold mb-3">Dashboard</h3>
+      <ul class="breadcrumbs mb-3">
+        <li class="nav-home">
+          <a href="#">
+            <i class="icon-home"></i>
+          </a>
+        </li>
+        <li class="separator">
+          <i class="icon-arrow-right"></i>
+        </li>
+        <li class="nav-item">
+          <a href="#">Profile</a>
+        </li>
+        <li class="separator">
+          <i class="icon-arrow-right"></i>
+        </li>
+        <li class="nav-item">
+          <a href="#">Add User Profile</a>
+        </li>
+      </ul>
+    </div>
+    <div class="card">
+      <div class="card-body">
+        <!-- User Profile Table and Form to Add Users -->
+        <button class="btn btn-primary" id="addBookingBtn">Add Booking</button>
+
+        <!-- Modal for Booking Form -->
+        <div class="modal fade" id="bookingFormModal" tabindex="-1" role="dialog" aria-labelledby="bookingFormModalLabel" aria-hidden="true">
+          <div class="modal-dialog modal-lg" role="document">
+              <div class="modal-content">
+                  <div class="modal-header">
+                      <h5 class="modal-title" id="bookingFormModalLabel">New Booking</h5>
+                      <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                          <span aria-hidden="true">&times;</span>
+                      </button>
+                  </div>
+                  <div class="modal-body">
+                    <form id="bookingForm" method="post">
+                        {% csrf_token %}
+                        
+                        <div class="row mt-4">
+                            <div class="col-12 text-center">
+                                <p>Booking Address</p>
+                                <hr class="mt-0">
+                            </div>
+                        </div>
+                    
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="car">Car</label>
+                                    {{ booking_form.car }}
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="user">User</label>
+                                    {{ booking_form.user }}
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="pickup_location">Pickup Location</label>
+                                    {{ booking_form.pickup_location }}
+                                </div>
+                            </div>
+                        </div>
+                    
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="city">City</label>
+                                    {{ booking_form.city }}
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="state">State</label>
+                                    {{ booking_form.state }}
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="country">Country</label>
+                                    {{ booking_form.country }}
+                                </div>
+                            </div>
+                        </div>
+                        
+                    
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="pickup_date">Pickup Date</label>
+                                    {{ booking_form.pickup_date }}
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="pickup_time">Pickup Time</label>
+                                    {{ booking_form.pickup_time }}
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="drop_date">Drop Date</label>
+                                    {{ booking_form.drop_date }}
+                                </div>
+                            </div>
+                        </div>
+                    
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="drop_time">Drop Time</label>
+                                    {{ booking_form.drop_time }}
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="receipt_amount">Receipt Amount</label>
+                                    {{ booking_form.receipt_amount }}
+                                </div>
+                            </div>
+                        </div>
+                    
+                        <div class="row mt-4">
+                            <div class="col-12">
+                                <div class="table-responsive">
+                                    <table class="table table-bordered">
+                                        <thead>
+                                            <tr>
+                                                <th>Details</th>
+                                                <th>Booking Rates</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td><strong>Per Hour</strong></td>
+                                                <td id="rate_per_hour">₹0.00</td>
+                                            </tr>
+                                            <tr>
+                                                <td><strong>Discount</strong></td>
+                                                <td id="discount">0%</td>
+                                            </tr>
+                                            <tr>
+                                                <td><strong>Per Day</strong></td>
+                                                <td id="rate_per_day">₹0.00</td>
+                                            </tr>
+                                            <tr>
+                                                <td><strong>Per Month</strong></td>
+                                                <td id="rate_per_month">₹0.00</td>
+                                            </tr>
+                                            <tr>
+                                                <td><strong>Receipt Amount</strong></td>
+                                                <td id="receipt_amount">₹0.00</td>
+                                            </tr>
+                                            <tr>
+                                                <td><strong>Per</strong></td>
+                                                <td id="per_details"></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    
+                        <button type="submit" class="btn btn-primary mt-3">Submit Booking</button>
+                    </form>
+                    
+                  </div>
+              </div>
+          </div>
+      </div>
+      
+      
+        <!-- Table for Admin Users -->
+        <h4 class="card-title mt-5">Users</h4>
+        <table class="table table-striped mt-3" id="adminUserTable">
+          <thead>
+              <tr>
+                  <th>Name</th>
+                  <th>Email</th>
+                  <th>Total Bookings</th>
+                  <th> View all booking</th>
+              </tr>
+          </thead>
+          <tbody>
+              {% for user in user_booking_counts %}
+              <tr> 
+                  <td>{{ user.user__username }}</td>
+                  <td>{{ user.user__email }}</td>
+                  <td>{{ user.total_bookings }}</td>
+                  <td>
+                    <button class="btn btn-info btn-sm view-bookings" data-user="{{ user.user__username }}">
+                        <i class="fas fa-eye"></i> <!-- FontAwesome eye icon -->
+                    </button>
+                </td>
+              </tr>
+              {% empty %}
+              <tr>
+                  <td colspan="3" class="text-center">No users have booked cars.</td>
+              </tr>
+              {% endfor %}
+          </tbody>
+      </table>
+      <div id="bookingModal" class="modal fade" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">User Bookings</h5>
+                    <button type="button" id="closetable" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <table class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th>Car</th>
+                                <th>Pickup Location</th>
+                                <th>Pickup Date</th>
+                                <th>Drop Date</th>
+                                <th>Receipt Amount</th>
+                            </tr>
+                        </thead>
+                        <tbody id="bookingDetails">
+                            <!-- Booking details will be inserted here dynamically -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+
+<!-- JavaScript to Handle Form Submission -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    var user_bookings="{% url 'user_bookings' %}";
+    var get_car_details="{% url 'get_car_details' %}";
+</script>
+<script src="{% static 'js/user_car_booking.js' %}"></script>
+<script>
+  
+</script>
+
+
+{% endblock %}

@@ -1,0 +1,61 @@
+{% extends 'employee/main.employee_base.html' %}
+{% block title %}Dashboard - Add Car{% endblock %}
+{% block content %}
+<div class="container">
+  <div class="row">
+    <div class="col-md-12 mb-4">
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title">Add New Car</h5>
+          <form action="#" method="POST" enctype="multipart/form-data">
+            
+            <!-- Car Number -->
+            <div class="mb-3">
+              <label for="carNumber" class="form-label">Car Number</label>
+              <input type="text" class="form-control form-control-lg" id="carNumber" name="carNumber" required>
+            </div>
+
+            <!-- Car Make -->
+            <div class="mb-3">
+              <label for="carMake" class="form-label">Make</label>
+              <input type="text" class="form-control form-control-lg" id="carMake" name="carMake" required>
+            </div>
+
+            <!-- Car Model -->
+            <div class="mb-3">
+              <label for="carModel" class="form-label">Model</label>
+              <input type="text" class="form-control form-control-lg" id="carModel" name="carModel" required>
+            </div>
+
+            <!-- Car Year -->
+            <div class="mb-3">
+              <label for="carYear" class="form-label">Year</label>
+              <input type="number" class="form-control form-control-lg" id="carYear" name="carYear" min="1900" max="2024" required>
+            </div>
+
+            <!-- Car Image -->
+            <div class="mb-3">
+              <label for="carImage" class="form-label">Car Image</label>
+              <input type="file" class="form-control form-control-lg" id="carImage" name="carImage" accept="image/*" required>
+            </div>
+
+            <!-- Car Status -->
+            <div class="mb-3">
+              <label for="carStatus" class="form-label">Status</label>
+              <select class="form-select form-select-lg" id="carStatus" name="carStatus" required>
+                <option value="Available">Available</option>
+                <option value="Sold">Sold</option>
+                <option value="Pending">Pending</option>
+                <option value="Unavailable">Unavailable</option>
+              </select>
+            </div>
+
+            <!-- Submit Button -->
+            <button type="submit" class="btn btn-primary btn-lg">Add Car</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

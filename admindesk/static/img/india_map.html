@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html>
+<head>
+    
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+    
+        <script>
+            L_NO_TOUCH = false;
+            L_DISABLE_3D = false;
+        </script>
+    
+    <style>html, body {width: 100%;height: 100%;margin: 0;padding: 0;}</style>
+    <style>#map {position:absolute;top:0;bottom:0;right:0;left:0;}</style>
+    <script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap-glyphicons.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.2.0/css/all.min.css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/python-visualization/folium/folium/templates/leaflet.awesome.rotate.min.css"/>
+    
+            <meta name="viewport" content="width=device-width,
+                initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+            <style>
+                #map_55b99d5db57e3dd48d32ac2a1696c6a7 {
+                    position: relative;
+                    width: 100.0%;
+                    height: 100.0%;
+                    left: 0.0%;
+                    top: 0.0%;
+                }
+                .leaflet-container { font-size: 1rem; }
+            </style>
+        
+</head>
+<body>
+    
+    
+            <div class="folium-map" id="map_55b99d5db57e3dd48d32ac2a1696c6a7" ></div>
+        
+</body>
+<script>
+    
+    
+            var map_55b99d5db57e3dd48d32ac2a1696c6a7 = L.map(
+                "map_55b99d5db57e3dd48d32ac2a1696c6a7",
+                {
+                    center: [20.5937, 78.9629],
+                    crs: L.CRS.EPSG3857,
+                    zoom: 5,
+                    zoomControl: true,
+                    preferCanvas: false,
+                }
+            );
+
+            
+
+        
+    
+            var tile_layer_51647c1f291b81eaf62c8d1375493653 = L.tileLayer(
+                "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
+                {"attribution": "\u0026copy; \u003ca href=\"https://www.openstreetmap.org/copyright\"\u003eOpenStreetMap\u003c/a\u003e contributors", "detectRetina": false, "maxNativeZoom": 19, "maxZoom": 19, "minZoom": 0, "noWrap": false, "opacity": 1, "subdomains": "abc", "tms": false}
+            );
+        
+    
+            tile_layer_51647c1f291b81eaf62c8d1375493653.addTo(map_55b99d5db57e3dd48d32ac2a1696c6a7);
+        
+    
+            var marker_c4d35de6bb219d083cdbc792ad31980f = L.marker(
+                [28.6139, 77.209],
+                {}
+            ).addTo(map_55b99d5db57e3dd48d32ac2a1696c6a7);
+        
+    
+            var icon_f5535bb1fdbb74abbb977a48c5e38616 = L.AwesomeMarkers.icon(
+                {"extraClasses": "fa-rotate-0", "icon": "info-sign", "iconColor": "white", "markerColor": "blue", "prefix": "glyphicon"}
+            );
+            marker_c4d35de6bb219d083cdbc792ad31980f.setIcon(icon_f5535bb1fdbb74abbb977a48c5e38616);
+        
+    
+        var popup_e7c94dd66adad0dda15f52574e11344e = L.popup({"maxWidth": "100%"});
+
+        
+            
+                var html_56babc1f7f463860e4be929b114e543f = $(`<div id="html_56babc1f7f463860e4be929b114e543f" style="width: 100.0%; height: 100.0%;"><strong>Delhi</strong><br>Capital city of India</div>`)[0];
+                popup_e7c94dd66adad0dda15f52574e11344e.setContent(html_56babc1f7f463860e4be929b114e543f);
+            
+        
+
+        marker_c4d35de6bb219d083cdbc792ad31980f.bindPopup(popup_e7c94dd66adad0dda15f52574e11344e)
+        ;
+
+        
+    
+    
+            var marker_ea7ef7e92f4bc55322f99f91b53ddc5b = L.marker(
+                [19.076, 72.8777],
+                {}
+            ).addTo(map_55b99d5db57e3dd48d32ac2a1696c6a7);
+        
+    
+            var icon_3da7e8a58d79bdd67083163f57015cb7 = L.AwesomeMarkers.icon(
+                {"extraClasses": "fa-rotate-0", "icon": "info-sign", "iconColor": "white", "markerColor": "blue", "prefix": "glyphicon"}
+            );
+            marker_ea7ef7e92f4bc55322f99f91b53ddc5b.setIcon(icon_3da7e8a58d79bdd67083163f57015cb7);
+        
+    
+        var popup_3faa0a9ac4720cd2c949f9d68f56c1da = L.popup({"maxWidth": "100%"});
+
+        
+            
+                var html_259459e32d8ac38d0be2e84cf1ef50a7 = $(`<div id="html_259459e32d8ac38d0be2e84cf1ef50a7" style="width: 100.0%; height: 100.0%;"><strong>Mumbai</strong><br>Financial capital of India</div>`)[0];
+                popup_3faa0a9ac4720cd2c949f9d68f56c1da.setContent(html_259459e32d8ac38d0be2e84cf1ef50a7);
+            
+        
+
+        marker_ea7ef7e92f4bc55322f99f91b53ddc5b.bindPopup(popup_3faa0a9ac4720cd2c949f9d68f56c1da)
+        ;
+
+        
+    
+    
+            var marker_0950123e312a15b9087d254ba4afd729 = L.marker(
+                [22.5726, 88.3639],
+                {}
+            ).addTo(map_55b99d5db57e3dd48d32ac2a1696c6a7);
+        
+    
+            var icon_bf1024d27e861ac039151f2a52da9cfd = L.AwesomeMarkers.icon(
+                {"extraClasses": "fa-rotate-0", "icon": "info-sign", "iconColor": "white", "markerColor": "blue", "prefix": "glyphicon"}
+            );
+            marker_0950123e312a15b9087d254ba4afd729.setIcon(icon_bf1024d27e861ac039151f2a52da9cfd);
+        
+    
+        var popup_673119b3adc02c8f9064a660f24ec6b2 = L.popup({"maxWidth": "100%"});
+
+        
+            
+                var html_ffce86875e196ed4afcc94e31b3bd72d = $(`<div id="html_ffce86875e196ed4afcc94e31b3bd72d" style="width: 100.0%; height: 100.0%;"><strong>Kolkata</strong><br>Cultural capital of India</div>`)[0];
+                popup_673119b3adc02c8f9064a660f24ec6b2.setContent(html_ffce86875e196ed4afcc94e31b3bd72d);
+            
+        
+
+        marker_0950123e312a15b9087d254ba4afd729.bindPopup(popup_673119b3adc02c8f9064a660f24ec6b2)
+        ;
+
+        
+    
+    
+            var marker_20a0608f19c01ce80c91ed9b4f903259 = L.marker(
+                [13.0827, 80.2707],
+                {}
+            ).addTo(map_55b99d5db57e3dd48d32ac2a1696c6a7);
+        
+    
+            var icon_6d95716946eceb51960aaa566791d646 = L.AwesomeMarkers.icon(
+                {"extraClasses": "fa-rotate-0", "icon": "info-sign", "iconColor": "white", "markerColor": "blue", "prefix": "glyphicon"}
+            );
+            marker_20a0608f19c01ce80c91ed9b4f903259.setIcon(icon_6d95716946eceb51960aaa566791d646);
+        
+    
+        var popup_53cf05729b973222a83a1796df0bd375 = L.popup({"maxWidth": "100%"});
+
+        
+            
+                var html_16acb70449c05ece3b412c3528b2c42c = $(`<div id="html_16acb70449c05ece3b412c3528b2c42c" style="width: 100.0%; height: 100.0%;"><strong>Chennai</strong><br>Known for its culture and beaches</div>`)[0];
+                popup_53cf05729b973222a83a1796df0bd375.setContent(html_16acb70449c05ece3b412c3528b2c42c);
+            
+        
+
+        marker_20a0608f19c01ce80c91ed9b4f903259.bindPopup(popup_53cf05729b973222a83a1796df0bd375)
+        ;
+
+        
+    
+    
+            var marker_9a9371021a7bed532c2ed4c6746fb424 = L.marker(
+                [12.9716, 77.5946],
+                {}
+            ).addTo(map_55b99d5db57e3dd48d32ac2a1696c6a7);
+        
+    
+            var icon_d4f4d2af5d09551cca922fa3158384ed = L.AwesomeMarkers.icon(
+                {"extraClasses": "fa-rotate-0", "icon": "info-sign", "iconColor": "white", "markerColor": "blue", "prefix": "glyphicon"}
+            );
+            marker_9a9371021a7bed532c2ed4c6746fb424.setIcon(icon_d4f4d2af5d09551cca922fa3158384ed);
+        
+    
+        var popup_f515f3a8f644fb899227d8c1325cae98 = L.popup({"maxWidth": "100%"});
+
+        
+            
+                var html_597ff5e3f95727ed5e42242a620ced2c = $(`<div id="html_597ff5e3f95727ed5e42242a620ced2c" style="width: 100.0%; height: 100.0%;"><strong>Bengaluru</strong><br>Silicon Valley of India</div>`)[0];
+                popup_f515f3a8f644fb899227d8c1325cae98.setContent(html_597ff5e3f95727ed5e42242a620ced2c);
+            
+        
+
+        marker_9a9371021a7bed532c2ed4c6746fb424.bindPopup(popup_f515f3a8f644fb899227d8c1325cae98)
+        ;
+
+        
+    
+    
+            var marker_35d9ec89d117a0a582dc131779bf69d7 = L.marker(
+                [17.385, 78.4867],
+                {}
+            ).addTo(map_55b99d5db57e3dd48d32ac2a1696c6a7);
+        
+    
+            var icon_6bbc7ba899160d535bd02f4c6d2d1acf = L.AwesomeMarkers.icon(
+                {"extraClasses": "fa-rotate-0", "icon": "info-sign", "iconColor": "white", "markerColor": "blue", "prefix": "glyphicon"}
+            );
+            marker_35d9ec89d117a0a582dc131779bf69d7.setIcon(icon_6bbc7ba899160d535bd02f4c6d2d1acf);
+        
+    
+        var popup_44470cbc6a781080d4353048e3b09880 = L.popup({"maxWidth": "100%"});
+
+        
+            
+                var html_d40e873e6f5380214763b304541cd11f = $(`<div id="html_d40e873e6f5380214763b304541cd11f" style="width: 100.0%; height: 100.0%;"><strong>Hyderabad</strong><br>Known for its history and IT industry</div>`)[0];
+                popup_44470cbc6a781080d4353048e3b09880.setContent(html_d40e873e6f5380214763b304541cd11f);
+            
+        
+
+        marker_35d9ec89d117a0a582dc131779bf69d7.bindPopup(popup_44470cbc6a781080d4353048e3b09880)
+        ;
+
+        
+    
+</script>
+</html>

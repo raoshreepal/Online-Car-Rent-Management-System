@@ -1,0 +1,370 @@
+{% extends "admindesk/admin-base.html" %}
+{% load static %}
+{% block title %}Report{% endblock %}
+{% block head%}
+<style>
+  #searchEmployee {
+    position: sticky;
+    top: 10px;
+    z-index: 10;
+    background: white;
+    padding: 10px;
+}
+canvas {
+    max-width: 90%;
+    height: auto;
+}
+
+
+</style>
+{% endblock %}
+{% block content %}
+<div class="container mt-5">
+    <div class="page-inner">
+        <h2 class="text-primary fw-bold">Reports</h2>
+
+        <!-- Tab Navigation -->
+        <ul class="nav nav-pills mb-3" id="reportTabs" role="tablist">
+            <li class="nav-item" role="presentation">
+                <a class="nav-link active" data-bs-toggle="tab" href="#bookingReports" role="tab">Booking Reports</a>
+            </li>
+            <li class="nav-item" role="presentation">
+                <a class="nav-link" data-bs-toggle="tab" href="#serviceReports" role="tab">Service Reports</a>
+            </li>
+            <li class="nav-item" role="presentation">
+                <a class="nav-link" data-bs-toggle="tab" href="#revenueReports" role="tab">Revenue Reports</a>
+            </li>
+            <li class="nav-item" role="presentation">
+                <a class="nav-link" data-bs-toggle="tab" href="#employeeReports" role="tab">Employee Performance</a>
+            </li>
+            <li class="nav-item" role="presentation">
+                <a class="nav-link" data-bs-toggle="tab" href="#carReports" role="tab">Car Report</a>
+            </li>
+        </ul>
+
+        <!-- Tab Content -->
+        <div class="tab-content mt-4">
+
+            <!-- Booking Reports -->
+            <div id="bookingReports" class="tab-pane fade show active" role="tabpanel">
+                <h3 class="mb-3 text-dark">Booking Reports</h3>
+
+                <!-- Search Bar -->
+                <input type="text" id="searchBooking" class="form-control mb-3" placeholder="Search by Booking ID or Customer Name">
+                <div class="text-end mb-3">
+                    <button class="btn bg-primary" style="color:white" id="downloadExcel">
+                        <i>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-file-earmark-bar-graph" viewBox="0 0 16 16">
+                                <path d="M10 13.5a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-6a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5zm-2.5.5a.5.5 0 0 1-.5-.5v-4a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v4a.5.5 0 0 1-.5.5zm-3 0a.5.5 0 0 1-.5-.5v-2a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-.5.5z"/>
+                                <path d="M14 14V4.5L9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2M9.5 3A1.5 1.5 0 0 0 11 4.5h2V14a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h5.5z"/>
+                              </svg>
+                        </i> Excel
+                    </button>
+                    
+
+                    </div>
+                <!-- Total Revenue -->
+                <div class="text-end mb-3">
+                    <h5>Total Confirmed Booking Revenue: <span class="text-success fw-bold">₹{{ total_confirm_cost|floatformat:2 }}</span></h5>
+                </div>
+                
+
+                <!-- Booking Table -->
+                <div class="table-responsive shadow-sm rounded" style="max-height: 400px; overflow-y: auto;">
+                    <table class="table table-striped table-hover">
+                        <thead class="table-dark">
+                            <tr>
+                                <th>Booking ID</th>
+                                <th>Customer</th>
+                                <th>Car</th>
+                                <th>Date</th>
+                                <th>Status</th>
+                                <th class="text-end">Amount</th>
+                            </tr>
+                        </thead>
+                        <tbody id="bookingList">
+                            {% for booking in booking %}
+                            <tr>
+                                <td>{{ booking.id }}</td>
+                                <td>{{ booking.user.username }}</td>
+                                <td>{{ booking.car.model }}</td>
+                                <td>{{ booking.drop_date }}</td>
+                                <td>
+                                    <span class="badge {% if booking.booking_status == 'confirm' %}bg-success{% elif booking.booking_status == 'pending' %}bg-warning{% else %}bg-danger{% endif %}">
+                                        {{ booking.booking_status }}
+                                    </span>
+                                </td>
+                                <td class="fw-bold text-end">₹{{ booking.receipt_amount }}</td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="6" class="text-center text-danger">No bookings found.</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Service Reports -->
+            <div id="serviceReports" class="tab-pane fade" role="tabpanel">
+                <h3 class="mb-3 text-dark">Service Reports</h3>
+
+                <input type="text" id="searchService" class="form-control mb-3" placeholder="Search by Service ID">
+                <div class="text-end mb-3">
+
+                    <button class="btn bg-primary" style="color:white" id="export_services_report">
+                        <i>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-file-earmark-bar-graph" viewBox="0 0 16 16">
+                                <path d="M10 13.5a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-6a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5zm-2.5.5a.5.5 0 0 1-.5-.5v-4a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v4a.5.5 0 0 1-.5.5zm-3 0a.5.5 0 0 1-.5-.5v-2a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-.5.5z"/>
+                                <path d="M14 14V4.5L9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2M9.5 3A1.5 1.5 0 0 0 11 4.5h2V14a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h5.5z"/>
+                            </svg>
+                        </i> download Report 
+                    </button>
+                </div>
+                <div class="text-end mb-3">
+                    <h5>Total Service Cost: <span class="text-success fw-bold">&#8377;{{ total_cost }}</span></h5>
+                </div>
+
+                <div class="table-responsive shadow-sm rounded" style="max-height: 400px; overflow-y: auto;">
+                    <table class="table table-striped table-hover">
+                        <thead class="table-dark">
+                            <tr>
+                                <th>Service ID</th>
+                                <th>Car</th>
+                                <th>Service Type</th>
+                                <th>Complete Date</th>
+                                <th class="text-end">Cost</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="serviceList">
+                            {% for service in completed_services %}
+                            <tr>
+                                <td>{{ service.id }}</td>
+                                <td>{{ service.car }}</td>
+                                <td>{{ service.service_type }}</td>
+                                <td>{{ service.service_date }}</td>
+                                <td class="fw-bold text-end">&#8377;{{ service.cost }}</td>
+                                <td>
+                                    <span class="badge {% if service.status == 'Completed' %}bg-success{% elif service.status == 'Pending' %}bg-warning{% else %}bg-danger{% endif %}">
+                                        {{ service.status }}
+                                    </span>
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="6" class="text-center text-danger">No services found.</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Revenue Reports -->
+            <div id="revenueReports" class="tab-pane fade" role="tabpanel">
+                <h3 class="mb-3 text-dark">Revenue Reports</h3>
+
+                <div class="card shadow-sm">
+                    <div class="card-body">
+                        <h5 class="card-title">Total Revenue Overview</h5>
+
+                        <!-- Charts -->
+                        <div class="text-center">
+                            <canvas id="revenueBarChart" style="max-width: 500px; max-height: 300px;"></canvas>
+                        </div>
+                    
+
+                        <ul class="list-group mt-3">
+                            <li class="list-group-item d-flex justify-content-between">
+                                <span>Booking Revenue</span>
+                                <span>₹ {{ booking_revenue|floatformat:2 }}</span>
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between">
+                                <span>Service Revenue</span>
+                                <span>₹ {{ service_revenue }}</span>
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between">
+                                <span>Profit</span>
+                                <span class=" fw-bold">₹{{ profit|floatformat:2  }}</span>
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between fw-bold text-success">
+                                <span>Total Revenue</span>
+                                <span>₹{{ booking_revenue|add:service_revenue }}</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Employee Performance Reports -->
+            <div id="employeeReports" class="tab-pane fade" role="tabpanel">
+                <h3 class="mb-3 text-dark">Employee Performance</h3>
+
+                <input type="text" id="searchEmployee" class="form-control mb-3" placeholder="Search by Employee Name or ID">
+
+                <div class="row">
+                    {% for emp in booking_employees %}
+                    <div class="col-md-4 mb-4">
+                        <div class="card shadow-sm">
+                            <div class="card-body">
+                                <h5 class="card-title">{{ emp.username }}</h5>
+                                <p><strong>ID:</strong> {{ emp.id }}</p>
+                                <p><strong>Services:</strong> {{ emp.total_services|default:"0" }}</p>
+                                <p><strong>Bookings:</strong> {{ emp.total_bookings|default:"0" }}</p>
+                            </div>
+                        </div>
+                    </div>
+                    {% empty %}
+                    <div class="col-12 text-center">
+                        <p class="text-danger">No employee performance records found.</p>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            <div id="carReports" class="tab-pane fade" role="tabpanel">
+                <h3 class="mb-3 text-dark">Employee Performance</h3>
+
+                <input type="text" id="searchEmployee" class="form-control mb-3" placeholder="Search by Employee Name or ID">
+
+              
+            </div>
+        </div>
+    </div>
+</div>
+
+
+{% endblock %}
+
+
+{% block extra_scripts %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+
+   
+</script>
+<script>
+    
+    
+    
+    
+  $(document).ready(function () {
+      let tabs = $(".nav-pills .nav-link");
+  
+      tabs.on("keydown", function (e) {
+          if (e.key === "Tab") {
+              e.preventDefault(); // Prevent default tab behavior
+  
+              let currentIndex = tabs.index(this); // Get current active tab index
+              let nextIndex = (currentIndex + 1) % tabs.length; // Move to the next tab in a loop
+  
+              tabs.eq(nextIndex).trigger("click").focus(); // Activate and focus on the next tab
+          }
+      });
+      $("#searchEmployee").on("keyup", function () {
+          let value = $(this).val().toLowerCase().trim();
+  
+          $(".employee-card").each(function () {
+              let employeeName = $(this).find(".card-title").text().toLowerCase();
+              let employeeId = $(this).find("p:nth-child(2)").text().toLowerCase(); // Employee ID is in the second <p> tag
+  
+              if (employeeName.includes(value) || employeeId.includes(value)) {
+                  $(this).show();
+              } else {
+                  $(this).hide();
+              }
+          });
+  
+          // Keep search bar in position by ensuring its container does not change height
+          $(".search-container").css("position", "sticky").css("top", "0").css("background", "#fff").css("z-index", "1000");
+      });
+      $("#searchBooking").on("input", function () {
+        let value = $(this).val().toLowerCase().trim();
+
+        $(".booking-card").each(function () {
+            let bookingId = $(this).find(".card-title").text().toLowerCase();
+            let customerName = $(this).find("p:nth-child(2)").text().toLowerCase(); // Customer Name is in the second <p> tag
+
+            if (bookingId.includes(value) || customerName.includes(value)) {
+                $(this).show();
+            } else {
+                $(this).hide();
+            }
+        });
+
+        // Keep search bar in position
+        $(".search-container").css("position", "sticky").css("top", "0").css("background", "#fff").css("z-index", "1000");
+    });
+      
+  
+
+
+  // Tabs functionality
+  $("#reportTabs .nav-link").click(function (e) {
+    e.preventDefault();
+    $("#reportTabs .nav-link").removeClass("active");
+    $(this).addClass("active");
+    $(".tab-pane").removeClass("show active");
+    $($(this).attr("href")).addClass("show active");
+  });
+
+  
+});
+document.addEventListener("DOMContentLoaded", function () {
+    var bookingRevenue = {% if booking_revenue %}{{ booking_revenue }}{% else %}0{% endif %};
+    var serviceRevenue = {% if service_revenue %}{{ service_revenue }}{% else %}0{% endif %};
+    var profit = {% if profit %}{{ profit|floatformat:2 }}{% else %}0{% endif %};
+
+   
+    var ctxBar = document.getElementById("revenueBarChart").getContext("2d");
+
+    new Chart(ctxBar, {
+        type: "bar",
+        data: {
+            labels: ["Revenue Sources"], 
+            datasets: [
+                {
+                    label: "Booking Revenue",
+                    data: [bookingRevenue],
+                    backgroundColor: "#007bff",
+                    borderColor: "#0056b3",
+                    borderWidth: 1
+                },
+                {
+                    label: "Service Revenue",
+                    data: [serviceRevenue],
+                    backgroundColor: "#28a745",
+                    borderColor: "#1e7e34",
+                    borderWidth: 1
+                },
+                {
+                    label: "Profit",
+                    data: [profit],
+                    backgroundColor: "#ffc107",
+                    borderColor: "#e0a800",
+                    borderWidth: 1
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: { beginAtZero: true }
+            },
+            plugins: {
+                legend: { display: true }
+            }
+        }
+    });
+});
+document.getElementById("downloadExcel").addEventListener("click", function() {
+    window.location.href = "{% url 'export_booking_report' %}"; // Adjust URL if needed
+});
+document.getElementById("export_services_report").addEventListener("click", function() {
+
+    window.location.href = "{% url 'export_services_report' %}"; // Adjust the URL if needed
+});
+</script>
+{% endblock %}

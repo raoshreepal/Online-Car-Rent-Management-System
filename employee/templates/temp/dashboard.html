@@ -1,0 +1,246 @@
+{% extends 'employee/main.employee_base.html' %}
+
+{% block title %}Dashboard Information | EasyPay{% endblock %}
+
+{% block content %}
+  <div class="row">
+    <!-- Card 1: Total Cars -->
+    <div class="col-md-3 mb-4" >
+      <div class="card">
+        <div class="card-body" >
+          <h5 class="card-title">Total Cars</h5>
+          <p class="card-text">150</p> <!-- Placeholder data -->
+        </div>
+      </div>
+    </div>
+
+    <!-- Card 2: Total Available Cars -->
+    <div class="col-md-3 mb-4">
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title">Total Available Cars</h5>
+          <p class="card-text">120</p> <!-- Placeholder data -->
+        </div>
+      </div>
+    </div>
+
+    <!-- Card 3: Car Status -->
+    <div class="col-md-3 mb-4">
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title">Car Status</h5>
+          <p class="card-text">Confirm</p> <!-- Placeholder data -->
+        </div>
+      </div>
+    </div>
+
+    <!-- Card 4: Total Services -->
+    <div class="col-md-3 mb-4" >
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title">Total Services</h5>
+          <p class="card-text">80</p> <!-- Placeholder data -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Card 5: Total Feedback -->
+  <div class="row" >
+    <div class="col-md-3 mb-4">
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title">Total Feedback</h5>
+          <p class="card-text">350</p> <!-- Placeholder data -->
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row" style="display: flex; justify-content: space-between; margin-bottom: 20px;">
+    <!-- First Table: Available Cars -->
+    <div class="col-md-4" style="padding: 0;">
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title">Available Cars</h5>
+          <table class="table table-striped">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Car Model</th>
+                <th>Year</th>
+                <th>Status</th>
+                <th>Price</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>1</td>
+                <td>Toyota Corolla</td>
+                <td>2021</td>
+                <td>Available</td>
+                <td>$25,000</td>
+              </tr>
+              <tr>
+                <td>2</td>
+                <td>Honda Civic</td>
+                <td>2020</td>
+                <td>Available</td>
+                <td>$22,000</td>
+              </tr>
+              <tr>
+                <td>3</td>
+                <td>Ford Mustang</td>
+                <td>2019</td>
+                <td>Available</td>
+                <td>$30,000</td>
+              </tr>
+              <tr>
+                <td>4</td>
+                <td>Chevrolet Camaro</td>
+                <td>2022</td>
+                <td>Available</td>
+                <td>$35,000</td>
+              </tr>
+              <tr>
+                <td>5</td>
+                <td>BMW X5</td>
+                <td>2021</td>
+                <td>Available</td>
+                <td>$50,000</td>
+              </tr>
+              <tr>
+                <td>6</td>
+                <td>Audi A4</td>
+                <td>2023</td>
+                <td>Available</td>
+                <td>$45,000</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  
+    <!-- Second Table: Car Status -->
+    <div class="col-md-4" style="padding: 0;">
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title">Car Status</h5>
+          <table class="table table-striped">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Username</th>
+                <th>Pending Status</th>
+                <th>Car Details</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>1</td>
+                <td>JohnDoe</td>
+                <td>Pending</td>
+                <td>Toyota Corolla (2021) - $25,000</td>
+              </tr>
+              <tr>
+                <td>2</td>
+                <td>JaneSmith</td>
+                <td>Pending</td>
+                <td>Honda Civic (2020) - $22,000</td>
+              </tr>
+              <tr>
+                <td>3</td>
+                <td>MichaelB</td>
+                <td>Pending</td>
+                <td>Ford Mustang (2019) - $30,000</td>
+              </tr>
+              <tr>
+                <td>4</td>
+                <td>AmyL</td>
+                <td>Pending</td>
+                <td>Chevrolet Camaro (2022) - $35,000</td>
+              </tr>
+              <tr>
+                <td>5</td>
+                <td>DavidG</td>
+                <td>Pending</td>
+                <td>BMW X5 (2021) - $50,000</td>
+              </tr>
+              <tr>
+                <td>6</td>
+                <td>SarahJ</td>
+                <td>Pending</td>
+                <td>Audi A4 (2023) - $45,000</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  
+    <!-- Third Table: Car Services Status -->
+    <div class="col-md-4" style="padding: 0;">
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title">Car Services Status</h5>
+          <table class="table table-striped">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Service Type</th>
+                <th>Service Date</th>
+                <th>Status</th>
+                <th>Next Service</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>1</td>
+                <td>Oil Change</td>
+                <td>2023-12-01</td>
+                <td>Completed</td>
+                <td>2024-06-01</td>
+              </tr>
+              <tr>
+                <td>2</td>
+                <td>Tire Rotation</td>
+                <td>2023-11-15</td>
+                <td>Completed</td>
+                <td>2024-05-15</td>
+              </tr>
+              <tr>
+                <td>3</td>
+                <td>Brake Inspection</td>
+                <td>2023-10-01</td>
+                <td>Completed</td>
+                <td>2024-04-01</td>
+              </tr>
+              <tr>
+                <td>4</td>
+                <td>Transmission Fluid Change</td>
+                <td>2023-09-20</td>
+                <td>Completed</td>
+                <td>2024-03-20</td>
+              </tr>
+              <tr>
+                <td>5</td>
+                <td>Battery Check</td>
+                <td>2023-08-15</td>
+                <td>Completed</td>
+                <td>2024-02-15</td>
+              </tr>
+              <tr>
+                <td>6</td>
+                <td>Air Filter Replacement</td>
+                <td>2023-07-10</td>
+                <td>Completed</td>
+                <td>2024-01-10</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+  {% endblock %}
+

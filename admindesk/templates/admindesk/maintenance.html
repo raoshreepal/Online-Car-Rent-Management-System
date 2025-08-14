@@ -1,0 +1,171 @@
+{% extends "admindesk/admin-base.html" %}
+{% load static %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="page-inner">
+
+    <h2 class="mb-3">Car Maintenance Reports</h2>
+
+    <!-- Maintenance Summary -->
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title">Total Maintenance Overview</h5>
+                    <canvas id="maintenanceChart" style="max-height: 300px;"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Car Maintenance Table -->
+    <div class="table-responsive mt-4" style="max-height: 400px; overflow: auto;">
+        <table class="table table-bordered table-striped" style="width: 100%; border-collapse: collapse;">
+            <thead class="table-dark" style="position: sticky; top: 0; z-index: 10;">
+                <tr>
+                    <th style="min-width: 100px;">Car</th>
+                    <th style="min-width: 100px;">Maintenance Count</th>
+                    <th style="min-width: 100px;">Total Maintenance Cost</th>
+                    <th style="min-width: 100px;">View More</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in car_maintenance_data %}
+                <tr>
+                    <td>{{ item.car.model }}</td>
+                    <td>{{ item.service_count }}</td>
+                    <td class="fw-bold">₹ {{ item.total_cost }}</td>
+                    <td>
+                        <i class="fas fa-eye text-primary view-car" 
+                           data-car-id="{{ item.car_id }}" 
+                           style="cursor: pointer;" 
+                           title="View Details">
+                        </i>
+                    </td>
+                                        
+                    
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="3" class="text-center">No maintenance records found.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <!-- Service Records Modal -->
+    <div class="modal fade" id="serviceRecordsModal" tabindex="-1" aria-labelledby="serviceRecordsModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="serviceRecordsModalLabel">Service Records</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-striped">
+                            <thead class="table-dark">
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Service Type</th>
+                                    <th>Employee</th>
+                                    <th>Service Date</th>
+                                    <th>Complete Date</th>
+                                    <th>Cost</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="serviceRecordsBody">
+                                <tr>
+                                    <td colspan="7" class="text-center">No service records available.</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+
+{% endblock %}
+{% block extra_scripts %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        var carNames = [];
+        var maintenanceCosts = [];
+        {% for item in car_maintenance_data %}
+            carNames.push("{{ item.car.model }}");
+            maintenanceCosts.push({{ item.total_cost }});
+        {% endfor %}
+
+        var ctx = document.getElementById("maintenanceChart").getContext("2d");
+        new Chart(ctx, {
+            type: "bar",
+            data: {
+                labels: carNames,
+                datasets: [{
+                    label: "Maintenance Cost",
+                    data: maintenanceCosts,
+                    backgroundColor: "#007bff",
+                    borderColor: "#0056b3",
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: { beginAtZero: true }
+                }
+            }
+        });
+    });
+    $(document).ready(function () {
+        $(".view-car").on("click", function () {
+            let carId = $(this).data("car-id"); // Get car ID
+    
+            $.ajax({
+                url: "{% url 'maintenance-get-car-details' car_id=0 %}".replace("0",carId),
+                type: "GET",
+                dataType: "json",
+                success: function (data) {
+                    let tableBody = $("#serviceRecordsBody");
+                    tableBody.empty(); // Clear previous data
+    
+                    if (data.services.length > 0) {
+                        data.services.forEach(service => {
+                            let row = `
+                                <tr>
+                                    <td>${service.id}</td>
+                                    <td>${service.name}</td>
+                                    <td>${service.employee}</td>
+                                    <td>${service.service_date}</td>
+                                    <td>${service.complete_date}</td>
+                                    <td>₹${service.cost}</td>
+                                    <td>${service.status}</td>
+                                </tr>
+                            `;
+                            tableBody.append(row);
+                        });
+                    } else {
+                        tableBody.html(`<tr><td colspan="7" class="text-center text-danger">No service records found.</td></tr>`);
+                    }
+    
+                    // Show Bootstrap modal
+                    $("#serviceRecordsModal").modal("show");
+                },
+                error: function (xhr, status, error) {
+                    console.error("Error fetching services:", error);
+                }
+            });
+        });
+    });
+    
+    
+    
+</script>
+{% endblock %}

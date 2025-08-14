@@ -1,0 +1,122 @@
+{% extends "employee/employee-base.html" %}
+{% load static %}
+{% block content %}
+<div class="container mt-5">
+  <div class="page-inner">
+    <div class="page-header">
+      <h3 class="fw-bold mb-3">Car Services Record</h3>
+      <ul class="breadcrumbs mb-3">
+        <li class="nav-home">
+          <a href="#">
+            <img src="{% static 'img/dashboard.png' %}" alt="Home Icon" width="30" height="30">
+          </a>
+        </li>
+        <li class="separator">
+          <i class="icon-arrow-right"></i>
+        </li>
+        <li class="nav-item">
+          <a href="#">Services</a>
+        </li>
+        <li class="separator">
+          <i class="icon-arrow-right"></i>
+        </li>
+        <li class="nav-item">
+          <a href="#">Service Record</a>
+        </li>
+      </ul>
+    </div>
+
+    <!-- Service Records Table -->
+    <div class="card">
+      <div class="card-body">
+        <h4 class="card-title mt-5">Car Service Records</h4>
+        <button id="filterPending" class="btn btn-warning">Show Pending</button>
+        <button id="filterCompleted" class="btn btn-success">Show Completed</button>
+        <button id="clearFilter" class="btn btn-secondary" style="display: none;">Clear Filter</button>
+        {% if messages %}
+        <div class="container mt-3">
+            {% for message in messages %}
+                <div class="alert {% if message.tags %}alert-{{ message.tags }}{% endif %}" role="alert">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+        <!-- Table displaying service details -->
+        <table class="table table-striped mt-3" id="serviceRecordTable">
+          <thead>
+            <tr>
+              <th>Service DEtails</th>
+              <th>Car Details</th>
+              <th>Employee Details</th>
+              <th>Service Cost</th>
+              <th>Description</th>
+              <th>Status</th>
+              <th>Confirmation Date</th>
+              <th>Set Date</th>
+              
+            </tr>
+          </thead>
+          <tbody>
+            <!-- Example service data -->
+             {% for services in services_car%}
+             <tr class="service-row {{ services.status }}"> 
+              <td><strong>ID</strong>:{{services.id}}
+              <br>
+              <strong>Type</strong>: {{services.service_type}}
+              </td>
+              <td>
+                <strong>Car ID</strong>{{services.car.id}}<br>
+                <strong>Model</strong>:{{services.car.model}}<br>
+              <strong>Number</strong>: {{services.car.number}}</td>
+              <td>
+              <Strong>ID</strong>:  {{services.employee.id}}<br>
+                <strong>Name</strong>: {{services.employee}}
+              
+              
+              </td>
+              <td>₹{{services.cost}}</td>
+              <td style="overflow: auto; white-space: nowrap; max-width: 200px;">{{ services.description }}</td>
+              {% if services.status == "pending"%}
+              <td><span class="badge bg-warning">Pending</span></td>
+              {% else %}
+              <td><span class="badge bg-success">Completed</span></td>
+              {% endif%}
+                <td>{{services.service_date}}</td>
+              {% if services.complete_date == None %}
+              <td><span>Pending</span></td>
+              {% else%}
+              <td>{{services.complete_date}}</td>
+              {% endif %}
+            </tr>
+            {% endfor%}
+           
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+{% endblock %}
+{% block extra_scripts%}
+<script>
+  $("#filterPending").click(function() {
+    $(".service-row").hide();
+    $(".pending").show();
+    $("#clearFilter").show();
+});
+
+$("#filterCompleted").click(function() {
+    $(".service-row").hide();
+    $(".completed").show();
+    $("#clearFilter").show();
+});
+
+$("#clearFilter").click(function() {
+    $(".service-row").show();
+    $("#clearFilter").hide();
+});
+</script>
+{% endblock%}

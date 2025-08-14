@@ -1,0 +1,595 @@
+{% extends "admindesk/admin-base.html" %}
+{% load static %}
+{% block title %}Dashboard{% endblock%}
+{% block head %} 
+<style>
+  .scrollable-tbody {
+  display: block;
+  max-height: 200px; /* Adjust the height as needed */
+  overflow-y: scroll;
+  width: 100%;
+}
+
+.scrollable-tbody tr {
+  display: table;
+  width: 100%;
+  table-layout: fixed;
+}
+
+.table {
+  width: 100%;
+  table-layout: fixed;
+}
+
+.table thead, .table tbody tr {
+  display: table;
+  width: 100%;
+  table-layout: fixed;
+}
+
+.table thead {
+  width: calc(100% - 1em);
+}
+
+/* Custom scrollbar styling */
+.scrollable-tbody::-webkit-scrollbar {
+  width: 8px; /* Width of the scrollbar */
+}
+
+.scrollable-tbody::-webkit-scrollbar-thumb {
+  background-color: #007bff; /* Color of the scrollbar thumb */
+  border-radius: 10px; /* Rounded corners for the scrollbar thumb */
+}
+
+.scrollable-tbody::-webkit-scrollbar-thumb:hover {
+  background-color: #0056b3; /* Darker shade on hover */
+}
+
+.scrollable-tbody::-webkit-scrollbar-track {
+  background-color: #f1f1f1; /* Background of the scrollbar track */
+  border-radius: 10px;
+}
+#chartContainer {
+  width: 600px !important;
+  height: 400px !important;
+}
+
+#statisticsChart {
+  width: 100% !important;
+  height: 100% !important;
+}
+
+</style>
+{% endblock%}
+{% block content%}
+<div class="container">
+  <div class="page-inner">
+    <div
+      class="d-flex align-items-left align-items-md-center flex-column flex-md-row pt-2 pb-4"
+    >
+      <div>
+        <h3 class="fw-bold mb-3">Dashboard</h3>
+      </div>
+     
+    </div>
+    <div class="row">
+      <div class="col-sm-6 col-md-3">
+        <div class="card card-stats card-round">
+          <div class="card-body">
+            <div class="row align-items-center">
+              <div class="col-icon">
+                <div
+                  class="icon-big text-center  bubble-shadow-small"
+                >
+                <div style="background-color:transparent;" class="icon-big text-center icon-info bubble-shadow-small">
+                  <img src="{% static 'img/two-cars-in-line-svgrepo-com.svg' %}" alt="Car Icon" width="80" height="60">
+                </div>
+                </div>
+              </div>
+              <div class="col col-stats ms-3 ms-sm-0">
+                <div class="numbers">
+                  <p class=""><b>Total Available Cars</b></p>
+                  <h4 class="card-title">{{ total_available_cars }}</h4>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-sm-6 col-md-3">
+        <div class="card card-stats card-round">
+          <div class="card-body">
+            <div class="row align-items-center">
+              <div class="col-icon">
+                <div style="background-color:transparent;" class="icon-big text-center icon-info bubble-shadow-small">
+                  <img src="{% static 'img/rent-a-car-svgrepo-com.svg' %}" alt="Car Icon" width="80" height="60">
+                </div>
+                
+              </div>
+              <div class="col col-stats ms-3 ms-sm-0">
+                <div class="numbers">
+                  <p class=""><B>Cars Currently Rented</B></p>
+                  <h4 class="card-title">{{ total_pending_cars }}</h4>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-sm-6 col-md-3">
+        <div class="card card-stats card-round">
+          <div class="card-body">
+            <div class="row align-items-center">
+              <div class="col-icon">
+                <div
+                  class="icon-big text-center  bubble-shadow-small"
+                >
+                <div class="icon-big text-center  bubble-shadow-small">
+                  <img src="{% static 'img/maintenance.png' %}" alt="Car Icon" width="80" height="60">
+                </div>
+                </div>
+              </div>
+              <div class="col col-stats ms-3 ms-sm-0">
+                <div class="numbers">
+                  <p class=""><b>Pending Car Service </b></p>
+                  <h4 class="card-title">{{ total_services_cars }}</h4>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-sm-6 col-md-3">
+        <div class="card card-stats card-round">
+          <div class="card-body">
+            <div class="row align-items-center">
+              <div class="col-icon">
+                <div
+                  class="icon-big text-center icon-srcondary bubble-shadow-small"
+                >
+                <svg xmlns="http://www.w3.org/2000/svg" width="250" height="250" fill="currentColor" class="bi bi-currency-rupee" viewBox="0 0 16 16">
+                  <path d="M4 3.06h2.726c1.22 0 2.12.575 2.325 1.724H4v1.051h5.051C8.855 7.001 8 7.558 6.788 7.558H4v1.317L8.437 14h2.11L6.095 8.884h.855c2.316-.018 3.465-1.476 3.688-3.049H12V4.784h-1.345c-.08-.778-.357-1.335-.793-1.732H12V2H4z"/>
+                </svg>
+                </div>
+              </div>
+              <div class="col col-stats ms-3 ms-sm-0">
+                <div class="numbers">
+                  <p class=""><b>Pending Payments</b></p>
+                  <h4 class="card-title">₹ {{total_pending_payment|floatformat:2}}</h4>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-8">
+        <div class="card card-round">
+          <div class="card-header">
+            <div class="card-head-row">
+              <div class="card-title">Daily Report</div>
+              <div class="card-tools">
+                <a href="#"   class="btn btn-label-success btn-round btn-sm me-2">
+                  <span class="btn-label">
+                    <i class="fa fa-pencil"></i>
+                  </span>
+                  Export
+                </a>
+                <button  id="printchart" class="btn btn-label-info btn-round btn-sm" >
+                  <span class="btn-label">
+                    <i class="fa fa-print"></i>
+                  </span>
+                  Print
+                </button>
+                
+              </div>
+            </div>
+          </div>
+      
+          <div class="card-body">
+            <div id="chart-container">
+              
+              <canvas id="statisticsChart"></canvas>
+          </div>
+          
+            <div id="myChartLegend"></div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="col-md-4">
+        <div class="card card-primary card-round">
+          <div class="card-header">
+            <div class="card-head-row">
+              <div class="card-title">Daily Sales</div>
+              <div class="card-tools">
+                <div class="dropdown">
+                  <button class="btn btn-sm btn-label-light dropdown-toggle" type="button" id="dropdownMenuButton"
+                    data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    Export
+                  </button>
+                  <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                    <a class="dropdown-item" href="#">Action</a>
+                    <a class="dropdown-item" href="#">Another action</a>
+                    <a class="dropdown-item" href="#">Something else here</a>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="card-category">Pending Payments for {{ today|date:"M d, Y" }}</div>
+          </div>
+          <div class="card-body pb-0">
+            <div class="mb-4 mt-2">
+              {% if total_pending_amount > 0 %}
+                <h1>${{ total_pending_amount|floatformat:2 }}</h1>
+              {% else %}
+                <h4 >No pending payments today</h4>
+              {% endif %}
+            </div>
+            <div class="pull-in">
+              <canvas id="dailySalesChart"></canvas>
+            </div>
+          </div>
+        </div>
+        
+        <div class="card card-round">
+          <div class="card-body text-center">
+              <div class="row">
+                  <div class="col-6">
+                      <h3 class="fw-bold text-primary">{{ total_user }}</h3>
+                      <p class="text-muted">Users</p>
+                  </div>
+                  <div class="col-6">
+                      <h3 class="fw-bold text-success">{{ total_employee }}</h3>
+                      <p class="text-muted">Employees</p>
+                  </div>
+              </div>
+          </div>
+      </div>
+      
+      
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-12">
+        <div class="card card-round">
+          <div class="card-header">
+            <div class="card-head-row card-tools-still-right">
+              <h4 class="card-title">View Available Cars</h4>
+              <h4 class="card-title" style="margin-left:600px">View  Confirm Rent Car</h4>
+
+              <div class="card-tools">
+                <button
+                  class="btn btn-icon btn-link btn-primary btn-xs"
+                >
+                  <span class="fa fa-angle-down"></span>
+                </button>
+                <button
+                  class="btn btn-icon btn-link btn-primary btn-xs btn-refresh-card"
+                >
+                  <span class="fa fa-sync-alt"></span>
+                </button>
+                <button
+                  class="btn btn-icon btn-link btn-primary btn-xs"
+                >
+                  <span class="fa fa-times"></span>
+                </button>
+              </div>
+            </div>
+            <p class="card-category">
+            </p>
+          </div>
+          <div class="card-body">
+            <div class="row">
+              <!-- Left side: Available Cars -->
+              <div class="col-md-6">
+                <div class="table-responsive table-hover table-sales">
+                  <table class="table">
+                    <thead>
+                      <tr>
+                        <th>ID</th>
+                        <th>Car Model</th>
+                        <th>Status</th>
+                      </tr>
+                    </thead>
+                    <tbody class="scrollable-tbody">
+                      {% for avl in avl_cars %}
+                        <tr>
+                          <td>{{ avl.id }}</td>
+                          <td>
+                            <div class="flag">
+                              <img
+                                src="{{ avl.image.url }}"
+                                alt="{{ avl.model }}"
+                                style="width: 40px; height: 25px; border-radius: 20px;"
+                              />
+                              {{ avl.model }}
+                            </div>
+                          </td>
+                          <td>{{ avl.status }}</td>
+                        </tr>
+                      {% endfor %}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+              
+              <!-- Right side: Confirmed Cars -->
+              <div class="col-md-6">
+                
+                <div class="table-responsive table-hover table-sales">
+                  <table class="table">
+                    <thead>
+                      <tr>
+                        <th>ID</th>
+                        <th>Car Model</th>
+                        <th>Status</th>
+                      </tr>
+                    </thead>
+                    <tbody class="scrollable-tbody">
+                      {% for confirm_car in total_confirm %}
+                        <tr>
+                          <td>{{ confirm_car.id }}</td>
+                          <td>
+                            <div class="flag">
+                              <img
+                                src="{{ confirm_car.car.image.url }}"
+                                alt="{{ confirm_car.car.model }}"
+                                style="width: 40px; height: 25px; border-radius: 20px;"
+                              />
+                              {{ confirm_car.car.model }}
+                            </div>
+                          </td>
+                          <td>{{ confirm_car.booking_status }}</td>
+                        </tr>
+                      {% endfor %}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="row">
+      <div class="col-md-4">
+        <div class="card card-round">
+          <div class="card-body">
+            <div class="card-head-row card-tools-still-right">
+              <div class="card-title">Pending Requests</div>
+              <div class="card-tools">
+                <div class="dropdown">
+                  
+               
+                </div>
+              </div>
+            </div>
+            <div class="card-list py-4">
+              {% for pending in booking_pending %}
+              <div class="item-list">
+                <div class="avatar">
+                  <img
+                    src="{{pending.car.image.url}}"
+                    alt="..."
+                    class="avatar-img rounded-circle"
+                  />
+                </div>
+                <div class="info-user ms-3">
+                  <div class="username"><strong>User</strong>- {{pending.user.username}}</div>
+                  <div class="username">pickup date :{{pending.pickup_date}}</div>
+                  <div class="status">Drop Date :{{pending.drop_date}}</div>
+                  <div class="status">Car Number :{{pending.car.number}}</div>
+
+                </div>
+                <button class="btn btn-icon btn-link op-8 me-1 openModal" data-id="{{ pending.id }}">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="50" height="50" fill="currentColor" class="bi bi-check" viewBox="0 0 16 16">
+                    <path d="M10.97 4.97a.75.75 0 0 1 1.07 1.05l-3.99 4.99a.75.75 0 0 1-1.08.02L4.324 8.384a.75.75 0 1 1 1.06-1.06l2.094 2.093 3.473-4.425z"/>
+                  </svg>
+                </button>
+                <div class="modal fade" id="employeeModal" tabindex="-1" aria-labelledby="employeeModalLabel" aria-hidden="true">
+                  <div class="modal-dialog">
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <h5 class="modal-title" id="employeeModalLabel">Select Employee</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                      </div>
+                      <div class="modal-body">
+                        <select id="employeeSelect" class="form-select">
+                        </select>
+                      </div>
+                      <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-primary" id="confirmBooking">Confirm</button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                
+                <button class="btn btn-icon btn-link btn-danger op-8 openCancelModal" data-id="{{ pending.id }}">
+                  <i class="fas fa-ban"></i>
+              </button>
+             <!-- Modal for cancelling booking -->
+                  <div class="modal fade" id="cancelModal" tabindex="-1" aria-labelledby="cancelModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="cancelModalLabel">Cancel Booking</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                Are you sure you want to cancel this booking?
+                                <!-- Hidden CSRF form -->
+                                <form id="csrfForm" style="display:none;">
+                                    {% csrf_token %}
+                                </form>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No</button>
+                                <button type="button" class="btn btn-danger" id="cancelBooking">Yes</button>
+                            </div>
+                        </div>
+                    </div>
+                  </div>
+
+
+              </div>
+             
+              {% endfor %}
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-8">
+        <div class="card card-round">
+          <div class="card-header">
+            <div class="card-head-row card-tools-still-right">
+              <div class="card-title">Transaction History</div>
+              <div class="card-tools">
+                
+              </div>
+            </div>
+          </div>
+          <div class="card-body p-0">
+            <div class="table-responsive">
+              <!-- Projects table -->
+              <table class="table align-items-center mb-0">
+                <thead class="thead-light">
+                  <tr>
+                    <th scope="col">Booking ID </th>
+                    <th scope="col" class="text-end">Date & Time</th>
+                    <th scope="col" class="text-end">Amount</th>
+                    <th scope="col" class="text-end">Status</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for confirm in payment_confirm%}
+                  <tr>
+                    <th scope="row">
+                      <button
+                        class="btn btn-icon btn-round btn-success btn-sm me-2"
+                      >
+                        <i class="fa fa-check"></i>
+                      </button>
+                      Payment from {{confirm.id}}
+                    </th>
+                    <td class="text-end">{{confirm.drop_date}} {{confirm.drop_time}}</td>
+                    <td class="text-end">₹ {{confirm.receipt_amount}}</td>
+                    <td class="text-end">
+                      <span class="badge badge-success">Completed</span>
+                    </td>
+                  </tr>
+                  {% endfor %}
+                 
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+{% block extra_scripts %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<script>
+
+
+var employee_url="{% url 'get_employee' %}";
+var urlss ="{% url 'confirm_employee_booking'%}";
+$(document).ready(function () {
+  $("#printchart").click(function () {
+      var canvas = document.getElementById("statisticsChart");
+
+      if (!canvas) {
+          console.log("Canvas not found!");
+          return;
+      }
+
+      var chartImage = canvas.toDataURL("image/png");
+
+      var reportContent = document.querySelector(".col-md-8");
+
+      if (!reportContent) {
+          console.log("Report content not found!");
+          return;
+      }
+
+      var printWindow = window.open("", "_blank");
+
+      printWindow.document.write(`
+          <html>
+          <head>
+              <title>Daily Report</title>
+              <style>
+                  body { 
+                      font-family: Arial, sans-serif;
+                      text-align: center;
+                      padding: 20px;
+                      background: #f8f9fa;
+                  }
+                  .report-container {
+                      max-width: 800px;
+                      margin: auto;
+                      background: #fff;
+                      padding: 20px;
+                      border-radius: 10px;
+                      box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+                      text-align: left;
+                  }
+                  h2 { 
+                      color: #343a40;
+                      border-bottom: 2px solid #007bff;
+                      padding-bottom: 10px;
+                  }
+                  img {
+                      max-width: 100%;
+                      height: auto;
+                      border: 1px solid #ddd;
+                      padding: 5px;
+                      border-radius: 5px;
+                      background: #fff;
+                  }
+                  .report-details {
+                      margin-top: 20px;
+                      font-size: 16px;
+                      line-height: 1.6;
+                      color: #555;
+                  }
+                  .highlight {
+                      color: #007bff;
+                      font-weight: bold;
+                  }
+              </style>
+          </head>
+          <body>
+              <div class="report-container">
+                  <h2>🚗 Daily Report - Car Rental</h2>
+                  <img src="${chartImage}" alt="Statistics Chart">
+                  <div class="report-details">${reportContent.innerHTML}</div>
+              </div>
+          </body>
+          </html>
+      `);
+
+      printWindow.document.close();
+      printWindow.focus();
+      setTimeout(() => {
+          printWindow.print();
+          printWindow.close();
+      }, 500); // Small delay to ensure proper rendering before printing
+  });
+});
+
+   
+
+
+</script>
+{% endblock %}
+
+

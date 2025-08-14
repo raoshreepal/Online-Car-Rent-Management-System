@@ -1,0 +1,237 @@
+{% extends "admindesk/admin-base.html" %}
+{% load static %}
+{% block head%}
+<style>
+	/* Ensuring proper width for the 'Time' column */
+	.table td, .table th {
+        white-space: nowrap; /* Prevents text from wrapping to the next line */
+    }
+
+    .table th, .table td {
+        padding: 0.75rem; /* Adds padding for clarity */
+    }
+
+    .table td:last-child {
+        width: 120px; /* Adjust width for the Time column if necessary */
+    }
+
+    .hidden {
+        display: none;
+    }
+	</style>
+{% endblock %}
+{% block content %}
+<div class="container">
+    <div class="page-inner">
+        <div class="page-header">
+            <h3 class="fw-bold mb-3">My Balance</h3>
+            <ul class="breadcrumbs mb-3">
+                <li class="nav-home">
+                    <a href="#">
+						<img src="{% static 'img/dashboard.png' %}" alt="Home Icon" width="30" height="30">
+                    </a>
+                </li>
+                <li class="separator">
+                    <i class="icon-arrow-right"></i>
+                </li>
+                <li class="nav-item">
+                    <a href="#">Profile</a>
+                </li>
+                <li class="separator">
+                    <i class="icon-arrow-right"></i>
+                </li>
+                <li class="nav-item">
+                    <a href="#">Balance</a>
+                </li>
+            </ul>
+        </div>
+		<div class="balance-section">
+			<h4>Your Current Balance:</h4>
+			<p class="balance-amount">$120.50</p> <!-- Static balance -->
+			<button class="btn btn-info" onclick="toggleHistoryTable()">See History</button> <!-- Button to show history -->
+		</div>
+		
+		<!-- Table or Carousel for Balance History (Initially Hidden) -->
+		<div id="historyTableContainer" style="display:none;">
+			<!-- Content will be populated dynamically -->
+			<div id="historyTable" class="table-responsive"></div>
+			<button class="btn btn-danger" id="hideButton" onclick="hideHistoryTable()">Hide Table</button>
+		</div>
+
+        <!-- Car Services History Section -->
+		<div class="car-services-section mt-4">
+			<h4>Recent Car Services:</h4>
+			<table class="table table-striped" id="servicesTable">
+				<thead>
+					<tr>
+						<th scope="col">Service</th>
+						<th scope="col">Date</th>
+						<th scope="col">Cost</th>
+						<th scope="col">Action</th>
+						<th scope="col">Request Status</th> <!-- New column for status -->
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td><strong>Oil Change</strong></td>
+						<td>Jan 01, 2025</td>
+						<td>$50.00</td>
+						<td>
+							<button class="btn btn-primary" onclick="sendRequest(this)">Request</button>
+						</td>
+						<td class="status"></td> <!-- Empty initially, for status -->
+					</tr>
+					<tr>
+						<td><strong>Tire Replacement</strong></td>
+						<td>Dec 15, 2024</td>
+						<td>$150.00</td>
+						<td>
+							<button class="btn btn-primary" onclick="sendRequest(this)">Request</button>
+						</td>
+						<td class="status"></td> <!-- Empty initially, for status -->
+					</tr>
+					<tr>
+						<td><strong>Brake Check</strong></td>
+						<td>Nov 10, 2024</td>
+						<td>$80.00</td>
+						<td>
+							<button class="btn btn-primary" onclick="sendRequest(this)">Request</button>
+						</td>
+						<td class="status"></td> <!-- Empty initially, for status -->
+					</tr>
+				</tbody>
+			</table>
+		</div>
+    </div>
+</div>
+{% endblock %}
+{% block extra_scripts%}
+<script>
+
+    // Function to handle request button click
+    function sendRequest(button) {
+        // Prompt confirmation before sending the request
+        var confirmRequest = confirm("Are you sure you want to send the request?");
+        
+        if (confirmRequest) {
+            // Find the row of the clicked button
+            var row = button.closest('tr');
+            // Change the status in the last column of that row
+            var statusCell = row.querySelector('.status');
+            statusCell.textContent = 'Request Sent';
+            statusCell.classList.add('text-success'); // Optional: add a color class for success
+
+            // Disable the button to prevent further requests
+            button.disabled = true;
+            button.classList.add('btn-secondary'); // Optional: change button color to indicate disabled state
+        }
+    }
+	var balanceHistory = [
+        { id: "User123", transaction: "Deposit", date: "Dec 01, 2024", amount: "$500.00", time: "10:30 AM" },
+        { id: "User123", transaction: "Withdrawal", date: "Dec 15, 2024", amount: "$200.00", time: "2:15 PM" },
+        { id: "User123", transaction: "Deposit", date: "Jan 01, 2025", amount: "$100.00", time: "9:00 AM" },
+        { id: "User123", transaction: "Deposit", date: "Jan 15, 2025", amount: "$400.00", time: "11:00 AM" },
+        { id: "User123", transaction: "Withdrawal", date: "Feb 02, 2025", amount: "$150.00", time: "1:00 PM" },
+        { id: "User123", transaction: "Deposit", date: "Feb 10, 2025", amount: "$250.00", time: "3:30 PM" }
+    ];
+
+    // Toggle the visibility of the history table
+	function toggleHistoryTable() {
+		alert("Toggle History Table Clicked");  // Debugging line
+		var historyTableContainer = document.getElementById("historyTableContainer");
+		var hideButton = document.getElementById("hideButton");
+	
+		// If the table is hidden, show it and render content; otherwise, hide it
+		if (historyTableContainer.style.display === "none") {
+			// Render the table or carousel based on the number of records
+			if (balanceHistory.length > 5) {
+				renderCarousel(); // More than 5 records, show carousel
+			} else {
+				renderTable(); // 5 or fewer records, show table
+			}
+	
+			historyTableContainer.style.display = "block";  // Show the table container
+			hideButton.style.display = "block";  // Show the hide button
+		} else {
+			historyTableContainer.style.display = "none";  // Hide the table container
+			hideButton.style.display = "none";  // Hide the hide button
+		}
+	}
+
+    // Function to render the table
+	function renderTable() {
+		var tableHTML = `
+			<table class="table table-striped">
+				<thead>
+					<tr>
+						<th scope="col">Booking ID</th>
+						<th scope="col">Transaction</th>
+						<th scope="col">Date</th>
+						<th scope="col">Amount</th>
+						<th scope="col">Time</th>
+					</tr>
+				</thead>
+				<tbody>`;
+	
+		// Loop through the balance history and populate table rows
+		balanceHistory.forEach(function(record) {
+			tableHTML += `
+				<tr>
+					<td>${record.id}</td>
+					<td>${record.transaction}</td>
+					<td>${record.date}</td>
+					<td>${record.amount}</td>
+					<td>${record.time}</td>
+				</tr>`;
+		});
+	
+		tableHTML += `</tbody></table>`;
+		document.getElementById("historyTable").innerHTML = tableHTML;  // Insert the table into the container
+	}
+
+    // Function to render the carousel
+    function renderCarousel() {
+        var carouselHTML = `
+            <div id="historyCarousel" class="carousel slide" data-bs-ride="carousel">
+                <div class="carousel-inner">`;
+
+        // Loop through the balance history and create carousel items
+        balanceHistory.forEach(function(record, index) {
+            var activeClass = index === 0 ? "active" : "";  // First item is active
+            carouselHTML += `
+                <div class="carousel-item ${activeClass}">
+                    <div class="carousel-caption d-none d-md-block">
+                        <p><strong>Booking ID:</strong> ${record.id}</p>
+                        <p><strong>Transaction:</strong> ${record.transaction}</p>
+                        <p><strong>Date:</strong> ${record.date}</p>
+                        <p><strong>Amount:</strong> ${record.amount}</p>
+                        <p><strong>Time:</strong> ${record.time}</p>
+                    </div>
+                </div>`;
+        });
+
+        carouselHTML += `
+                </div>
+                <button class="carousel-control-prev" type="button" data-bs-target="#historyCarousel" data-bs-slide="prev">
+                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Previous</span>
+                </button>
+                <button class="carousel-control-next" type="button" data-bs-target="#historyCarousel" data-bs-slide="next">
+                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Next</span>
+                </button>
+            </div>`;
+        document.getElementById("historyTable").innerHTML = carouselHTML;  // Insert the carousel into the container
+    }
+
+    // Function to hide the history table
+    function hideHistoryTable() {
+        var historyTableContainer = document.getElementById("historyTableContainer");
+        var hideButton = document.getElementById("hideButton");
+		alert("hide")
+        // Hide the table and the hide button
+        historyTableContainer.style.display = "none";
+        hideButton.style.display = "none";
+    }
+</script>
+{% endblock%}

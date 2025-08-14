@@ -1,0 +1,285 @@
+{% extends "employee/employee-base.html" %}
+{% load static %}
+{% block title %}Add and Update Cars{% endblock %}
+{% block content %}
+<div class="container mt-5">
+    <div class="page-inner">
+        <div class="page-header">
+            <h3 class="fw-bold mb-3">Add and Update Cars</h3>
+            <ul class="breadcrumbs mb-3">
+                <li class="nav-home">
+                    <a href="#">
+                        <img src="{% static 'img/dashboard.png' %}" alt="Home Icon" width="30" height="30">
+                    </a>
+                </li>
+                <li class="separator">
+                    <i class="icon-arrow-right"></i>
+                </li>
+                <li class="nav-item">
+                    <a href="#">Car Record</a>
+                </li>
+                <li class="separator">
+                    <i class="icon-arrow-right"></i>
+                </li>
+                <li class="nav-item">
+                    <a href="#">Add and Update Cars</a>
+                </li>
+            </ul>
+        </div>
+
+        <!-- Add Car Button -->
+        <div class="mb-3">
+          <button id="showAvailable" class="btn btn-success">Available <span id="availableCount"></span></button>
+          <button id="showPending" class="btn btn-warning">Pending <span id="pendingCount"></span></button>
+          <button id="showNotAvailable" class="btn btn-danger">Not Available <span id="notAvailableCount"></span></button>
+          <button id="showONServices" class="btn btn-info">On Service <span id="onServiceCount"></span></button>
+          <button id="clearFilter" class="btn btn-secondary">Clear Filter</button>
+        </div>
+                    
+     
+        <!-- Add Car Form Modal -->
+    
+
+        <!-- Cars Table -->
+        <div class="table-responsive">
+
+            <table class="table table-striped">
+              <thead>
+                <tr>
+                  <th>Car ID</th>
+                  <th>Image</th>
+                  <th>Number</th>
+                  <th>Model</th>
+                  <th>Year</th>
+                  <th>Mileage</th>
+                  <th>Type</th>
+                  <th>Rent Ammount</th>
+                  <th>Car Status</th>
+                </tr>
+              </thead>
+              <tbody id="carTableBody" >
+    
+                {% for car in car_record %}
+                <tr class="car-record {{ car.status }}">
+    
+                    <td>{{ car.id }}</td>
+                    <td title="View and Update Image" id="hovertd" style="text-align:center">
+                      <img
+                       class="car-thumbnail"          
+                      src="{{ car.image.url }}"
+                      alt="{{ car.model }}" 
+                      style="width: 100px; height: 70px; object-fit: cover; border-radius: 20%; cursor: pointer;" 
+                      data-car-id="{{ car.id }}"
+                      data-bs-toggle="modal"
+                      data-bs-target="#imageModal">
+                 
+                      <br>
+                      <span style="cursor:pointer" data-car-id="{{ car.id }}">{{ car.make }}</span>
+                  </td>
+                  
+                  <!-- CSRF Token (for form submission) -->
+                  <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+                  
+                  <!-- Modal Structure -->
+                  <div class="modal fade" id="imageModal" tabindex="-1" role="dialog" aria-labelledby="imageModalLabel" aria-hidden="true">
+                      <div class="modal-dialog" role="document">
+                          <div class="modal-content">
+                              <div class="modal-header">
+                                  <h5 class="modal-title" id="imageModalLabel">Update Car Image</h5>
+                                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="cancelButton"></button>
+                              </div>
+                              <div class="modal-body">
+                                  <!-- Full Image Display -->
+                                  <img id="fullImage" src="" alt="" style="width: 100%; height: auto;"/>
+                                  <br><br>
+                                  <label for="imageUpload">Choose a new car image:</label>
+                                  <!-- Image Upload Input -->
+                                  <input type="file" id="imageUpload" name="image" accept="image/*" class="form-control">
+                              </div>
+                              <div class="modal-footer">
+                                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" id="cancelButton">Cancel</button>
+                                  <button type="button" class="btn btn-primary" id="updateImageBtn" data-car-id="">Update Image</button>
+                              </div>
+                          </div>
+                      </div>
+                  </div>
+                  
+                
+                  <td>{{ car.number }}</td>
+                    <td>{{ car.make }}</td>
+                    <td>{{ car.year }}</td>
+                    <td>{{ car.mileage}}</td>
+                    <td>{{ car.type }}</td>
+                    <td class="edit-price" id="hovertd" data-car-id="{{ car.id }}">
+                      <div class="car-discount">
+                        <strong>Discount:</strong> <span id="car-discount-{{ car.id }}">{{ car.discount }}</span> &#x25;
+                      </div>
+                      <div>
+                        <strong>Hourly Rate:</strong> ₹<span id="car-par-hour-rent-{{ car.id }}">{{ car.price_per_hour }}</span>
+                      </div>
+                      <div>
+                        <strong>Daily Rate:</strong> ₹<span id="car-par-day-rent-{{ car.id }}">{{ car.price_per_day }}</span>
+                      </div>
+                      <div>
+                        <b>Monthly Rate:</b> ₹<span id="car-par-month-rent-{{ car.id }}">{{ car.price_per_month }}</span>
+                      </div>
+                    </td>
+                    
+                    
+                  
+    
+                    <td class="car-status" id="hovertd" data-car-id="{{ car.id }}" title="Change status">
+                      {{ car.status }}
+                  </td>
+                  
+                 
+                </tr>
+                {% empty %}
+                <tr>
+                  <td colspan="10" class="text-center">No cars available</td>
+                </tr>
+            {% endfor %}
+              </tbody>
+                <!-- More Rows Dynamically Added -->
+            </table>
+          </div>
+    </div>
+
+
+  
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<!-- Include Bootstrap CSS -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<!-- Include jQuery and Bootstrap JS -->
+
+<script>
+  $(document).ready(function() {
+    // Handle image click event
+    $('.car-thumbnail').on('click', function() {
+        var carId = $(this).data('car-id');  
+        var carImage = $(this).attr('src');  
+        $('#fullImage').attr('src', carImage); 
+        $('#updateImageBtn').data('car-id', carId);  
+    });
+    
+    // Handle image update action
+    $('#updateImageBtn').on('click', function() {
+        var carId = $(this).data('car-id');  // Get car ID for image update
+        var formData = new FormData();
+    
+        // Get the selected file input and check if a file is chosen
+        var fileInput = $('#imageUpload')[0];
+        if (fileInput.files.length === 0) {
+            alert('Please choose an image to upload!');
+            return;
+        }
+    
+        // Append the new image and car ID to the FormData object
+        formData.append('image', fileInput.files[0]);
+        formData.append('car_id', carId);  // Append car ID to the data
+        formData.append('csrfmiddlewaretoken', '{{ csrf_token }}');  // Add CSRF token for security
+    
+        // Perform the AJAX request to the backend
+        $.ajax({
+            url: '{% url "update_car_image" %}',  // URL to handle the image update in Django
+            type: 'POST',
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: function(response) {
+                if (response.success) {
+                    // On success, update the image on the page
+                    $('img[data-car-id="' + carId + '"]').attr('src', response.new_image_url);
+                    $('#imageModal').modal('hide');  // Close modal after update
+                } else {
+                    alert('Error updating image!');
+                }
+            },
+            error: function() {
+                alert('Failed to update image!');
+            }
+        });
+    });
+
+    // Close modal on cancel
+    $('#cancelButton').on('click', function() {
+        $('#imageModal').modal('hide');  // Close modal when cancel button is clicked
+    });
+});
+$(document).ready(function () {
+  // Function to show the clear filter button
+  function showClearButton() {
+    $('#clearFilter').show();
+  }
+
+  // Function to hide the clear filter button
+  function hideClearButton() {
+    $('#clearFilter').hide();
+  }
+
+  // Function to update the count for each filter button
+  function updateCounts() {
+    var availableCount = $('.car-record.available').length;
+    var pendingCount = $('.car-record.pending').length;
+    var notAvailableCount = $('.car-record.not_available').length;
+    var onServiceCount = $('.car-record.services').length;
+
+    // Update the counts in the buttons
+    $('#availableCount').text(availableCount);
+    $('#pendingCount').text(pendingCount);
+    $('#notAvailableCount').text(notAvailableCount);
+    $('#onServiceCount').text(onServiceCount);
+  }
+
+  // Filter by Available Cars
+  $('#showAvailable').click(function () {
+    $('.car-record').hide(); // Hide all records
+    $('.car-record.available').show(); // Show only available cars
+    showClearButton();
+    updateCounts(); // Update the counts after filter
+  });
+
+  // Filter by Pending Cars
+  $('#showPending').click(function () {
+    $('.car-record').hide(); // Hide all records
+    $('.car-record.pending').show(); // Show only pending cars
+    showClearButton();
+    updateCounts(); // Update the counts after filter
+  });
+
+  // Filter by Not Available Cars
+  $('#showNotAvailable').click(function () {
+    $('.car-record').hide(); // Hide all records
+    $('.car-record.not_available').show(); // Show only not available cars
+    showClearButton();
+    updateCounts(); // Update the counts after filter
+  });
+
+  // Filter by Cars On Service
+  $('#showONServices').click(function () {
+    $('.car-record').hide(); // Hide all records
+    $('.car-record.services').show(); // Show only cars on service
+    showClearButton();
+    updateCounts(); // Update the counts after filter
+  });
+
+  // Clear all filters and show all records
+  $('#clearFilter').click(function () {
+    $('.car-record').show(); // Show all records
+    hideClearButton();
+    updateCounts(); // Update the counts after clearing filter
+  });
+
+  // Initially hide the clear filter button and update counts
+  hideClearButton();
+  updateCounts(); // Call to update the counts when the page is loaded
+});
+
+    
+</script>
+{% endblock %}

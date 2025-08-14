@@ -1,0 +1,345 @@
+{% extends 'base.html'%}
+{% load static %}
+{% block title %} car Details{% endblock%}
+{% block head%}
+<style>
+.car-img {
+    width: 100%;
+    height: 100%;
+    min-height: 350px;
+    background-size: cover;
+    background-position: center;
+    border-radius: 10px 0 0 10px;
+}
+
+.car-title {
+    font-size: 28px;
+    font-weight: bold;
+    color: #333;
+}
+
+.list-group-item {
+    font-size: 16px;
+    font-weight: 500;
+    border: none;
+}
+
+.badge {
+    font-size: 14px;
+}
+.nav-pills .nav-link {
+    background: #f8f9fa;
+    color: #333;
+    font-weight: bold;
+    border-radius: 50px;
+    padding: 10px 20px;
+    transition: 0.3s;
+  }
+  .nav-pills .nav-link.active {
+    background: #ff6600;
+    color: #fff;
+  }
+  .nav-pills .nav-link:hover {
+    background: #ff8533;
+    color: white;
+  }
+
+  /* Features List */
+  .features {
+    list-style: none;
+    padding: 0;
+  }
+  .features li {
+    font-size: 1rem;
+    padding: 8px 0;
+    display: flex;
+    align-items: center;
+  }
+  .features .check span {
+    color: green;
+    font-size: 1.2rem;
+    margin-right: 8px;
+  }
+  .features .remove span {
+    color: red;
+    font-size: 1.2rem;
+    margin-right: 8px;
+  }
+
+  /* Reviews */
+  .review {
+    background: #f8f9fa;
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+  }
+  .desc h4 {
+    font-size: 1rem;
+  }
+  .desc p {
+    margin-bottom: 0;
+  }
+  .rating-wrap {
+    background: #fff3e0;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  }
+</style>
+{% endblock%}    
+{% block content %}
+    <section class="hero-wrap hero-wrap-2 js-fullheight" style="background-image: url('{% static 'images/bg_3_1.jpeg'%}');" data-stellar-background-ratio="0.5">
+      <div class="overlay"></div>
+      <div class="container">
+        <div class="row no-gutters slider-text js-fullheight align-items-end justify-content-start">
+          <div class="col-md-9 ftco-animate pb-5">
+          	<p class="breadcrumbs"><span class="mr-2"><a href="{% url 'home'%}">Home <i class="ion-ios-arrow-forward"></i></a></span> <span>Car details <i class="ion-ios-arrow-forward"></i></span></p>
+            <h1 class="mb-3 bread">Car Details</h1>
+          </div>
+        </div>
+      </div>
+    </section>
+		
+
+	<section class="ftco-section ftco-car-details">
+		<div class="container">
+			<div class="row justify-content-center">
+				<div class="col-md-12">
+					<div class="card shadow-lg border-0 rounded-lg overflow-hidden">
+						<div class="row g-0">
+							<!-- Left Section: Car Image -->
+							<div class="col-md-6 position-relative">
+								<div class="car-img" style="background-image: url('{{ car_details.image.url }}'); height: 100%; min-height: 400px; background-size: cover; background-position: center;"></div>
+								{% if car_details.discount > 0 %}
+								<div class="badge bg-danger position-absolute top-0 start-0 m-3 p-2">
+									<span class="h5 mb-0">-{{ car_details.discount }}% OFF</span>
+								</div>
+								{% endif %}
+							</div>
+							
+							<!-- Right Section: Car Details & Pricing -->
+							<div class="col-md-6 bg-light p-5">
+								<div class="text-center mb-4">
+									<h2 class="car-title display-5 fw-bold">{{ car_details.model }}</h2>
+									<p class="text-muted lead">{{ car_details.make }}</p>
+								</div>
+								
+								<!-- Car Specifications -->
+								<div class="car-specs mb-4">
+									<ul class="list-group list-group-flush">
+										<li class="list-group-item d-flex justify-content-between align-items-center">
+											<span class="fw-bold">Mileage</span>
+											<span class="badge bg-primary rounded-pill">{{ car_details.mileage }} km/l</span>
+										</li>
+										<li class="list-group-item d-flex justify-content-between align-items-center">
+											<span class="fw-bold">Seats</span>
+											<span class="badge bg-primary rounded-pill">{{ car_details.seats }} Adults</span>
+										</li>
+										<li class="list-group-item d-flex justify-content-between align-items-center">
+											<span class="fw-bold">Luggage</span>
+											<span class="badge bg-primary rounded-pill">4 Bags</span>
+										</li>
+										<li class="list-group-item d-flex justify-content-between align-items-center">
+											<span class="fw-bold">Fuel Type</span>
+											<span class="badge bg-primary rounded-pill">{{ car_details.type }}</span>
+										</li>
+										<li class="list-group-item d-flex justify-content-between align-items-center">
+											<span class="fw-bold">Status</span>
+											<span class="badge {% if car_details.status == 'available' %}bg-success{% else %}bg-danger{% endif %} rounded-pill">
+												{% if car_details.status == "not_available" %}Not Available{% else %}Available{% endif %}
+											</span>
+										</li>
+									</ul>
+								</div>
+	
+								{% if car_details.status == "available" %}
+								<!-- Pricing Details -->
+								<div class="pricing-section mb-4 p-3 rounded shadow-sm bg-white">
+									<h4 class="text-center mb-3 fw-bold">Pricing Details</h4>
+									<ul class="list-group list-group-flush">
+										<li class="list-group-item d-flex justify-content-between align-items-center">
+											<span>Price per Hour</span>
+											<span class="text-success fw-bold">${{ car_details.price_per_hour }}</span>
+										</li>
+										<li class="list-group-item d-flex justify-content-between align-items-center">
+											<span>Price per Day</span>
+											<span class="text-success fw-bold">${{ car_details.price_per_day }}</span>
+										</li>
+										<li class="list-group-item d-flex justify-content-between align-items-center">
+											<span>Price per Month</span>
+											<span class="text-success fw-bold">${{ car_details.price_per_month }}</span>
+										</li>
+									</ul>
+								</div>
+								{% endif %}
+	
+								<!-- Booking Button -->
+								<div class="text-center mt-4">
+									{% if car_details.status == "available" %}
+										<a href="{% url 'car_booking' car_details.id %}" class="btn btn-success btn-lg px-5 py-3 me-3">Book Now</a>
+									{% endif %}
+									<a href="{% url 'cars' %}" class="btn btn-outline-secondary btn-lg px-5 py-3">View More Cars</a>
+								</div>
+							</div> <!-- End Right Section -->
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>    
+	</section>
+	
+	
+	
+	<section class="ftco-section">
+		<div class="container">
+		  <div class="row">
+			<div class="col-md-12 pills">
+			  <div class="bd-example bd-example-tabs">
+					<h3> ⭐ Reviews </h3 >
+				<div class="tab-content">
+				  <!-- Reviews Tab -->
+				  <div class="tab-pane show active" id="pills-review">
+					<div class="row">
+					  
+						<div class="col-md-7" style="max-height: 500px; overflow-y: auto;">
+							<h3 class="head">{{ feedbackcount }} Reviews</h3>
+							
+							{% for feedback in feedbacks %}
+							<div class="review d-flex position-relative">
+							  
+							  <!-- User Avatar -->
+							  <div class="user-img" style="background-image: url('{{ feedback.car.user.image.url }}'); width: 50px; height: 50px; border-radius: 50%; background-size: cover;"></div>
+							  
+							  <div class="desc ml-3 w-100">
+								<h4 class="mb-1 d-flex justify-content-between">
+								  <span class="font-weight-bold">{{ feedback.car.user.username }}</span>
+								</h4>
+								
+								<!-- Star Rating -->
+								<p class="star mb-1">
+								  <span>
+									{% for _ in ""|rjust:feedback.rating %}
+									  <i class="ion-ios-star" style="color: #ffcc00;"></i>  
+									{% endfor %}
+								  </span>
+								</p>
+						
+								<!-- User Comment -->
+								<p style="color: #555;">{{ feedback.comments }}</p>
+								<span class="text-muted" style="font-size: 0.9rem;">{{ feedback.created_at|date:"M d, Y" }}</span>
+
+								{% if feedback.replay %}
+<div class="reply-box position-absolute bottom-0 end-0 text-white px-3 py-2 rounded shadow-sm" 
+     style="background: linear-gradient(135deg, #007bff, #0056b3); 
+            font-size: 0.85rem; 
+            max-width: 80%; 
+            border-radius: 10px;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+            padding: 10px; 
+            word-wrap: break-word;">
+    <i class="fas fa-reply mr-1"></i> <strong>CarBook :</strong> {{ feedback.replay }}
+</div>
+{% endif %}
+
+							  </div>
+							</div>
+							<hr>
+							{% empty %}
+							<div class="text-center text-muted">No reviews yet.</div>
+							{% endfor %}
+						</div>
+						
+					  <!-- Rating Summary -->
+					  <div class="col-md-5">
+						<div class="rating-wrap">
+						  <h3 class="head">Give a Review</h3>
+						  <div class="wrap">
+							{% for item in rating_data %}
+							<p class="star d-flex align-items-center">
+							  <span>
+								{% for _ in ""|rjust:item.rating %}
+								  <i class="ion-ios-star" style="color: #ffcc00;"></i>
+								{% endfor %}
+								({{ item.percentage }}%)
+							  </span>
+							  <span class="ml-auto text-muted" style="font-size: 0.9rem;">{{ item.count }} Reviews</span>
+							</p>
+							{% endfor %}
+						  </div>
+						</div>
+					  </div>
+					</div>
+				  </div> <!-- End Reviews Tab -->
+				</div>
+			  </div>
+			</div>
+		  </div>
+		</div>
+	  </section>
+	  <section class="ftco-section ftco-no-pt bg-light">
+    	<div class="container">
+    		<div class="row justify-content-center">
+          <div class="col-md-12 heading-section text-center ftco-animate mb-5">
+          	<span class="subheading">What we offer</span>
+            <h2 class="mb-2">Available Vehicles</h2>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-12">
+            <div class="carousel-car owl-carousel">
+              {% for car in all_cars %}
+                <div class="item">
+                  <div class="car-wrap rounded ftco-animate">
+                    <div class="img rounded d-flex align-items-end" style="background-image: url('{{ car.image.url }}');"></div>
+                    <div class="text">
+                      <h2 class="mb-0"><a href="#">{{car.model}}</a></h2>
+                      <div class="d-flex mb-3">
+                        <span class="cat">{{car.make}}</span>
+                        <p class="price ml-auto">₹ {{car.price_per_hour}} <span>/hour</span></p>
+                      </div>
+                      <p class="d-flex mb-0 d-block">
+                        <a href="{% url 'car_booking' car.id %}" class="btn btn-primary py-2 mr-1">Book now</a>
+                        <a href="{% url 'car-single' car.id %}" class="btn btn-secondary py-2 ml-1">Details</a>
+                        
+                        <button
+                          class="btn  py-2 mr-1 save-car-btn"
+                          data-car-id="{{ car.id }}"
+                          data-save-url="{% url 'save_car' car_id=0 %}"
+                          >
+                          {% if car.is_saved %}
+                          <!-- Display saved icon -->
+                          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-bookmark-check-fill" viewBox="0 0 16 16">
+                              <path fill-rule="evenodd" d="M2 15.5V2a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v13.5a.5.5 0 0 1-.74.439L8 13.069l-5.26 2.87A.5.5 0 0 1 2 15.5m8.854-9.646a.5.5 0 0 0-.708-.708L7.5 7.793 6.354 6.646a.5.5 0 1 0-.708.708l1.5 1.5a.5.5 0 0 0 .708 0z"/>
+                          </svg>
+                          {% else %}
+                          <!-- Display unsaved icon -->
+                          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-bookmark" viewBox="0 0 16 16">
+                              <path d="M2 2a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v13.5a.5.5 0 0 1-.777.416L8 13.101l-5.223 2.815A.5.5 0 0 1 2 15.5zm2-1a1 1 0 0 0-1 1v12.566l4.723-2.482a.5.5 0 0 1 .554 0L13 14.566V2a1 1 0 0 0-1-1z"/>
+                          </svg>
+                          {% endif %}
+                  
+                      </button>
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              {% endfor %}
+            </div>
+          </div>
+        </div>
+        <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+
+        <!-- Favorite count display -->
+      
+    	</div>
+    </section>
+	  
+		<div id="ftco-loader" class="show fullscreen"><svg class="circular" width="48px" height="48px"><circle class="path-bg" cx="24" cy="24" r="22" fill="none" stroke-width="4" stroke="#eeeeee"/><circle class="path" cx="24" cy="24" r="22" fill="none" stroke-width="4" stroke-miterlimit="10" stroke="#F96D00"/></svg></div>
+
+{% endblock %}
+{% block extra_scripts %}
+<script src="{% static 'js/save_car.js' %}"></script>
+
+{% endblock%}

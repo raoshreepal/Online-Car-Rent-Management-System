@@ -1,0 +1,85 @@
+{% extends "employee/employee-base.html" %}
+{% load static %}
+{% block title %}Confirm Services{% endblock %}
+{% block content %}
+<div class="container mt-5">
+    <div class="page-inner">
+      <div class="page-header">
+        <h3 class="fw-bold mb-3">Confirm car services</h3>
+        <ul class="breadcrumbs mb-3">
+          <li class="nav-home">
+            <a href="#">
+              <img src="{% static 'img/dashboard.png' %}" alt="Home Icon" width="30" height="30">
+            </a>
+          </li>
+          <li class="separator">
+            <i class="icon-arrow-right"></i>
+          </li>
+          <li class="nav-item">
+            <a href="#">Car Services Record</a>
+          </li>
+          <li class="separator">
+            <i class="icon-arrow-right"></i>
+          </li>
+          <li class="nav-item">
+            <a href="#">confirm Services </a>
+          </li>
+        </ul>
+      </div>
+      <div class="row">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Total Services Payment</h5>
+                    <p class="card-text"><strong>{{count}}</strong></p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Confirm Services Payment</h5>
+                    <p class="card-text"><strong> {{payment}}</strong></p>
+                </div>
+            </div>
+        </div>
+          
+      </div>
+    </div>
+      <div class="card">
+        <div class="card-body">
+            <h4 class="card-title mb-3">Confirmed Car Services</h4>
+            <!-- Table displaying the confirmed car services -->
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Service ID</th>
+                        <th>Car ID - Model</th>
+                        <th>Employee ID</th>
+                        <th>Service Cost</th>
+                        <th>Services type</th>
+                        <th>Status</th>
+                        <th>Confirmation Date</th>
+                    </tr>
+                </thead>
+                <tbody>
+                  {% for scar in completed%}
+                  <tr>
+                        <td>{{scar.id}}</td>
+                        <td>{{scar.car.id}}-{{scar.car.model}}</td>
+                        <td>{{scar.employee.id}}</td>
+                        <td>₹{{scar.cost}}</td>
+                        <td>{{scar.service_type}}</td>
+                        <td><span  class="badge bg-success">Confirmed</span></td>
+                        <td>{{scar.complete_date}}</td>
+                    </tr>
+                    {% endfor%}
+                   
+                </tbody>
+            </table>
+        </div>
+    </div>
+  
+    </div>
+  </div>
+{% endblock %}

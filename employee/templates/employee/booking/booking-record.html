@@ -1,0 +1,217 @@
+{% extends "employee/employee-base.html" %}
+{% load static %}
+{% block title %}User Booking{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="page-inner">
+        <button type="button" class="btn btn-primary" id="pendingBookingsTab">
+            {{pending_bookings_count}} - Booking Request
+        </button>
+
+        <div class="row g-3" id="requestPending" style="display:none;">
+            {% for booking in pending_bookings %}
+            <div class="col-md-4 col-sm-6">
+                <div class="card shadow-sm border-0">
+                    <div class="card-body">
+                        <!-- Car Image and Model -->
+                        <div class="d-flex align-items-center mb-3">
+                            <img src="{{ booking.car.image.url }}" alt="Car Image" 
+                                 class="rounded-circle" style="width: 50px; height: 50px; object-fit: cover;">
+                            <div class="ms-3">
+                                <h5 class="mb-0">{{ booking.car.model }}</h5>
+                                <small>{{ booking.car.number }}</small>
+                            </div>
+                        </div>
+    
+                        <!-- User Details -->
+                        <div class="d-flex align-items-center mb-3">
+                            {% comment %} <img src="{{ booking.user.image.url  }}" alt="User Image" 
+                                 class="rounded-circle" style="width: 50px; height: 50px; object-fit: cover;"> {% endcomment %}
+                            <div class="ms-3">
+                                <h6 class="mb-0">{{ booking.user.username }}</h6>
+                                    <small>{{ booking.user.phone_number }}</small>
+                           </div>
+                        </div>
+    
+                        <!-- Pickup Details -->
+                        <p><strong>Pickup Location:</strong> {{ booking.pickup_location }}</p>
+                        <p><strong>Pickup Dates:</strong> {{ booking.pickup_date }} to {{ booking.drop_date }}</p>
+    
+                        <!-- Status and Amount -->
+                        <p><strong>Status:</strong> {{ booking.booking_status }}</p>
+                        <p><strong>Amount:</strong> ${{ booking.receipt_amount }}</p>
+    
+                        <!-- Confirm Booking Button -->
+                        <button class="btn btn-warning w-100 confirm-booking" 
+                                data-booking-id="{{ booking.id }}"
+                                data-car-id="{{ booking.car.id }}" 
+                                data-car-model="{{ booking.car.model }}" 
+                                data-bs-toggle="modal" 
+                                data-bs-target="#confirmBookingModal">
+                            Confirm Booking
+                        </button>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        
+        <!-- Confirm Booking Modal -->
+        <div class="modal fade" id="confirmBookingModal" tabindex="-1" aria-labelledby="confirmBookingModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="confirmBookingModalLabel">Confirm Booking</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <p>Are you sure you want to confirm the booking for <strong id="carModel"></strong>?</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="button" class="btn btn-primary" id="confirmBookingBtn">Confirm</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <h2>Your Confirmed Bookings</h2>
+        <div class="d-flex justify-content-end mb-3">
+            <button type="button" class="btn btn-primary" id="generatePdfBtn">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-printer" viewBox="0 0 16 16">
+                    <path d="M2.5 8a.5.5 0 1 0 0-1 .5.5 0 0 0 0 1"/>
+                    <path d="M5 1a2 2 0 0 0-2 2v2H2a2 2 0 0 0-2 2v3a2 2 0 0 0 2 2h1v1a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2v-1h1a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-1V3a2 2 0 0 0-2-2zM4 3a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2H4zm1 5a2 2 0 0 0-2 2v1H2a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1h-1v-1a2 2 0 0 0-2-2zm7 2v3a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-3a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1"/>
+                  </svg> Print Report
+            </button>
+        </div>
+        
+        <div>
+            <strong>Total Receipt Amount for Confirmed Bookings: ₹{{ employee_total_booking_receipt }}</strong>
+        </div>
+       
+        <div class="table-responsive">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th scope="col">Car Model</th>
+                        <th>user details</th>
+                        <th scope="col">Pickup Date</th>
+                        <th scope="col">Drop Date</th>
+                        <th scope="col">Pickup Location</th>
+                        <th scope="col">Booking Status</th>
+                        <th scope="col">Amount</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for booking in employee_booking %}
+                    <tr>
+                        <td>
+                            <div class="d-flex flex-column">
+                                <strong>{{ booking.car.model }}</strong>
+                                <small>Number: {{ booking.car.number }}</small>
+                                <small>{{ booking.car.type }}</small>
+                                <small>{{ booking.car.seats }} seats</small>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="d-flex flex-column">
+                                <strong>{{ booking.user.username }}</strong>
+                                <small>{{ booking.user.phone_number }}</small>
+                                <small>{{ booking.user.email }}</small>
+                            </div>
+                        </td>
+                        
+                        
+                        <td>{{ booking.pickup_date }}</td>
+                        <td>{{ booking.drop_date }}</td>
+                        <td>{{ booking.pickup_location }}</td>
+                        <td>{{ booking.booking_status }}</td>
+                        <td>₹{{ booking.receipt_amount }}</td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="6">No confirmed bookings found.</td>
+                    </tr>
+                    
+                    {% endfor %}
+                
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+</div>
+<form id="csrfForm" method="post" style="display:none;">
+    {% csrf_token %}
+</form>
+{% endblock %}
+{% block extra_scripts %}
+<script>
+    var confirm_booking = "{% url 'confirm_booking' %}";
+</script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.2/html2pdf.bundle.js"></script>
+
+<script>
+    
+    $(document).ready(function () {
+        // Open modal when the "Confirm Booking" button is clicked
+        $('.confirm-booking').click(function () {
+            var bookingId = $(this).data('booking-id');
+            var carId = $(this).data('car-id');
+            var carModel = $(this).data('car-model');
+            
+            // Set car model in the modal
+            $('#carModel').text(carModel);
+    
+            // Show the modal
+            $('#confirmBookingModal').modal('show');
+    
+            // Handle confirm button click inside the modal
+            $('#confirmBookingBtn').click(function () {
+                $.ajax({
+                    url: confirm_booking,  // URL for the confirm booking view
+                    method: 'POST',
+                    data: {
+                        'booking_id': bookingId,
+                        'car_id': carId,
+                        'csrfmiddlewaretoken': $('input[name="csrfmiddlewaretoken"]').val()
+                    },
+                    success: function (response) {
+                        // If the booking is confirmed successfully, update the UI
+                        if (response.status === 'success') {
+                            $('#confirmBookingModal').modal('hide');
+                            location.reload();  // Reload the page to reflect the changes
+                        } else {
+                            alert('There was an error confirming the booking.');
+                        }
+                    },
+                    error: function () {
+                        alert('An error occurred while confirming the booking.');
+                    }
+                });
+            });
+        });
+        $('#pendingBookingsTab').on('click', function () {
+            $('#requestPending').toggle(); // Toggles the visibility of the #requestPending div
+        });
+        
+    });
+        $('#generatePdfBtn').on('click',function () {
+            $.ajax({
+                url: '{% url "generate_employee_pdf" %}',  // Use the URL for the class-based view
+                method: 'GET',
+                success: function(response) {
+                    // Open the PDF in a new tab using the URL returned in the response
+                    window.open(response.pdf_url, '_blank');
+                },
+                error: function() {
+                    alert("Error generating PDF.");
+                }
+            });
+    });
+   
+</script>
+{% endblock%}

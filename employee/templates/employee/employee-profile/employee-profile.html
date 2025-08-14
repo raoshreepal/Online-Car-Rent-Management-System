@@ -1,0 +1,217 @@
+{% extends "employee/employee-base.html" %}
+{% load static %}
+{% block title %}Employee Profile{% endblock %}
+{% block content %}
+<div class="container">
+    <div class="page-inner">
+        <div class="page-header">
+            <h3 class="fw-bold mb-3">Employee Profile</h3>
+            <ul class="breadcrumbs mb-3">
+                <li class="nav-home">
+                    <a href="#">
+                        <i class="icon-home"></i>
+                    </a>
+                </li>
+                <li class="separator">
+                    <i class="icon-arrow-right"></i>
+                </li>
+                <li class="nav-item">
+                    <a href="#">Dashboard</a>
+                </li>
+                <li class="separator">
+                    <i class="icon-arrow-right"></i>
+                </li>
+                <li class="nav-item">
+                    <a href="#">Profile</a>
+                </li>
+            </ul>
+        </div>
+        <div class="row">
+            <div class="col-md-8">
+                <!-- Employee Profile Section -->
+                <div class="card">
+                    <div class="card-header">
+                        <h4 class="card-title">Employee Profile</h4>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-4">
+								<!-- Employee Avatar (Image) -->
+								<div class="avatar avatar-xxl text-center position-relative">
+									<!-- Display current profile image -->
+									<img src="{{ user.image.url }}" alt="Profile Image" class="profile-img mb-5" id="profileImage" style="width: 150px; height: 150px; object-fit: cover; border-radius: 5%;">
+									
+									<!-- Image Update Button -->
+									<a href="#" id="updateImageButton" class="position-absolute" style="top: 10px; left: 10px; color:blue" title="Update image">
+										<i class="fas fa-camera"></i> <!-- Camera icon for image update -->
+									</a>
+								</div>
+							
+								<!-- Image upload form (hidden initially) -->
+								<div id="imageUploadForm" style="display: none;">
+									<form id="imageForm" enctype="multipart/form-data">
+										{% csrf_token %}
+										<div class="form-group">
+											<label for="imageUpload">Select a new image:</label>
+											<input type="file" id="imageUpload" name="image" accept="image/*" class="form-control">
+										</div>
+										<div>
+											<button type="submit" id="updateImageBtn" class="btn btn-primary">Update</button>
+											<button type="button" id="cancelImageUpdate" class="btn btn-secondary">Cancel</button>
+										</div>
+									</form>
+								</div>
+							</div>
+							
+							<div class="col-md-8">
+								<!-- Employee Details -->
+								<h5 class="fw-bold" id="profileFirstName">{{ user.first_name }} {{ user.last_name }}</h5>
+								<p><strong>Email:</strong> <span id="profileEmail">{{ user.email }}</span></p>
+								<p><strong>Contact:</strong> <span id="profilePhoneNumber">{{ user.phone_number }}</span></p>
+								<p><strong>Gender:</strong> <span id="profileGender">{{ user.gender }}</span></p>
+								<p><strong>Joined On:</strong> {{ user.date_joined|date:"F j, Y" }}</p>
+								<button id="updateButton" class="btn btn-primary">Update</button>
+							</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Profile Update Form on the Right Side -->
+            <div class="col-md-4" id="updateProfileFormContainer" style="display:none;">
+                <div class="card">
+                    <div class="card-header">
+                        <h4 class="card-title">Update Profile</h4>
+                    </div>
+                    <div class="card-body">
+						<form id="updateProfileForm" method="post">
+							{% csrf_token %}
+							<div class="form-group">
+								<label for="username">Username</label>
+								<input type="text" class="form-control" id="username" name="username" value="{{ user.username }}">
+							</div>
+							<div class="form-group">
+								<label for="first_name">First Name</label>
+								<input type="text" class="form-control" id="first_name" name="first_name" value="{{ user.first_name }}">
+							</div>
+							<div class="form-group">
+								<label for="last_name">Last Name</label>
+								<input type="text" class="form-control" id="last_name" name="last_name" value="{{ user.last_name }}">
+							</div>
+							<div class="form-group">
+								<label for="email">Email</label>
+								<input type="email" class="form-control" id="email" name="email" value="{{ user.email }}">
+							</div>
+							<div class="form-group">
+								<label for="phone_number">Contact</label>
+								<input type="text" class="form-control" id="phone_number" name="phone_number" value="{{ user.phone_number }}">
+							</div>
+							<div class="form-group">
+								<label for="gender">Gender</label>
+								<select class="form-control" id="gender" name="gender">
+									<option value="male" {% if user.gender == 'male' %}selected{% endif %}>Male</option>
+									<option value="female" {% if user.gender == 'female' %}selected{% endif %}>Female</option>
+									<option value="other" {% if user.gender == 'other' %}selected{% endif %}>Other</option>
+								</select>
+							</div>
+							<button type="submit" class="btn btn-primary">Update</button>
+						</form>
+						
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+{% block extra_scripts %}
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(document).ready(function () {
+
+        // Show the update form when clicking the "Update" button
+        $('#updateButton').on('click', function () {
+            $('#updateProfileFormContainer').show();
+            $(this).hide();  // Hide the "Update" button
+        });
+
+        // Hide the update form when clicking the "Cancel" button
+        $('#cancelUpdate').on('click', function () {
+            $('#updateProfileFormContainer').hide();
+            $('#updateButton').show();  // Show the "Update" button again
+        });
+
+        // Handle form submission via AJAX
+        $('#updateProfileForm').on('submit', function (e) {
+			e.preventDefault();
+		
+			$.ajax({
+				type: 'POST',
+				url: '{% url "update_employee_profile" %}',
+				data: $(this).serialize(),
+				headers: {
+					'X-CSRFToken': $('input[name="csrfmiddlewaretoken"]').val()
+				},
+				success: function(response) {
+					alert(response.message);  // Show the success message
+					$('#updateProfileModal').modal('hide');
+					window.location.href = "{% url 'employee_profile' %}";  // Redirect to the employee profile page
+				},
+				error: function(response) {
+					alert('the username alreeady exist plase ente another username');
+				}
+			});
+			
+		});
+		let previousImage = $('#profileImage').attr('src');  // Store the current image source
+
+        // Handle image update button click
+        $('#updateImageButton').on('click', function (e) {
+            e.preventDefault();
+            $('#imageUploadForm').show();  // Show the image upload form
+            $('#updateImageButton').hide();  // Hide the camera icon
+        });
+
+        // When a new image is selected, show the image preview
+        $('#imageUpload').on('change', function (e) {
+            var reader = new FileReader();
+            reader.onload = function (e) {
+                $('#profileImage').attr('src', e.target.result);  // Update the image preview
+            };
+            reader.readAsDataURL(this.files[0]);
+        });
+
+        // Handle Cancel button
+        $('#cancelImageUpdate').on('click', function (e) {
+            e.preventDefault();
+            $('#imageUploadForm').hide();  // Hide the image upload form
+            $('#updateImageButton').show();  // Show the camera icon again
+            $('#imageUpload').val('');  // Clear the file input
+            $('#profileImage').attr('src', previousImage);  // Revert to the previous image
+        });
+
+        // Handle form submission for image update (submit new image)
+        $('#imageForm').on('submit', function (e) {
+            e.preventDefault();
+
+            var formData = new FormData(this);
+            $.ajax({
+                type: 'POST',
+                url: '{% url "update_employee_profile_image" %}',  // Adjust URL for image update
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function (response) {
+                    alert('Image updated successfully!');
+                    $('#imageUploadForm').hide();
+                    $('#updateImageButton').show();
+                    $('#profileImage').attr('src', response.new_image_url);  // Update the image with the new URL
+                },
+                error: function (response) {
+                    alert('There was an error updating the image.');
+                }
+            });
+        });
+    });
+</script>
+{% endblock %}

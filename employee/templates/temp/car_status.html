@@ -1,0 +1,76 @@
+{% extends 'employee/main.employee_base.html' %}
+{% block title %}Dashboard - Available Car{% endblock %}
+{% block content %}
+
+<div class="container">
+    <h2>Pending Cars</h2>
+    
+    <!-- Table to Display Cars -->
+    <div class="table-container">
+        <table id="carTable" class="table table-bordered table-striped">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Car Number</th>
+                    <th>Make</th>
+                    <th>Model</th>
+                    <th>Year</th>
+                    <th>Status</th>
+                    <th>Booking ID (if Confirmed)</th>
+                </tr>
+            </thead>
+            <tbody id="carTableBody">
+                <!-- Rows will be dynamically added here -->
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+    // Random data generator for cars
+    const carData = [];
+    const totalCars = 30;  // Total number of cars for demonstration
+
+    for (let i = 1; i <= totalCars; i++) {
+        // Generate random status for each car
+        const status = (i % 3 === 0) ? 'Confirmed' : 'Pending'; // Randomize between 'Pending' and 'Confirmed'
+        const bookingId = status === 'Confirmed' ? 'BK-' + (1000 + i) : ''; // Assign booking ID if Confirmed
+
+        carData.push({
+            carNumber: 'ABC' + (1000 + i),
+            carMake: 'Make ' + i,
+            carModel: 'Model ' + i,
+            carYear: 2000 + (i % 25),
+            carStatus: status,
+            bookingId: bookingId
+        });
+    }
+
+    // Function to render the car table
+    function renderTable() {
+        const tableBody = document.getElementById('carTableBody');
+        tableBody.innerHTML = '';  // Clear the previous rows
+
+        // Filter the data to only include cars with status 'Pending'
+        const pendingCars = carData.filter(car => car.carStatus === 'Pending');
+
+        pendingCars.forEach((car, index) => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${index + 1}</td>
+                <td>${car.carNumber}</td>
+                <td>${car.carMake}</td>
+                <td>${car.carModel}</td>
+                <td>${car.carYear}</td>
+                <td>${car.carStatus}</td>
+                <td>${car.bookingId || 'N/A'}</td> <!-- Only show booking ID if car is confirmed -->
+            `;
+            tableBody.appendChild(row);
+        });
+    }
+
+    // Initialize the table
+    renderTable();
+</script>
+
+{% endblock %}

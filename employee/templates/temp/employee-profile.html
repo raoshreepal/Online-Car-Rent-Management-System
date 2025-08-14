@@ -1,0 +1,262 @@
+{% extends 'employee/main.employee_base.html' %}
+{% block title %}Profile - User{% endblock %}
+{% block content %}
+
+<div class="container">
+    <div class="row">
+        <!-- Right Side Profile Information -->
+        <div class="col-md-8" >
+            <h2>User Profile</h2>
+
+            <!-- Profile Card -->
+            <div class="profile-card" >
+                <img src="{% static 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRLe5PABjXc17cjIMOibECLM7ppDwMmiDg6Dw&s'%}" alt="Profile Image" class="profile-image">
+                <div class="profile-details" >
+                    <h5 id="username">Username: johndoe123</h5>
+                    <p id="firstName">First Name: John</p>
+                    <p id="lastName">Last Name: Doe</p>
+                    <p id="email">Email: johndoe@example.com</p>
+                    <p id="contactNumber">Contact Number: +1234567890</p>
+                    <p id="role">Role: Employee</p>
+
+                    <!-- Edit Profile Button -->
+                    <button class="btn-edit" onclick="openEditModal()">Edit Profile <i class="fas fa-edit"></i></button>
+                </div>
+            </div>
+
+            <!-- Completed Rides Table -->
+            <h3>Completed Rides</h3>
+            <table class="table table-bordered" >
+                <thead>
+                    <tr>
+                        <th>Booking ID</th>
+                        <th>Reading</th>
+                        <th>Reading Message</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Random Sample Data (You can dynamically generate this with your back-end) -->
+                    <tr>
+                        <td>B1001</td>
+                        <td>100 miles</td>
+                        <td>Great ride! Smooth and fast.</td>
+                    </tr>
+                    <tr>
+                        <td>B1002</td>
+                        <td>50 miles</td>
+                        <td>Good ride, but the driver was a bit slow.</td>
+                    </tr>
+                    <tr>
+                        <td>B1003</td>
+                        <td>80 miles</td>
+                        <td>Excellent service. Will ride again!</td>
+                    </tr>
+                    <!-- Add more rows as needed -->
+                </tbody>
+            </table>
+
+            <!-- Car Services Table -->
+            <h3>Car Services (Pending)</h3>
+            <table class="table table-bordered" >
+                <thead>
+                    <tr>
+                        <th>Service ID</th>
+                        <th>Car Status</th>
+                        <th>Code</th>
+                        <th>Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Random Sample Data for Car Services -->
+                    <tr>
+                        <td>S12345</td>
+                        <td>Pending</td>
+                        <td>C001</td>
+                        <td>Oil change required for the engine.</td>
+                    </tr>
+                    <tr>
+                        <td>S12346</td>
+                        <td>Pending</td>
+                        <td>C002</td>
+                        <td>Brake pads need replacement.</td>
+                    </tr>
+                    <tr>
+                        <td>S12347</td>
+                        <td>Pending</td>
+                        <td>C003</td>
+                        <td>Tyre pressure is low, needs refilling.</td>
+                    </tr>
+                    <!-- Add more rows as needed -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Modal for Editing Profile -->
+<div class="modal" id="editProfileModal">
+    <div class="modal-content">
+        <span class="close-btn" onclick="closeEditModal()">&times;</span>
+        <h3>Edit Profile</h3>
+        <form id="editProfileForm">
+            <label for="editUsername">Username</label>
+            <input type="text" id="editUsername" value="johndoe123" required>
+
+            <label for="editFirstName">First Name</label>
+            <input type="text" id="editFirstName" value="John" required>
+
+            <label for="editLastName">Last Name</label>
+            <input type="text" id="editLastName" value="Doe" required>
+
+            <label for="editEmail">Email</label>
+            <input type="email" id="editEmail" value="johndoe@example.com" required>
+
+            <label for="editContactNumber">Contact Number</label>
+            <input type="text" id="editContactNumber" value="+1234567890" required>
+
+            <label for="editRole">Role</label>
+            <input type="text" id="editRole" value="Employee" readonly>
+
+            <button type="button" class="btn-update" onclick="updateProfile()">Update Profile</button>
+        </form>
+    </div>
+</div>
+
+<!-- Custom Styles -->
+<style>
+    .container {
+        margin: 20px;
+    }
+
+    .profile-card {
+        width: 100%;
+        border: 1px solid #ddd;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+
+    .profile-image {
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+    }
+
+    .ride-image {
+        width: 50px;
+        height: 50px;
+        border-radius: 5px;
+    }
+
+    .profile-details {
+        margin-top: 20px;
+    }
+
+    .btn-edit {
+        background-color: #4CAF50;
+        color: white;
+        padding: 10px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        margin-top: 15px;
+    }
+
+    .btn-edit i {
+        margin-left: 5px;
+    }
+
+    .modal {
+        display: none;
+        position: fixed;
+        z-index: 1;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        overflow: auto;
+        background-color: rgb(0, 0, 0);
+        background-color: rgba(0, 0, 0, 0.4);
+    }
+
+    .modal-content {
+        background-color: white;
+        margin: 15% auto;
+        padding: 20px;
+        border: 1px solid #888;
+        width: 50%;
+        border-radius: 8px;
+    }
+
+    .close-btn {
+        color: #aaa;
+        float: right;
+        font-size: 28px;
+        font-weight: bold;
+    }
+
+    .close-btn:hover,
+    .close-btn:focus {
+        color: black;
+        text-decoration: none;
+        cursor: pointer;
+    }
+
+    .modal input {
+        width: 100%;
+        padding: 10px;
+        margin: 10px 0;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+    }
+
+    .modal button {
+        background-color: #4CAF50;
+        color: white;
+        padding: 10px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        width: 100%;
+    }
+
+    .modal button:hover {
+        background-color: #45a049;
+    }
+</style>
+
+<!-- Font Awesome for Icons -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css" />
+
+<script>
+    // Open Edit Profile Modal
+    function openEditModal() {
+        document.getElementById('editProfileModal').style.display = "block";
+    }
+
+    // Close Edit Profile Modal
+    function closeEditModal() {
+        document.getElementById('editProfileModal').style.display = "none";
+    }
+
+    // Function to update the profile
+    function updateProfile() {
+        const username = document.getElementById('editUsername').value;
+        const firstName = document.getElementById('editFirstName').value;
+        const lastName = document.getElementById('editLastName').value;
+        const email = document.getElementById('editEmail').value;
+        const contactNumber = document.getElementById('editContactNumber').value;
+
+        // Update profile fields on the main page
+        document.getElementById('username').textContent = 'Username: ' + username;
+        document.getElementById('firstName').textContent = 'First Name: ' + firstName;
+        document.getElementById('lastName').textContent = 'Last Name: ' + lastName;
+        document.getElementById('email').textContent = 'Email: ' + email;
+        document.getElementById('contactNumber').textContent = 'Contact Number: ' + contactNumber;
+
+        // Close the modal after update
+        closeEditModal();
+    }
+</script>
+
+{% endblock %}

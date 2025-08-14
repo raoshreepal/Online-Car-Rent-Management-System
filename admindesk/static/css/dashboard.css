@@ -1,0 +1,638 @@
+/*  import google fonts */
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap");
+
+* {
+  margin: 0;
+  padding: 0;
+  border: none;
+  outline: none;
+  text-decoration: none;
+  box-sizing: border-box;
+  font-family: "Poppins", sans-serif;
+}
+
+body {
+  background: rgb(219, 219, 219);
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 60px;
+  padding: 20px;
+  background: #fff;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+}
+
+.logo a {
+  color: #000;
+  font-size: 18px;
+  font-weight: 600;
+  margin: 2rem 8rem 2rem 2rem;
+}
+
+.search_box {
+  display: flex;
+  align-items: center;
+}
+
+.search_box input {
+  padding: 9px;
+  width: 250px;
+  background: rgb(228, 228, 228);
+  border-top-left-radius: 5px;
+  border-bottom-left-radius: 5px;
+}
+
+.search_box i {
+  padding: 0.66rem;
+  cursor: pointer;
+  color: #fff;
+  background: #000;
+  border-top-right-radius: 5px;
+  border-bottom-right-radius: 5px;
+}
+
+.header-icons {
+  display: flex;
+  align-items: center;
+}
+
+.header-icons i {
+  margin-right: 2rem;
+  cursor: pointer;
+}
+
+.header-icons .account {
+  width: 130px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.header-icons .account img {
+  width: 35px;
+  height: 35px;
+  cursor: pointer;
+  border-radius: 50%;
+}
+
+.container {
+  margin-top: 10px;
+  display: flex;
+  justify-content: flex-start;
+}
+
+/* Side menubar section */
+nav {
+  background: #fff;
+}
+
+.side_navbar {
+  padding: 1px;
+  display: flex;
+  flex-direction: column;
+}
+
+.side_navbar span {
+  color: gray;
+  margin: 1rem ;
+  font-size: 12px;
+}
+
+.side_navbar a {
+  width: 100%;
+  padding: 0.8rem 3rem;
+  font-weight: 500;
+  font-size: 15px;
+  color: rgb(100, 100, 100);
+}
+
+.links {
+  margin-top: 5rem;
+  display: flex;
+  flex-direction: column;
+}
+
+.links a {
+  font-size: 13px;
+}
+
+.side_navbar a:hover {
+  background: rgb(235, 235, 235);
+}
+
+.side_navbar .active {
+  border-left: 2px solid rgb(100, 100, 100);
+}
+
+/* Main Body Section */
+.main-body {
+  padding: 1rem;
+}
+
+
+
+
+
+
+
+.row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 1rem 0;
+}
+
+
+
+/* Sidebar Section */
+
+
+
+
+.balance .info i {
+  margin-right: 2px;
+}
+/* Default hidden submenu */
+.submenu {
+  display: none;  /* Hide the submenu by default */
+  list-style-type: none;
+}
+
+/* Active submenu should be visible */
+.submenu.open {
+  display: block;  /* Show submenu when it has the 'open' class */
+}
+
+/* Style for menu items */
+.side_navbar > a {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+  text-decoration: none;
+}
+
+/* Style for the submenu toggle icon */
+.submenu-toggle-icon {
+  margin-left: 10px;
+  font-size: 14px;
+  color: #333;
+}
+
+/* Submenu item styling */
+.submenu li {
+  padding: 8px 0;
+}
+
+.submenu li a {
+  color: #333;
+  text-decoration: none;
+}
+
+.submenu li a:hover {
+  color: #007bff;
+}
+
+/* Highlight parent menu item when submenu is open */
+.side_navbar > a.active {
+  background: rgb(235, 235, 235);
+}
+
+/* dashboard section 1 */
+/* Row to arrange cards */
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  margin-bottom: 20px;
+}
+
+/* Individual card container */
+.card {
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  width: 100%;
+  transition: transform 0.3s ease;
+}
+
+/* Hover effect on cards */
+.card:hover {
+  transform: scale(1.05);
+}
+
+/* Card body */
+.card-body {
+  padding: 20px;
+}
+
+/* Card title (stats label) */
+.card-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 10px;
+}
+
+/* Card text (stats value) */
+.card-text {
+  font-size: 24px;
+  font-weight: 500;
+  color: #555;
+}
+
+/* Column layout for cards */
+.col-md-3 {
+  width: 23%;
+  min-width: 250px;
+  margin-bottom: 20px;
+}
+
+/* Mobile responsive */
+@media (max-width: 768px) {
+  .col-md-3 {
+    width: 48%;
+  }
+}
+
+@media (max-width: 480px) {
+  .col-md-3 {
+    width: 100%;
+  }
+}
+/* dashboard available car table*/
+/*  import google fonts */
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap");
+
+* {
+  margin: 0;
+  padding: 0;
+  border: none;
+  outline: none;
+  text-decoration: none;
+  box-sizing: border-box;
+  font-family: "Poppins", sans-serif;
+}
+
+body {
+  background: rgb(219, 219, 219);
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 60px;
+  padding: 20px;
+  background: #fff;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+}
+
+.logo a {
+  color: #000;
+  font-size: 18px;
+  font-weight: 600;
+  margin: 2rem 8rem 2rem 2rem;
+}
+
+.search_box {
+  display: flex;
+  align-items: center;
+}
+
+.search_box input {
+  padding: 9px;
+  width: 250px;
+  background: rgb(228, 228, 228);
+  border-top-left-radius: 5px;
+  border-bottom-left-radius: 5px;
+}
+
+.search_box i {
+  padding: 0.66rem;
+  cursor: pointer;
+  color: #fff;
+  background: #000;
+  border-top-right-radius: 5px;
+  border-bottom-right-radius: 5px;
+}
+
+.header-icons {
+  display: flex;
+  align-items: center;
+}
+
+.header-icons i {
+  margin-right: 2rem;
+  cursor: pointer;
+}
+
+.header-icons .account {
+  width: 130px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.header-icons .account img {
+  width: 35px;
+  height: 35px;
+  cursor: pointer;
+  border-radius: 50%;
+}
+
+.container {
+  margin-top: 10px;
+  display: flex;
+  justify-content: flex-start;
+}
+
+/* Side menubar section */
+nav {
+  background: #fff;
+}
+
+.side_navbar {
+  padding: 1px;
+  display: flex;
+  flex-direction: column;
+}
+
+.side_navbar span {
+  color: gray;
+  margin: 1rem ;
+  font-size: 12px;
+}
+
+.side_navbar a {
+  width: 100%;
+  padding: 0.8rem 3rem;
+  font-weight: 500;
+  font-size: 15px;
+  color: rgb(100, 100, 100);
+}
+
+.links {
+  margin-top: 5rem;
+  display: flex;
+  flex-direction: column;
+}
+
+.links a {
+  font-size: 13px;
+}
+
+.side_navbar a:hover {
+  background: rgb(235, 235, 235);
+}
+
+.side_navbar .active {
+  border-left: 2px solid rgb(100, 100, 100);
+}
+
+/* Main Body Section */
+.main-body {
+  padding: 1rem;
+}
+
+
+
+
+
+
+
+.row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 1rem 0;
+}
+
+
+
+/* Sidebar Section */
+
+
+
+
+.balance .info i {
+  margin-right: 2px;
+}
+/* Default hidden submenu */
+.submenu {
+  display: none;  /* Hide the submenu by default */
+  list-style-type: none;
+}
+
+/* Active submenu should be visible */
+.submenu.open {
+  display: block;  /* Show submenu when it has the 'open' class */
+}
+
+/* Style for menu items */
+.side_navbar > a {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+  text-decoration: none;
+}
+
+/* Style for the submenu toggle icon */
+.submenu-toggle-icon {
+  margin-left: 10px;
+  font-size: 14px;
+  color: #333;
+}
+
+/* Submenu item styling */
+.submenu li {
+  padding: 8px 0;
+}
+
+.submenu li a {
+  color: #333;
+  text-decoration: none;
+}
+
+.submenu li a:hover {
+  color: #007bff;
+}
+
+/* Highlight parent menu item when submenu is open */
+.side_navbar > a.active {
+  background: rgb(235, 235, 235);
+}
+/* dashboard section 1 */
+/* Row to arrange cards */
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  margin-bottom: 20px;
+}
+
+/* Individual card container */
+.card {
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  width: 100%;
+  transition: transform 0.3s ease;
+}
+
+/* Hover effect on cards */
+.card:hover {
+  transform: scale(1.05);
+}
+
+/* Card body */
+.card-body {
+  padding: 16px;
+}
+
+/* Card title (stats label) */
+.card-title {
+  font-size: 16px; /* Reduced font size */
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 8px;
+}
+
+/* Card text (stats value) */
+.card-text {
+  font-size: 20px; /* Reduced font size */
+  font-weight: 500;
+  color: #555;
+}
+
+/* Column layout for cards */
+.col-md-3 {
+  width: 23%;
+  min-width: 230px;
+  margin-bottom: 16px;
+}
+
+/* Mobile responsive */
+@media (max-width: 768px) {
+  .col-md-3 {
+    width: 48%;
+  }
+}
+
+@media (max-width: 480px) {
+  .col-md-3 {
+    width: 100%;
+  }
+}
+
+/* dashboard available car table */
+/* Styling for the table */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 16px; /* Reduced margin */
+}
+
+table th, table td {
+  padding: 8px; /* Reduced padding */
+  text-align: center;
+  border: 1px solid #ddd;
+}
+
+table th {
+  background-color: #f8f8f8;
+  font-weight: 600;
+  color: #333;
+  font-size: 14px; /* Reduced font size */
+}
+
+table td {
+  font-size: 14px; /* Reduced font size */
+}
+
+table tr:nth-child(even) {
+  background-color: #f9f9f9;
+}
+
+table tr:hover {
+  background-color: #f1f1f1;
+}
+
+.card {
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  padding: 16px; /* Reduced padding */
+  margin-bottom: 20px;
+}
+
+.card-body {
+  padding: 16px; /* Reduced padding */
+}
+
+.card-title {
+  font-size: 20px; /* Reduced font size */
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 12px;
+}
+
+@media (max-width: 768px) {
+  table th, table td {
+    padding: 6px; /* Reduced padding */
+    font-size: 12px; /* Smaller font size */
+  }
+}
+
+@media (max-width: 480px) {
+  table th, table td {
+    padding: 5px; /* Reduced padding */
+    font-size: 10px;
+     /* Smaller font size */
+  }
+}
+/* car status table */
+/*create a vertical dashboard for the 
+1 dashboard
+2 profile 
+2 car details
+	add new car 
+	available
+        car status
+3 details services 
+	set services car details
+	services status 
+4 user payment status
+5 see  feedback
+
+	create the form for add car with 
+	number 
+	make
+	model
+	year
+	image
+	status 
+
+create a from for add car services  
+	car id
+	employee id
+	services type(oil change tire rotation  and add more)
+	service_date(date time)
+	total cost 
+	and cost description
+	status(complete and pending
+*/

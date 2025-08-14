@@ -1,0 +1,73 @@
+{% extends 'employee/main.employee_base.html' %}
+{% block title %}Add Car Service{% endblock %}
+{% block content %}
+
+<div class="container">
+    <h2>Add Car Service</h2>
+
+    <!-- Service Form -->
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title">Car Service Form</h5>
+            <form action="/submit_car_service" method="POST" enctype="multipart/form-data">
+
+                <!-- Car ID -->
+                <div class="mb-3">
+                    <label for="carId" class="form-label">Car ID</label>
+                    <input type="text" class="form-control" id="carId" name="carId" required>
+                </div>
+
+                <!-- Employee ID -->
+                <div class="mb-3">
+                    <label for="employeeId" class="form-label">Employee ID</label>
+                    <input type="text" class="form-control" id="employeeId" name="employeeId" required>
+                </div>
+
+                <!-- Service Type -->
+                <div class="mb-3">
+                    <label for="serviceType" class="form-label">Service Type</label>
+                    <select class="form-select" id="serviceType" name="serviceType" required>
+                        <option value="Oil Change">Oil Change</option>
+                        <option value="Tire Rotation">Tire Rotation</option>
+                        <option value="Brake Inspection">Brake Inspection</option>
+                        <option value="Transmission Service">Transmission Service</option>
+                        <option value="Battery Check">Battery Check</option>
+                        <option value="Fluid Top-up">Fluid Top-up</option>
+                    </select>
+                </div>
+
+                <!-- Service Date -->
+                <div class="mb-3">
+                    <label for="serviceDate" class="form-label">Service Date</label>
+                    <input type="datetime-local" class="form-control" id="serviceDate" name="serviceDate" required>
+                </div>
+
+                <!-- Total Cost -->
+                <div class="mb-3">
+                    <label for="totalCost" class="form-label">Total Cost</label>
+                    <input type="number" class="form-control" id="totalCost" name="totalCost" min="0" step="0.01" required>
+                </div>
+
+                <!-- Cost Description -->
+                <div class="mb-3">
+                    <label for="costDescription" class="form-label">Cost Description</label>
+                    <textarea class="form-control" id="costDescription" name="costDescription" rows="3" required></textarea>
+                </div>
+
+                <!-- Status -->
+                <div class="mb-3">
+                    <label for="status" class="form-label">Status</label>
+                    <select class="form-select" id="status" name="status" required>
+                        <option value="Complete">Complete</option>
+                        <option value="Pending">Pending</option>
+                    </select>
+                </div>
+
+                <!-- Submit Button -->
+                <button type="submit" class="btn btn-primary">Submit Service</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

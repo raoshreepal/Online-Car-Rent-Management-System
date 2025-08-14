@@ -1,0 +1,173 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block head %}
+<style>
+	.filter-section h4 {
+		margin-bottom: 15px;
+	}
+	
+	.btn-group .btn {
+		margin: 0 5px;
+	}
+	
+	.btn-group .btn:hover, .btn-group .btn:focus, .btn-group .btn:checked {
+		background-color: #007bff;
+		color: white;
+	}
+	
+</style>
+{% endblock %}% 
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    
+    <link href="https://fonts.googleapis.com/css?family=Poppins:200,300,400,500,600,700,800&display=swap" rel="stylesheet">
+ 
+	{% block content %}
+	<section class="hero-wrap hero-wrap-2 js-fullheight" style="background-image: url('{% static 'images/car-booking.jpeg'%}');" data-stellar-background-ratio="0.5">
+      <div class="overlay"></div>
+      <div class="container">
+        <div class="row no-gutters slider-text js-fullheight align-items-end justify-content-start">
+          <div class="col-md-9 ftco-animate pb-5">
+          	<p class="breadcrumbs"><span class="mr-2"><a href="{% url 'home'%}">Home <i class="ion-ios-arrow-forward"></i></a></span> <span>Pricing <i class="ion-ios-arrow-forward"></i></span></p>
+            <h1 class="mb-3 bread">Pricing</h1>
+          </div>
+        </div>
+      </div>
+    </section>
+
+   <section class="ftco-section ftco-cart">
+    <div class="container">
+        <div class="row">
+			
+            <div class="col-md-12 mb-3">
+                <div class="filter-section text-center">
+                    <h4>Filter by Seats</h4>
+                    <div class="btn-group" role="group" aria-label="Seat Filter">
+                        <input type="radio" class="btn-check" name="seatFilter" value="4" id="seat4" autocomplete="off">
+                        <label class="btn btn-outline-primary" for="seat4">4 Seats</label>
+    
+                        <input type="radio" class="btn-check" name="seatFilter" value="5" id="seat5" autocomplete="off">
+                        <label class="btn btn-outline-primary" for="seat5">5 Seats</label>
+    
+                        <input type="radio" class="btn-check" name="seatFilter" value="7" id="seat6" autocomplete="off">
+                        <label class="btn btn-outline-primary" for="seat6">7 Seats</label>
+                        <hr>
+                    </div>
+                </div>
+            </div>
+            
+		
+            <!-- Show all available cars -->
+            <div class="col-md-12 ftco-animate">
+                <div class="car-list">
+                    <table class="table">
+                        <thead class="thead-primary">
+                            <tr class="text-center">
+                                <th>&nbsp;</th>
+                                <th>&nbsp;</th>
+                                <th class="bg-primary heading">Per Hour Rate</th>
+                                <th class="bg-dark heading">Per Day Rate</th>
+                                <th class="bg-black heading">Per Month Rate </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for car in car_records %}
+                            <tr class="car-row" data-seats="{{ car.seats }}">
+                                <td class="car-image">
+                                    <div class="img" style="background-image:url('{{ car.image }}');"></div>
+                                </td>
+                                <td class="product-name">
+                                    <h3>{{ car.model }}</h3>
+                                    <span>Type - {{ car.type }} sheet - {{ car.seats }}</span>
+                                    <p class="mb-0 rated">
+                                        <span>rated:</span>
+                                        {% for i in "12345"|slice:":5" %}
+                                        <span class="ion-ios-star{% if i < car.rating %}{% endif %}"></span>
+                                        {% endfor %}
+										<br>
+										<a href="{% url 'car-single' car.id%}">More Details</a>
+                                        <button
+                                        class="btn py-2 mr-1 save-car-btn"
+                                        data-car-id="{{ car.id }}"
+                                        data-save-url="{% url 'save_car' car_id=car.id %}"
+                                        data-is-saved="{% if car.is_saved %}true{% else %}false{% endif %}">
+									{% if car.is_saved %}
+									<!-- Display saved icon -->
+									<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-bookmark-check-fill" viewBox="0 0 16 16">
+										<path fill-rule="evenodd" d="M2 15.5V2a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v13.5a.5.5 0 0 1-.74.439L8 13.069l-5.26 2.87A.5.5 0 0 1 2 15.5m8.854-9.646a.5.5 0 0 0-.708-.708L7.5 7.793 6.354 6.646a.5.5 0 1 0-.708.708l1.5 1.5a.5.5 0 0 0 .708 0z"/>
+									</svg>
+									{% else %}
+									<!-- Display unsaved icon -->
+									<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-bookmark" viewBox="0 0 16 16">
+										<path d="M2 2a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v13.5a.5.5 0 0 1-.777.416L8 13.101l-5.223 2.815A.5.5 0 0 1 2 15.5zm2-1a1 1 0 0 0-1 1v12.566l4.723-2.482a.5.5 0 0 1 .554 0L13 14.566V2a1 1 0 0 0-1-1z"/>
+									</svg>
+									{% endif %}
+								</button>
+                                    </p>
+                                </td>
+                                <td class="price">
+                                    <p class="btn-custom"><a href="{% url 'car_booking' car.id %}">Book Now</a></p>
+                                    <div class="price-rate">
+                                        <h3>
+                                            <span class="num"><small class="currency">$</small> {{ car.price_per_hour }}</span>
+                                            <span class="per">{{ car.price_per_hour }}/per hour</span>
+                                        </h3>
+                                        <span class="subheading">$3/hour fuel surcharges</span>
+                                    </div>
+                                </td>
+                                <td class="price">
+                                    <p class="btn-custom"><a href="{% url 'car_booking' car.id %}">Book Now</a></p>
+                                    <div class="price-rate">
+                                        <h3>
+                                            <span class="num"><small class="currency">$</small> {{ car.price_per_day }}</span>
+                                            <span class="per">per day</span>
+                                        </h3>
+                                        <span>{{ car.discount }} % Discount Per day</span><br>
+                                        <span class="subheading">$3/hour fuel surcharges</span>
+                                    </div>
+                                </td>
+                         <td class="price">
+                                    <p class="btn-custom"><a href="{% url 'car_booking' car.id %}">Book Now</a></p>
+
+                                    <div class="price-rate">
+                                        <h3>
+                                            <span class="num"><small class="currency">$</small> {{ car.price_per_month }}</span>
+                                            <span class="per">per month</span>
+                                        </h3>
+                                        <span>{{ car.discount }} % Discount Per month</span><br>
+                                        <span class="subheading">$3/hour fuel surcharges</span>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% endblock %}
+{% block extra_scripts %}
+<script src="{% static 'js/save_car.js' %}"></script>
+
+<script>
+	$(document).ready(function() {
+		$('input[name="seatFilter"]').on('change', function() {
+			var selectedSeats = $(this).val();
+			
+			// Show only the rows that match the selected number of seats
+			$('.car-row').each(function() {
+				var carSeats = $(this).data('seats');
+				if (carSeats == selectedSeats) {
+					$(this).show();
+				} else {
+					$(this).hide();
+				}
+			});
+		});
+	});
+	
+</script>
+{% endblock %}

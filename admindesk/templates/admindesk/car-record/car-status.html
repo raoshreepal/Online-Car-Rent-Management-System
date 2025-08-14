@@ -1,0 +1,138 @@
+{% extends "admindesk/admin-base.html" %}
+{% load static %}
+{% block title %}Car Management{% endblock%}
+{% block content %}
+<div class="container mt-5">
+  <div class="page-inner">
+    <div class="page-header">
+      <h3 class="fw-bold mb-3">Car Management</h3>
+      <ul class="breadcrumbs mb-3">
+        <li class="nav-home">
+          <a href="#">
+            <img src="{% static 'img/dashboard.png' %}" alt="Home Icon" width="30" height="30">
+          </a>
+        </li>
+        <li class="separator">
+          <i class="icon-arrow-right"></i>
+        </li>
+        <li class="nav-item">
+          <a href="#">Cars</a>
+        </li>
+        <li class="separator">
+          <i class="icon-arrow-right"></i>
+        </li>
+        <li class="nav-item">
+          <a href="#">Car Status</a>
+        </li>
+      </ul>
+    </div>
+
+    <!-- Car Status Progress Section -->
+    <div class="card">
+      <div class="card-body">
+        <h4 class="card-title">Car Status Progress</h4>
+
+        <!-- Progress Bar -->
+        <div class="progress">
+          <div class="progress-bar" id="statusProgress" role="progressbar" style="width: 50%" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100">50%</div>
+        </div>
+
+        <p class="mt-2">Total Cars: <span id="totalCars">10</span> | On Ride: <span id="onRide">5</span> | Under Service: <span id="underService">3</span> | Cancelled: <span id="cancelled">2</span></p>
+      </div>
+    </div>
+
+    <!-- Car Status Overview Section -->
+
+    <!-- Car Status Table -->
+    <div class="card">
+      <div class="card-body">
+        <h4 class="card-title mt-5">Confirmed Car Bookings</h4>
+
+        <!-- Table displaying booking details -->
+        <table class="table table-striped mt-3" id="carBookingTable">
+          <thead>
+            <tr>
+              <th>Booking ID</th>
+              <th>Car Model</th>
+              <th>Pickup Location</th>
+              <th>Drop Location</th>
+              <th>Date & Time</th>
+              <th>Payment Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- Example of confirmed car bookings data -->
+            <tr>
+              <td>#BK001</td>
+              <td>Toyota Corolla</td>
+              <td>New York</td>
+              <td>Los Angeles</td>
+              <td>2025-01-15 10:00 AM</td>
+              <td><span class="badge bg-success">Confirmed</span></td>
+            </tr>
+            <tr>
+              <td>#BK002</td>
+              <td>Honda Civic</td>
+              <td>Chicago</td>
+              <td>Miami</td>
+              <td>2025-01-18 2:30 PM</td>
+              <td><span class="badge bg-warning">Pending</span></td>
+            </tr>
+            <tr>
+              <td>#BK003</td>
+              <td>BMW X5</td>
+              <td>Houston</td>
+              <td>San Francisco</td>
+              <td>2025-01-20 9:00 AM</td>
+              <td><span class="badge bg-success">Confirmed</span></td>
+            </tr>
+            <tr>
+              <td>#BK004</td>
+              <td>Audi A4</td>
+              <td>Miami</td>
+              <td>New York</td>
+              <td>2025-01-25 4:00 PM</td>
+              <td><span class="badge bg-warning">Pending</span></td>
+            </tr>
+            <tr>
+              <td>#BK005</td>
+              <td>Ford Mustang</td>
+              <td>Los Angeles</td>
+              <td>Dallas</td>
+              <td>2025-01-28 11:30 AM</td>
+              <td><span class="badge bg-success">Confirmed</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+// Simulate car data
+var totalCars = 10;
+var onRideCars = 5;
+var underServiceCars = 3;
+var cancelledCars = 2;
+
+// Calculate percentage for on ride cars
+var availabilityPercentage = ((onRideCars + underServiceCars) / totalCars) * 100;
+
+// Update progress bar for car status
+var progressBar = document.getElementById("statusProgress");
+progressBar.style.width = availabilityPercentage + "%";
+progressBar.setAttribute("aria-valuenow", availabilityPercentage);
+progressBar.textContent = Math.round(availabilityPercentage) + "%";
+  
+// Update car status counts
+document.getElementById("totalCars").textContent = totalCars;
+document.getElementById("onRide").textContent = onRideCars;
+document.getElementById("underService").textContent = underServiceCars;
+document.getElementById("cancelled").textContent = cancelledCars;
+</script>
+{% endblock %}

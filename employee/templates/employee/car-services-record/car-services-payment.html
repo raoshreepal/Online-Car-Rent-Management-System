@@ -1,0 +1,84 @@
+{% extends "employee/employee-base.html" %}
+{% load static %}
+{% block title %}Car Services Payment{% endblock %}
+{% block content %}
+<div class="container mt-5">
+    <div class="page-inner">
+        <div class="page-header">
+            <h3 class="fw-bold mb-3">Car Services Payment</h3>
+            <ul class="breadcrumbs mb-3">
+                <li class="nav-home">
+                    <a href="#">
+                        <img src="{% static 'img/dashboard.png' %}" alt="Home Icon" width="30" height="30">
+                    </a>
+                </li>
+                <li class="separator">
+                    <i class="icon-arrow-right"></i>
+                </li>
+                <li class="nav-item">
+                    <a href="#">Car Services Record</a>
+                </li>
+                <li class="separator">
+                    <i class="icon-arrow-right"></i>
+                </li>
+                <li class="nav-item">
+                    <a href="#">Car Services Payment</a>
+                </li>
+            </ul>
+        </div>
+
+        <!-- Payment Overview Section -->
+        <div class="row">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Total Services Payment</h5>
+                        <p class="card-text"><strong>₹{{total_services_payment}}</strong></p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Pending Services Payment</h5>
+                        <p class="card-text"><strong>₹{{pending_payment}}</strong></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Payment History Table -->
+        <div class="card mt-5">
+            <div class="card-body">
+                <h4 class="card-title mb-3">Services Payment History</h4>
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Car ID</th>
+                            <th>Service ID</th>
+                            <th>Service Type</th>
+                            <th>Service Date</th>
+                            <th>Cost</th>
+                            <th>Payment Status</th>
+                            <th>Payment Date</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for scar in all_cars%}
+                        <tr>
+                            <td>{{scar.car.id}}</td>
+                            <td>{{scar.id}}</td>
+                            <td>{{scar.service_type}}</td>
+                            <td>{{scar.service_date}}</td>
+                            <td>₹{{scar.cost}}</td>
+                            <td>{{scar.status}}</td>
+                            <td>{{scar.complete_date}}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

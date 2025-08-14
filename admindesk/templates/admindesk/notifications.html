@@ -1,0 +1,117 @@
+{% extends "admindesk/admin-base.html" %}
+{% load static %}
+{% block content %}
+<div class="container mt-5">
+  <div class="page-inner">
+
+  <h2>Notifications</h2>
+  <button class="btn btn-primary mb-3" id="sendNotificationButton">Send Notification</button>
+  <div id="notificationList">
+    <h4>Notification List</h4>
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th>Emp ID</th>
+          <th>Image</th>
+          <th>Message</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody id="notificationTableBody">
+        <!-- Temporary Notifications -->
+        <tr>
+          <td>1</td>
+          <td><img src="https://via.placeholder.com/50" class="img-thumbnail" alt="Emp Image" /></td>
+          <td>Welcome to the team!</td>
+          <td>
+            <i class="fas fa-paper-plane text-primary" style="cursor: pointer;" title="Send"></i>
+            <i class="fas fa-envelope text-success ms-3" style="cursor: pointer;" title="Receive"></i>
+          </td>
+        </tr>
+        <tr>
+          <td>2</td>
+          <td><img src="https://via.placeholder.com/50" class="img-thumbnail" alt="Emp Image" /></td>
+          <td>Your meeting is scheduled at 3 PM.</td>
+          <td>
+            <i class="fas fa-paper-plane text-primary" style="cursor: pointer;" title="Send"></i>
+            <i class="fas fa-envelope text-success ms-3" style="cursor: pointer;" title="Receive"></i>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Send Notification Modal -->
+  <div class="modal fade" id="sendNotificationModal" tabindex="-1" aria-labelledby="sendNotificationModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="sendNotificationModalLabel">Send Notification</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form id="sendNotificationForm">
+            <div class="mb-3">
+              <label for="empIdSelect" class="form-label">Select Employee ID</label>
+              <select id="empIdSelect" class="form-control" required>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+              </select>
+            </div>
+            <div class="mb-3">
+              <label for="notificationSubject" class="form-label">Subject</label>
+              <input type="text" id="notificationSubject" class="form-control" required />
+            </div>
+            <div class="mb-3">
+              <label for="notificationMessage" class="form-label">Message</label>
+              <textarea id="notificationMessage" class="form-control" rows="3" required></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary">Send Notification</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div> 
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+$(document).ready(function () {
+  // Open the Send Notification Modal
+  $("#sendNotificationButton").click(function () {
+    $("#sendNotificationModal").modal("show");
+  });
+
+  // Handle the Notification Form Submission
+  $("#sendNotificationForm").submit(function (e) {
+    e.preventDefault();
+
+    const empId = $("#empIdSelect").val();
+    const subject = $("#notificationSubject").val();
+    const message = $("#notificationMessage").val();
+
+    // Add the notification to the list
+    $("#notificationTableBody").append(`
+      <tr>
+        <td>${empId}</td>
+        <td><img src="https://via.placeholder.com/50" class="img-thumbnail" alt="Emp Image" /></td>
+        <td>${subject}: ${message}</td>
+        <td>
+          <i class="fas fa-paper-plane text-primary" style="cursor: pointer;" title="Send"></i>
+          <i class="fas fa-envelope text-success ms-3" style="cursor: pointer;" title="Receive"></i>
+        </td>
+      </tr>
+    `);
+
+    // Close the modal
+    $("#sendNotificationModal").modal("hide");
+
+    // Reset the form
+    $("#sendNotificationForm")[0].reset();
+  });
+});
+</script>
+{% endblock %}

@@ -1,0 +1,218 @@
+{% extends "admindesk/admin-base.html" %}
+{% load static %}
+{% block title %}admin-profile{% endblock %}
+{% block content %}
+<div class="container">
+    <div class="page-inner">
+        <div class="page-header">
+            <h3 class="fw-bold mb-3">Admin Profile</h3>
+            <ul class="breadcrumbs mb-3">
+                <li class="nav-home">
+                    <a href="#">
+                        <i class="icon-home"></i>
+                    </a>
+                </li>
+                <li class="separator">
+                    <i class="icon-arrow-right"></i>
+                </li>
+                <li class="nav-item">
+                    <a href="#">Dashboard</a>
+                </li>
+                <li class="separator">
+                    <i class="icon-arrow-right"></i>
+                </li>
+                <li class="nav-item">
+                    <a href="#">Profile</a>
+                </li>
+            </ul>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h4 class="card-title">welcome    {{user.username}}</h4>
+                        <button id="editProfileBtn" class="btn btn-primary float-end">Edit Profile</button>
+                    </div>
+                    <div class="card-body">
+                        <div id="profileView" class="content-section">
+                            <div class="row mt-4">
+								<div class="col-md-4 text-center">
+									<div class="avatar avatar-xxl position-relative">
+										<img src="{% if user.image %} {{user.image.url}}{% endif %}"
+                                        alt="Admin Photo" class="avatar-img rounded-circle mb-3" id="profileImagePreview">
+										<button id="updateImageBtn" class="btn btn-sm btn-primary position-absolute top-0 start-100 translate-middle p-0 border border-light rounded-circle">
+											<i class="fas fa-camera"></i> 
+										</button>
+									</div>
+									<h5 class="fw-bold">{{ user.username }}</h5>
+									
+									<!-- Hidden form for updating the image -->
+									<form id="updateImageForm" class="mt-3 d-none" enctype="multipart/form-data">
+										{% csrf_token %}
+										<input type="file" id="newImageInput" name="image" class="form-control mb-2" accept="image/*">
+										<button type="button" id="confirmImageBtn" class="btn btn-success btn-sm">Confirm</button>
+										<button type="button" id="cancelImageBtn" class="btn btn-danger btn-sm">Cancel</button>
+									</form>
+								</div>
+                                <div class="col-md-8">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <p><strong>First Name:</strong> {{user.first_name}}</p>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <p><strong>Last Name:</strong> {{user.last_name}}</p>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <p><strong>Email:</strong> {{user.email}}</p>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <p><strong>Contact:</strong> {{user.phone_number}}</p>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <p><strong>Role:</strong> {{user.role}}</p>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <p><strong>Gender:</strong> {{user.gender}}</p>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <p><strong>Joined On:</strong> {{user.date_joined|date:"F j, Y"}}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div id="updateProfileView" class="content-section" style="display:none;">
+							<form id="updateProfileForm" class="mt-4" method="post" enctype="multipart/form-data">
+								{% csrf_token %}
+								<div class="mb-3">
+									<label for="username" class="form-label">Username</label>
+									<input type="text" class="form-control" id="username" name="username" placeholder="Enter username" value="{{ user.username }}">
+								</div>
+								<div class="mb-3">
+									<label for="fname" class="form-label">First Name</label>
+									<input type="text" class="form-control" id="fname" name="first_name" placeholder="Enter first name" value="{{ user.first_name }}">
+								</div>
+								<div class="mb-3">
+									<label for="lname" class="form-label">Last Name</label>
+									<input type="text" class="form-control" id="lname" name="last_name" placeholder="Enter last name" value="{{ user.last_name }}">
+								</div>
+								<div class="mb-3">
+									<label for="email" class="form-label">Email</label>
+									<input type="email" class="form-control" id="email" name="email" placeholder="Enter email" value="{{ user.email }}">
+								</div>
+								<div class="mb-3">
+									<label for="phone_number" class="form-label">Contact Number</label>
+									<input type="tel" class="form-control" id="phone_number" name="phone_number" placeholder="Enter contact number" value="{{ user.phone_number }}">
+								</div>
+								<div class="mb-3">
+									<label for="gender" class="form-label">Gender</label>
+									<select class="form-select" id="gender" name="gender">
+										<option value="male" {% if user.gender == 'male' %}selected{% endif %}>Male</option>
+										<option value="female" {% if user.gender == 'female' %}selected{% endif %}>Female</option>
+										<option value="other" {% if user.gender == 'other' %}selected{% endif %}>Other</option>
+									</select>
+								</div>
+								<button type="submit" class="btn btn-primary">Update Profile</button>
+								<button type="button" id="cancelUpdateBtn" class="btn btn-secondary">Cancel</button>
+							</form>
+							
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block extra_scripts %}
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(document).ready(function() {
+        $('#editProfileBtn').on('click', function() {
+            $('#profileView').slideUp('fast', function() {
+                $('#updateProfileView').slideDown('fast');
+            });
+        });
+
+        $('#cancelUpdateBtn').on('click', function() {
+            $('#updateProfileView').slideUp('fast', function() {
+                $('#profileView').slideDown('fast');
+            });
+        });
+
+        $('#updateProfileForm').on('submit', function(e) {
+            e.preventDefault();
+            var formData = new FormData(this);
+
+            $.ajax({
+                url: '{% url "update_admin_profile" %}', // Adjust this URL to your actual view
+                type: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                headers: {
+                    'X-CSRFToken': '{{ csrf_token }}'
+                },
+                success: function(data) {
+                    if (data.success) {
+                        $('#updateProfileView').slideUp('fast', function() {
+                            $('#profileView').slideDown('fast');
+                            location.reload(); // Refresh the page to show updated profile data
+                        });
+                    } else {
+                        alert('Error updating profile');
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error('Error:', error);
+                    alert('An error occurred. Please try again.');
+                }
+            });
+        });
+		$('#updateImageBtn').click(function() {
+			$('#updateImageForm').removeClass('d-none');
+		});
+	
+		// Preview the selected image
+		$('#newImageInput').change(function(event) {
+			const reader = new FileReader();
+			reader.onload = function(e) {
+				$('#profileImagePreview').attr('src', e.target.result);
+			};
+			reader.readAsDataURL(event.target.files[0]);
+		});
+	
+		// Confirm image update
+		$('#confirmImageBtn').click(function() {
+			const formData = new FormData($('#updateImageForm')[0]);
+			$.ajax({
+				type: 'POST',
+				url: '{% url "update_admin_image" %}', // URL to your image update view
+				data: formData,
+				processData: false,
+				contentType: false,
+				success: function(response) {
+					if (response.success) {
+						alert('Image updated successfully');
+						$('#updateImageForm').addClass('d-none');
+					} else {
+						alert('Error updating image');
+					}
+				},
+				error: function(xhr, status, error) {
+					alert('An unexpected error occurred: ' + error);
+				}
+			});
+		});
+	
+		// Cancel image update and revert to the previous image
+		$('#cancelImageBtn').click(function() {
+			$('#profileImagePreview').attr('src', '{{ user.image.url }}');
+			$('#updateImageForm').addClass('d-none');
+		});
+    });
+</script>
+{% endblock %}

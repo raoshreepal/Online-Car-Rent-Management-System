@@ -1,0 +1,376 @@
+{% extends "admindesk/admin-base.html" %}
+
+{% load static %}
+{% block head %}
+<style>
+    .male-column {
+        background-color: lightblue;
+    }
+    .female-column {
+        background-color: lightpink;
+    }
+    .other-column {
+        background-color: lightgreen;
+    }
+    .admin-column {
+        background-color: lightyellow;
+    }
+    .employee-column {
+        background-color: lightgray;
+    }
+    .customer-column {
+        background-color: lightcoral;
+    }
+    td:hover{
+      box-shadow: 5px 10px 20px ;
+      
+    }
+</style>
+{% endblock%}
+{% block content %}
+  <div class="page-inner">
+    <div class="page-header">
+      <h3 class="fw-bold mb-3">Dashboard</h3>
+      <ul class="breadcrumbs mb-3">
+        <li class="nav-home">
+          <a href="{% url 'admin_index'%}">
+            <i class="icon-home"></i>
+          </a>
+        </li>
+        <li class="separator">
+          <i class="icon-arrow-right"></i>
+        </li>
+        <li class="nav-item">
+          <a href="#">User Management</a>
+        </li>
+      </ul>
+    </div>
+    <div class="card">
+      <div class="card-body">
+        <ul class="nav nav-tabs" id="userManagementTabs" role="tablist">
+          <li class="nav-item">
+            <a class="nav-link active" id="view-users-tab" data-bs-toggle="tab" href="#view-users" role="tab" aria-controls="view-users" aria-selected="true">
+              View All Users
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" id="add-user-tab" data-bs-toggle="tab" href="#add-user" role="tab" aria-controls="add-user" aria-selected="false">
+              <i class="fas fa-user-plus"></i> Add User
+            </a>
+          </li>
+        </ul>
+      
+        
+        
+        <div class="tab-content mt-4" id="userManagementContent">
+          
+          <!-- View All Users Tab -->
+          <div class="tab-pane fade show active" id="view-users" role="tabpanel" aria-labelledby="view-users-tab">
+            <h4 class="card-title">All Users</h4>
+            <div class="mb-3">
+              <label for="filterRole" class="form-label">Filter by Role:</label>
+              <div class="d-flex">
+                  <div class="form-check me-3">
+                      <input class="form-check-input" type="radio" name="role" id="roleAll" value="all" checked>
+                      <label class="form-check-label" for="roleAll">
+                          All
+                      </label>
+                  </div>
+                  <div class="form-check me-3">
+                      <input class="form-check-input" type="radio" name="role" id="roleCustomer" value="customer">
+                      <label class="form-check-label" for="roleCustomer">
+                          Customer
+                      </label>
+                  </div>
+                  <div class="form-check me-3">
+                      <input class="form-check-input" type="radio" name="role" id="roleEmployee" value="employee">
+                      <label class="form-check-label" for="roleEmployee">
+                          Employee
+                      </label>
+                  </div>
+                  <div class="form-check">
+                      <input class="form-check-input" type="radio" name="role" id="roleAdmin" value="admin">
+                      <label class="form-check-label" for="roleAdmin">
+                          Admin
+                      </label>
+                  </div>
+              </div>
+          
+              <div style="margin-left: 500px; margin-top: -100px;">
+                <h4>Search Users</h4>
+                  <div class="input-group">
+                    <input class="form-control" type="search" id="searchusername" placeholder="Search by username">
+                    <button class="btn btn-outline-secondary" type="button" id="searchIconBtn">
+                      <i class="fas fa-search"></i>
+                    </button> 
+                  </div>
+                </div>
+              </div>
+                      <!-- Filter by Gender -->
+               <div class="mb-3">
+                    <label for="filterGender" class="form-label">Filter by Gender:</label>
+                    <div class="d-flex">
+                        <div class="form-check me-3 ">
+                            <input class="form-check-input " type="radio" name="gender" id="genderAll" value="all" checked>
+                            <label class="form-check-label" for="genderAll">
+                                All
+                            </label>
+                        </div>
+                        <div class="form-check me-3">
+                            <input class="form-check-input" type="radio" name="gender" id="genderMale" value="male">
+                            <label class="form-check-label" for="genderMale">
+                                Male
+                            </label>
+                        </div>
+                        <div class="form-check me-3">
+                            <input class="form-check-input" type="radio" name="gender" id="genderFemale" value="female">
+                            <label class="form-check-label" for="genderFemale">
+                                Female
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="gender" id="genderOther" value="other">
+                            <label class="form-check-label" for="genderOther">
+                                Other
+                            </label>
+                        </div>
+                    </div>
+                  </div>
+            <table class="table  table-striped mt-3">
+                  <thead>
+                    <tr>
+                        <th>Image</th>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Contact</th>
+                        <th>Gender</th>
+                        <th>Role</th>
+                        <th>Date Of Join</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+            
+              <tbody id="userTableBody">
+                {% for user in users %}
+                <tr data-user-id="{{ user.id }}">
+                        <td>
+                            {% if user.image %}
+                                <img src="{{ user.image.url }}" alt="{{ user.first_name }} {{ user.last_name }}" style="width: 50px; height: 50px; object-fit: cover; border-radius: 50%;">
+                            {% else %}
+                                <p>not aatech</p>
+                            {% endif %}
+                        </td>
+                        <td class="user-name">{{ user.first_name }} {{ user.last_name }}</td>
+                        <td class="user-email">{{ user.email }}</td>
+                        <td class="user-phone">{{ user.phone_number }}</td>
+                        <td class="user-gender">{{ user.gender }}</td>
+                        <td class="user-joindate">{{user.date_joined|date:"F j, Y"}}</td>
+                        <td class="user-role">{{ user.role }}</td>
+                        <td>
+                            <i class="fas fa-eye text-primary view-user" data-user-id="{{ user.id }}" style="cursor: pointer;" title="View Details"></i>
+                            <i class="fas fa-edit text-warning edit-user ms-2" data-user-id="{{ user.id }}" style="cursor: pointer;" title="Edit Details"></i>
+                            <i class="fas fa-delete text-warning edit-user ms-2" data-user-id="{{ user.id }}" style="cursor: pointer;" title="Edit Details"></i>
+
+                          </td>
+                   </tr>
+                {% endfor %}
+              </tbody>
+              
+            </table>
+            <div class="pagination-container">
+              <button class="btn btn-secondary" id="previousPage" style="display: none;">&lt; Previous</button>
+              <button class="btn btn-secondary" id="nextPage">Next &gt;</button>
+            </div>
+            </div>
+        </div>
+        
+          
+          <div class="modal fade" id="viewUserDetailsModal" tabindex="-1" aria-labelledby="viewUserDetailsModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="viewUserDetailsModalLabel">User Details</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <p><strong>Name:</strong> <span id="viewUserName"></span></p>
+                        <p><strong>Email:</strong> <span id="viewUserEmail"></span></p>
+                        <p><strong>Contact:</strong> <span id="viewUserContact"></span></p>
+                        <p><strong>Gender</strong> <span id="viewUserGender"></span></p>
+                        <p><strong>Role:</strong> <span id="viewUserRole"></span></p>
+                        <h5>Booking & Payment Details</h5>
+                        <p><strong>Total Booking</strong> <span id="totalBoking"></span></p>
+                        <p><strong>Total Payment</strong> <span id="totalPayent"></span></p>
+
+                      </div>
+                </div>
+            </div>
+        </div>
+      
+        
+         <!-- Edit User Modal -->
+<!-- Edit User Modal -->
+       
+          <!-- User Booking Details Modal -->
+          
+          
+
+          <!-- Add User Tab -->
+          <div class="tab-pane fade" id="add-user" role="tabpanel" aria-labelledby="add-user-tab">
+            <form id="user-form" method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+                  
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="first_name">First Name</label>
+                            <input type="text" class="form-control" id="first_name" name="first_name" placeholder="Enter First Name" required>
+                        </div>
+                    </div>
+        
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="last_name">Last Name</label>
+                            <input type="text" class="form-control" id="last_name" name="last_name" placeholder="Enter Last Name" required>
+                        </div>
+                    </div>
+        
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="username">Username</label>
+                            <input type="text" class="form-control" id="username" name="username" placeholder="Enter Username" required>
+                        </div>
+                    </div>
+                </div>
+        
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="email">Email</label>
+                            <input type="email" class="form-control" id="email" name="email" placeholder="Enter Email" required>
+                        </div>
+                    </div>
+        
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="phone_number">Contact Number</label>
+                            <input type="tel" class="form-control" id="phone_number" name="phone_number" placeholder="Enter Contact Number" required>
+                        </div>
+                    </div>
+        
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="image">Upload Image</label>
+                            <input type="file" class="form-control" id="image" name="image" accept="image/*" required>
+                        </div>
+                    </div>
+                </div>
+        
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="role">Role</label>
+                            <select class="form-control" id="role" name="role" required>
+                                <option value="admin ">Admin</option>
+                                <option value="customer">Customer</option>
+                                <option value="employee">Employee</option>
+                            </select>
+                        </div>
+                    </div>
+        
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="gender">Gender</label>
+                            <select class="form-control" id="gender" name="gender" required>
+                                <option value="male">Male</option>
+                                <option value="female">Female</option>
+                                <option value="other">Other</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+        
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="password1">Password</label>
+                            <input type="password" class="form-control" id="password1" name="password1" placeholder="Enter Password" required>
+                        </div>
+                    </div>
+        
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="password2">Confirm Password</label>
+                            <input type="password" class="form-control" id="password2" name="password2" placeholder="Confirm Password" required>
+                        </div>
+                    </div>
+                </div>
+            
+                <div id="errorMessages"></div>
+                <button type="submit" class="btn btn-primary mt-3">Add User</button>
+            </form>
+        </div>
+        
+      </div>
+      
+      <div class="modal fade" id="successModal" tabindex="-1" aria-labelledby="successModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="successModalLabel">Request Accepted</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                New USer Added Successfully
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-primary" data-bs-dismiss="modal">OK</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+    </div>
+  </div>
+  <div class="modal" tabindex="-1" role="dialog" id="errorModal">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Error</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p class="error-message"></p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+      </div>
+    </div>
+</div>
+
+</div>
+
+  <button id="pdfButton" class="btn btn-secondary"><i class="fa fa-download"></i> generate pdf</button>
+
+</div>
+
+
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+  var getUserDetailsUrl = "{% url 'get_user_details' id=0 %}";
+  var updateUserDetailsUrl = "{% url 'update_user_details' id=0 %}";
+    var filterUsersUrl = "{% url 'filter_users' %}";
+    var admin_add="{% url 'admin_Add_user'%}";
+    var user_search="{% url 'user_search'%}";
+    var user_pdf_records="{% url 'user_pdf_records' %}";
+</script>
+<script  src="{% static 'js/user-management/user-management.js'%}"></script> 
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
+
+{% endblock %}

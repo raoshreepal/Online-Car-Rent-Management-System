@@ -1,0 +1,586 @@
+{% extends "employee/employee-base.html" %}
+{% load static %}
+{% block title %}Employee Dashboard{% endblock%}
+{% block head %}
+<style>
+  .available-cars {
+    max-height: 400px;  
+    overflow-y: auto;  
+    scrollbar-width: thin; 
+    scrollbar-color: #888 #ddd; 
+  }
+
+  
+  .available-cars::-webkit-scrollbar {
+    width: 8px;  
+  }
+
+  .available-cars::-webkit-scrollbar-thumb {
+    background-color: #888;  
+    border-radius: 10px;  
+  }
+
+  .available-cars::-webkit-scrollbar-track {
+    background-color: #ddd; 
+    border-radius: 10px;
+  }
+  .checked_booking:hover{
+    cursor: pointer;
+    backgroung-color: #888; 
+    background-color:#888 ;
+    border-radius: 25px;
+  }
+</style>
+{% endblock %}
+{% block content%}
+<div class="container">
+  <div class="page-inner">
+    <div
+      class="d-flex align-items-left align-items-md-center flex-column flex-md-row pt-2 pb-4"
+    >
+      <div>
+        <h3 class="fw-bold mb-3">Dashboard</h3>
+      </div>
+      <div class="ms-md-auto py-2 py-md-0">
+        <a href="#" class="btn btn-label-info btn-round me-2">Manage</a>
+        <a href="#" class="btn btn-primary btn-round">Add Customer</a>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-sm-6 col-md-3">
+        <div class="card card-stats card-round">
+          <div class="card-body">
+            <div class="row align-items-center">
+              <div class="col-icon">
+                <div
+                  class="icon-big text-center  bubble-shadow-small"
+                >
+                <div style="background-color:transparent;" class="icon-big text-center icon-info bubble-shadow-small">
+                  <img src="{% static 'img/two-cars-in-line-svgrepo-com.svg' %}" alt="Car Icon" width="80" height="60">
+                </div>
+                </div>
+              </div>
+              <div class="col col-stats ms-3 ms-sm-0">
+                <div class="numbers">
+                  <p class=""><b>Available Cars</b></p>
+                  <h4 class="card-title">{{total_car}}</h4>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-sm-6 col-md-3">
+        <div class="card card-stats card-round">
+          <div class="card-body">
+            <div class="row align-items-center">
+              <div class="col-icon">
+                <div style="background-color:transparent;" class="icon-big text-center icon-info bubble-shadow-small">
+                  <img src="{% static 'img/rent-a-car-svgrepo-com.svg' %}" alt="Car Icon" width="80" height="60">
+                </div>
+                
+              </div>
+              <div class="col col-stats ms-3 ms-sm-0">
+                <div class="numbers">
+                  <p class=""><B>Cars Currently Rented</B></p>
+                  <h4 class="card-title">{{car_not_available}}</h4>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-sm-6 col-md-3">
+        <div class="card card-stats card-round">
+          <div class="card-body">
+            <div class="row align-items-center">
+              <div class="col-icon">
+                <div
+                  class="icon-big text-center  bubble-shadow-small"
+                >
+                <div class="icon-big text-center  bubble-shadow-small">
+                  <img src="{% static 'img/maintenance.png' %}" alt="Car Icon" width="80" height="60">
+                </div>
+                </div>
+              </div>
+              <div class="col col-stats ms-3 ms-sm-0">
+                <div class="numbers">
+                  <p class=""><b>Pending Car Service </b></p>
+                  <h4 class="card-title">{{car_services}}</h4>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-sm-6 col-md-3">
+        <div class="card card-stats card-round">
+          <div class="card-body">
+            <div class="row align-items-center">
+              <div class="col-icon">
+                <div
+                  class="icon-big text-center icon-srcondary bubble-shadow-small"
+                >
+                <svg xmlns="http://www.w3.org/2000/svg" width="250" height="250" fill="currentColor" class="bi bi-currency-rupee" viewBox="0 0 16 16">
+                  <path d="M4 3.06h2.726c1.22 0 2.12.575 2.325 1.724H4v1.051h5.051C8.855 7.001 8 7.558 6.788 7.558H4v1.317L8.437 14h2.11L6.095 8.884h.855c2.316-.018 3.465-1.476 3.688-3.049H12V4.784h-1.345c-.08-.778-.357-1.335-.793-1.732H12V2H4z"/>
+                </svg>
+                </div>
+              </div>
+              <div class="col col-stats ms-3 ms-sm-0">
+                <div class="numbers">
+                  <p class=""><b>Pending Payments</b></p>
+                  <h4 class="card-title">₹{{employee_total_booking_receipt}}</h4>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-8">
+        <div class="card card-round">
+          <div class="card-header">
+            <div class="card-head-row">
+              <div class="card-title">Daily Report</div>
+              <div class="card-tools">
+                <a href="#" class="btn btn-label-success btn-round btn-sm me-2">
+                  <span class="btn-label">
+                    <i class="fa fa-pencil"></i>
+                  </span>
+                  Export
+                </a>
+                <a href="#" class="btn btn-label-info btn-round btn-sm">
+                  <span class="btn-label">
+                    <i class="fa fa-print"></i>
+                  </span>
+                  Print
+                </a>
+              </div>
+            </div>
+            <div class="mt-4">
+              <div class="row">
+                
+              
+              </div>
+
+            </div>
+          </div>
+          
+          <div class="card-body">
+            <div class="chart-container" style="min-height: 375px">
+              <canvas id="statisticsChart"></canvas>
+            </div>
+            <div id="myChartLegend"></div>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="card card-primary card-round">
+          <div class="card-header">
+            <div class="card-head-row">
+              <div class="card-title">Daily Sales</div>
+              <div class="card-tools">
+                <div class="dropdown">
+                  <button
+                    class="btn btn-sm btn-label-light dropdown-toggle"
+                    type="button"
+                    id="dropdownMenuButton"
+                    data-bs-toggle="dropdown"
+                    aria-haspopup="true"
+                    aria-expanded="false"
+                  >
+                    Export
+                  </button>
+                  <div
+                    class="dropdown-menu"
+                    aria-labelledby="dropdownMenuButton"
+                  >
+                    <a class="dropdown-item" href="#">Action</a>
+                    <a class="dropdown-item" href="#">Another action</a>
+                    <a class="dropdown-item" href="#"
+                      >Something else here</a
+                    >
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="card-category">{{ current_datetime|date:"F j, Y, g:i a" }}</div>
+          </div>
+          <div class="card-body pb-0">
+            <div class="mb-4 mt-2">
+              
+              <h1><spna> Today  </span>₹{{employee_total_booking_receipt_today_ammount}}</h1>
+            </div>
+            <div class="pull-in">
+              <canvas id="dailySalesChart"></canvas>
+            </div>
+          </div>
+        </div>
+        <div class="card card-round">
+          <div class="card-body pb-0">
+            <div class="h1 fw-bold float-end text-primary"></div>
+            <h2 class="mb-2">{{total_users}}</h2>
+            <p class="text-muted">My  Bookings</p>
+            <div class="pull-in sparkline-fix">
+              <div id="lineChart"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="row" style="display: flex;">
+      <!-- View Available Cars -->
+      <div class="col-md-6" style="display: flex; flex-direction: column; height: 100%;">
+          <div class="card card-round" style="flex: 1;">
+              <div class="card-header">
+                  <div class="card-head-row card-tools-still-right">
+                      <h4 class="card-title">View Available Cars</h4>
+                      <div class="card-tools">
+                          <button class="btn btn-icon btn-link btn-primary btn-xs">
+                              <span class="fa fa-angle-down"></span>
+                          </button>
+                          <button class="btn btn-icon btn-link btn-primary btn-xs btn-refresh-card">
+                              <span class="fa fa-sync-alt"></span>
+                          </button>
+                          <button class="btn btn-icon btn-link btn-primary btn-xs">
+                              <span class="fa fa-times"></span>
+                          </button>
+                      </div>
+                  </div>
+                  <p class="card-category">
+                      Asailable cars
+                  </p>
+              </div>
+              <div class="card-body" style="overflow-y: auto;">
+                  <div class="table-responsive table-hover available-cars table-sales">
+                      <table class="table">
+                          <tbody>
+                              {% for car in car_available %}
+                              <tr>
+                                  <td>
+                                      <div class="flag">
+                                          <img src="{{car.image.url}}" alt="{{car.model}}" style="width:50px;border-radius:20px;" height="50px" />
+                                      </div>
+                                  </td>
+                                  <td>{{car.model}} <br>{{car.number}}</td>
+                                  <td class="text-end">{{car.type}}</td>
+                                  <td class="text-end">{{car.seats}} Seats</td>
+                              </tr>
+                              {% endfor %}
+                          </tbody>
+                      </table>
+                  </div>
+              </div>
+          </div>
+      </div>
+  
+      <!-- Pending Requests -->
+      <div class="col-md-6" style="display: flex; flex-direction: column; height: 100%;">
+          <div class="card card-round" style="flex: 1;">
+              <div class="card-body" style="flex: 1;">
+                  <div class="card-head-row card-tools-still-right">
+                      <div class="card-title">Pending Requests</div>
+                      <div class="card-tools">
+                          <div class="dropdown">
+                              <button class='btn btn-primary' id="acceptallrequest" style="display:none">Accept all</button>
+                              <button class="btn btn-icon btn-clean me-0" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                  <i class="fas fa-ellipsis-h"></i>
+                              </button>
+                              <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                  <button class="dropdown-item" type="button" id="selectAll">Select All</button>
+                                  <button class="dropdown-item" type="button" id="cancelSelection">Cancel</button>
+                                  <button class="dropdown-item" type="button" id="cancelSelectionall">Cancel all </button>
+                              </div>
+                          </div>
+                      </div>
+                  </div>
+                  <p class="card-category">
+                    Pending Booking Request
+                </p>
+                  <div class="card-list py-4 available-cars" style="overflow-y: auto; flex: 1;">
+                      {% for booking in booking_pending %}
+                      <div class="item-list checked_booking" data-booking-id="{{ booking.id }}">
+                          <div class="form-check">
+                              <input class="form-check-input" type="checkbox" value="{{ booking.id }}" id="checkbox-{{ booking.id }}" />
+                          </div>
+                          <div class="avatar">
+                              <img src="{{ booking.car.image.url }}" alt="..." class="avatar-img rounded-circle" />
+                          </div>
+                          <div class="info-user ms-3">
+                              <div class="username">{{ booking.car.model }}</div>
+                              <div class="username">{{ booking.car.number }}</div>
+                              <div class="username">Pickup Date: {{ booking.pickup_date }}</div>
+                              <div class="username">₹{{ booking.receipt_amount }}</div>
+                              <div class="username">Username-{{ booking.user.username }}</div>
+                          </div>
+                          <button class="btn btn-icon btn-link op-8 me-1 check-booking">
+                              <svg xmlns="http://www.w3.org/2000/svg" width="50" height="50" fill="currentColor" class="bi bi-check" viewBox="0 0 16 16">
+                                  <path d="M10.97 4.97a.75.75 0 0 1 1.07 1.05l-3.99 4.99a.75.75 0 0 1-1.08.02L4.324 8.384a.75.75 0 1 1 1.06-1.06l2.094 2.093 3.473-4.425z"/>
+                              </svg>
+                          </button>
+                          <button class="btn btn-icon btn-link btn-danger op-8">
+                              <i class="fas fa-ban"></i>
+                          </button>
+                      </div>
+                      {% empty %}
+                      <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+                      <div class="alert alert-info" role="alert">
+                          No pending bookings now.
+                      </div>
+                      {% endfor %}
+                  </div>
+              </div>
+          </div>
+      </div>
+  </div>
+  <!-- Success Modal -->
+<div class="modal fade" id="successModal" tabindex="-1" aria-labelledby="successModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="successModalLabel">Bookings Accepted</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <p>All selected bookings have been successfully accepted!</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <!-- You can add another button here if needed -->
+      </div>
+    </div>
+  </div>
+</div>
+
+  
+      <div class="col-md-8">
+        <div class="card card-round">
+          <div class="card-header">
+            <div class="card-head-row card-tools-still-right">
+              <div class="card-title">Transaction History</div>
+              <div class="card-tools">
+                <div class="dropdown">
+                  <button
+                    class="btn btn-icon btn-clean me-0"
+                    type="button"
+                    id="dropdownMenuButton"
+                    data-bs-toggle="dropdown"
+                    aria-haspopup="true"
+                    aria-expanded="false"
+                  >
+                    <i class="fas fa-ellipsis-h"></i>
+                  </button>
+                  <div
+                    class="dropdown-menu"
+                    aria-labelledby="dropdownMenuButton"
+                  >
+                    <a class="dropdown-item" href="#">Action</a>
+                    <a class="dropdown-item" href="#">Another action</a>
+                    <a class="dropdown-item" href="#"
+                      >Something else here</a
+                    >
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="card-body p-0">
+            <div class="table-responsive">
+              <!-- Projects table -->
+              <table class="table align-items-center mb-0">
+                <thead class="thead-light">
+                  <tr>
+                    <th scope="col">Payment Number</th>
+                    <th scope="col" class="text-end">Date & Time</th>
+                    <th scope="col" class="text-end">Amount</th>
+                    <th scope="col" class="text-end">Status</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <th scope="row">
+                      <button
+                        class="btn btn-icon btn-round btn-success btn-sm me-2"
+                      >
+                        <i class="fa fa-check"></i>
+                      </button>
+                      Payment from #10231
+                    </th>
+                    <td class="text-end">Mar 19, 20204 ,2.45pm</td>
+                    <td class="text-end">₹250.00</td>
+                    <td class="text-end">
+                      <span class="badge badge-success">Completed</span>
+                    </td>
+                  </tr>
+                  <tr>
+                    <th scope="row">
+                      <button
+                        class="btn btn-icon btn-round btn-success btn-sm me-2"
+                      >
+                        <i class="fa fa-check"></i>
+                      </button>
+                      Payment from #10231
+                    </th>
+                    <td class="text-end">Mar 19, 20204 ,2.45pm</td>
+                    <td class="text-end">₹250.00</td>
+                    <td class="text-end">
+                      <span class="badge badge-success">Completed</span>
+                    </td>
+                  </tr>
+                  <tr>
+                    <th scope="row">
+                      <button
+                        class="btn btn-icon btn-round btn-success btn-sm me-2"
+                      >
+                        <i class="fa fa-check"></i>
+                      </button>
+                      Payment from #10231
+                    </th>
+                    <td class="text-end">Mar 19, 20204 ,2.45pm</td>
+                    <td class="text-end">₹250.00</td>
+                    <td class="text-end">
+                      <span class="badge badge-success">Completed</span>
+                    </td>
+                  </tr>
+                  <tr>
+                    <th scope="row">
+                      <button
+                        class="btn btn-icon btn-round btn-success btn-sm me-2"
+                      >
+                        <i class="fa fa-check"></i>
+                      </button>
+                      Payment from #10231
+                    </th>
+                    <td class="text-end">Mar 19, 20204 ,2.45pm</td>
+                    <td class="text-end">₹250.00</td>
+                    <td class="text-end">
+                      <span class="badge badge-success">Completed</span>
+                    </td>
+                  </tr>
+                  <tr>
+                    <th scope="row">
+                      <button
+                        class="btn btn-icon btn-round btn-success btn-sm me-2"
+                      >
+                        <i class="fa fa-check"></i>
+                      </button>
+                      Payment from #10231
+                    </th>
+                    <td class="text-end">Mar 19, 20204 ,2.45pm</td>
+                    <td class="text-end">₹250.00</td>
+                    <td class="text-end">
+                      <span class="badge badge-success">Completed</span>
+                    </td>
+                  </tr>
+                  <tr>
+                    <th scope="row">
+                      <button
+                        class="btn btn-icon btn-round btn-success btn-sm me-2"
+                      >
+                        <i class="fa fa-check"></i>
+                      </button>
+                      Payment from #10231
+                    </th>
+                    <td class="text-end">Mar 19, 20204 ,2.45pm</td>
+                    <td class="text-end">250.00</td>
+                    <td class="text-end">
+                      <span class="badge badge-success">Completed</span>
+                    </td>
+                  </tr>
+                  <tr>
+                    <th scope="row">
+                      <button
+                        class="btn btn-icon btn-round btn-success btn-sm me-2"
+                      >
+                        <i class="fa fa-check"></i>
+                      </button>
+                      Payment from #10231
+                    </th>
+                    <td class="text-end">Mar 19, 20204 ,2.45pm</td>
+                    <td class="text-end">₹250.00</td>
+                    <td class="text-end">
+                      <span class="badge badge-success">Completed</span>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+{% block extra_scripts %}
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<!-- jQuery CDN -->
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+  var accept_url = "{% url 'accept_pending_car_request' %}";
+  
+</script>
+<script>
+  $(document).ready(function () {
+    $.ajax({
+      url: "{% url 'car_statistics' %}",  // Update with your Django URL
+      method: "GET",
+      dataType: "json",
+      success: function (data) {
+        renderStackedBarChart(data);  // Render the column chart with data
+      },
+      error: function (xhr, status, error) {
+          console.error("Error fetching data: " + error);
+      }
+  });
+  
+  function renderStackedBarChart(data) {
+    var canvas = document.getElementById("statisticsChart");
+    var ctx = canvas.getContext("2d");
+
+    // Ensure the canvas size is set properly
+    canvas.width = 600; // Increase width
+    canvas.height = 400; // Adjust height
+
+    // Destroy existing chart if it exists
+    if (window.myChart) {
+        window.myChart.destroy();
+    }
+
+    window.myChart = new Chart(ctx, {
+        type: "bar",
+        data: {
+            labels: ["Total Cars", "Available Cars", "Pending Cars", "Rented Cars", "Services"],
+            datasets: [
+                { label: "Total Cars", backgroundColor: "#88E788", data: [data.total_cars, 0, 0, 0, 0] },
+                { label: "Available Cars", backgroundColor: "#28a745", data: [0, data.available_cars, 0, 0, 0] },
+                { label: "Pending Cars", backgroundColor: "#E67E22", data: [0, 0, data.pendings, 0, 0] },
+                { label: "Rented Cars", backgroundColor: "#007bff", data: [0, 0, 0, data.rented_cars, 0] },
+                { label: "Services", backgroundColor: "#ffc107", data: [0, 0, 0, 0, data.services] },
+            ],
+        },
+        options: {
+            responsive: false, // Disable responsiveness for fixed size
+            maintainAspectRatio: false, // Allow width expansion
+            scales: {
+                x: { stacked: true, ticks: { font: { size: 12 } } },
+                y: { stacked: true, ticks: { font: { size: 12 } } },
+            },
+            plugins: {
+                legend: { display: true, position: "top" },
+            },
+        },
+    });
+}
+
+  
+
+});
+
+  </script>
+
+{% endblock %}
+
+

@@ -1,0 +1,126 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>{% block title %}Admin Dashboard | By Code Info{% endblock %}</title>
+  <link rel="stylesheet" href="style.css" />
+  <!-- Font Awesome Cdn Link -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css" />
+<!-- Bootstrap CSS -->
+
+  <link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
+  <link rel="stylesheet" href="{% static 'css/add_car.css' %}">
+
+</head>
+
+<body>
+  <!-- Header Section -->
+  <header class="header">
+    <div class="logo">
+      <a href="#">CarBook</a>
+      <div class="search_box">
+        <input type="text" placeholder="Search EasyPay">
+        <i class="fa-sharp fa-solid fa-magnifying-glass"></i>
+      </div>
+    </div>
+
+    <div class="header-icons">
+      <!-- Bell Icon -->
+      <i class="fas fa-bell"></i>
+  
+      <!-- Account Section -->
+      <div class="account">
+          <!-- Profile Image -->
+          <img src="{% static 'data:image/png;base64,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" alt="">
+          <h4>Jhon Viek</h4>
+          
+          <!-- Dropdown Menu on Hover -->
+          <div class="submenu">
+              <ul>
+                  <li><a href="{% url 'employee-login'%}">Login</a></li>
+                  <li><a href="#">Logout</a></li>
+                  <li><a href="#">See Profile</a></li>
+              </ul>
+          </div>
+      </div>
+  </div>
+    </div>
+  </header>
+
+  <div class="container">
+    <!-- Side Navigation Menu -->
+    <nav>
+      <div class="side_navbar">
+        <span>Main Menu</span>
+        <a href="{% url 'dashboard' %}" class="active">Dashboard</a>
+        <a href="{% url 'employee-profile' %}">Profile</a>
+
+        <!-- Car Details Section with Submenu -->
+        <a href="#" class="menu-toggle" data-target="car-details-submenu">
+          Car Details 
+          <span class="submenu-toggle-icon">▼</span>
+        </a>
+        <ul class="submenu" id="car-details-submenu">
+          <li><a href="{% url 'add-car'%}">Add Car</a></li>
+          <li><a href="{% url 'available-car'%}">Available Cars</a></li>
+          <li><a href="{% url 'car-status' %}">Car Status</a></li>
+        </ul>
+
+        <!-- Services Details Section with Submenu -->
+        <a href="#" class="menu-toggle" data-target="services-details-submenu">
+          Services Details
+          <span class="submenu-toggle-icon">▼</span>
+        </a>
+        <ul class="submenu" id="services-details-submenu">
+          <li><a href="{% url 'add_services_car' %}">Add Service</a></li>
+          <li><a href="{% url 'car-services-status'%}">Service Status</a></li>
+        </ul>
+
+        <a href="{% url 'payment-status'%}">Payment Status</a>
+        <a href="{% url 'customer-feedback' %}">Feedback</a>
+
+        <div class="links">
+          <span>Quick Link</span>
+          <a href="#">Paypal</a>
+          <a href="#">EasyPay</a>
+          <a href="#">SadaPay</a>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Block for Dynamic Content -->
+    <div class="main-body">
+      {% block content %}
+      <!-- The content of each specific page will go here -->
+      {% endblock %}
+    </div>
+  </div>
+
+  <script>
+    // JavaScript to toggle submenu visibility on click
+    document.querySelectorAll('.menu-toggle').forEach(menuToggle => {
+      menuToggle.addEventListener('click', function() {
+        const submenuId = this.getAttribute('data-target');
+        const submenu = document.getElementById(submenuId);
+        const icon = this.querySelector('.submenu-toggle-icon');
+
+        if (submenu.style.display === 'block') {
+          submenu.style.display = 'none';
+          icon.textContent = '▼'; // Change to down arrow
+        } else {
+          submenu.style.display = 'block';
+          icon.textContent = '▲'; // Change to up arrow
+        }
+
+        // Optionally adjust the size of the main container or navbar when submenu is shown
+        const nav = document.querySelector('.side_navbar');
+        nav.style.height = nav.scrollHeight + 'px';
+      });
+    });
+  </script>
+  <!-- Bootstrap CSS -->
+
+</body>
+</html>

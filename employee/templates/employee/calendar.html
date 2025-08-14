@@ -1,0 +1,92 @@
+{% extends "employee/employee-base.html" %}
+{% load static %}
+{% block title %}User Booking{% endblock %}
+
+{% block content %}
+    <div class="container mt-5">
+        <div class="page-inner"><h3> My All  booking</h3>
+            <div class="row justify-content-center">
+                <!-- Booking Calendar -->
+                <div class="col-md-6 d-flex justify-content-center">
+                    <div class="card shadow-lg p-3 w-100">
+                        <h4 class="text-primary text-center">📅 Booking Calendar</h4>
+                        <div id="bookingCalendar" style="min-height: 500px;"></div>
+                    </div>
+                </div>
+
+                <!-- Service Calendar -->
+                <div class="col-md-6 d-flex justify-content-center">
+                    <div class="card shadow-lg p-3 w-100">
+                        <h4 class="text-success text-center">🛠️ Service Calendar</h4>
+                        <div id="serviceCalendar" style="min-height: 500px;"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock%}
+{% block extra_scripts %}
+<!-- FullCalendar CSS -->
+<link href="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.css" rel="stylesheet">
+
+<!-- jQuery (Load First, Only Once) -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+
+<!-- FullCalendar JS -->
+<script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/locales-all.min.js"></script>
+
+<script>
+    $(document).ready(function () {
+        function loadCalendar(calendarId, filterType) {
+            let calendarEl = document.getElementById(calendarId);
+            if (!calendarEl) {
+                console.error("Calendar element not found:", calendarId);
+                return;
+            }
+    
+            let calendar = new FullCalendar.Calendar(calendarEl, {
+                initialView: 'dayGridMonth',
+                events: function (fetchInfo, successCallback, failureCallback) {
+                    $.ajax({
+                        url: "{% url 'get_employee_all_date' %}",
+                        dataType: "json",
+                        success: function (data) {
+                            console.table(data); // Debugging output
+    
+                            let filteredEvents = data.filter(event => {
+                                if (filterType === "booking") {
+                                    return event.title === "Booking" || event.title === "Drop";
+                                } else if (filterType === "service") {
+                                    return event.title === "Service Start" || event.title === "Service Complete";
+                                }
+                                return false;
+                            });
+    
+                            successCallback(filteredEvents.length ? filteredEvents : []);
+                        },
+                        error: function (xhr, status, error) {
+                            console.error("Error fetching events:", error);
+                            failureCallback(error);
+                        }
+                    });
+                },
+                headerToolbar: {
+                    left: "prev,next today",
+                    center: "title",
+                    right: "dayGridMonth,timeGridWeek"
+                }
+            });
+    
+            calendar.render();
+        }
+    
+        // Separate calls for booking and service calendars
+        loadCalendar("bookingCalendar", "booking");
+        loadCalendar("serviceCalendar", "service");
+    });
+    
+    
+    
+</script>
+{% endblock %}

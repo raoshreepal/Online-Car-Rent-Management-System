@@ -1,0 +1,248 @@
+{% extends "admindesk/admin-base.html" %}
+
+{% load static %}
+{% block head %}<
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+{% endblock%}
+{% block content %}
+
+<div class="container">
+  <div class="page-inner">
+    <div class="page-header">
+      <h3 class="fw-bold mb-3">Dashboard</h3>
+      <ul class="breadcrumbs mb-3">
+        <li class="nav-home">
+          <a href="#">
+            <i class="icon-home"></i>
+          </a>
+        </li>
+        <li class="separator">
+          <i class="icon-arrow-right"></i>
+        </li>
+        <li class="nav-item">
+          <a href="#">User Management</a>
+        </li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <div class="card-body">
+        <!-- Tabs for the slider -->
+        <ul class="nav nav-tabs" id="userManagementTabs" role="tablist">
+          <li class="nav-item">
+            <a class="nav-link active" id="view-users-tab" data-bs-toggle="tab" href="#view-users" role="tab" aria-controls="view-users" aria-selected="true">View All Users</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" id="add-user-tab" data-bs-toggle="tab" href="#add-user" role="tab" aria-controls="add-user" aria-selected="false">Add User</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" id="edit-user-tab" data-bs-toggle="tab" href="#edit-user" role="tab" aria-controls="edit-user" aria-selected="false">Edit User</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" id="manage-roles-tab" data-bs-toggle="tab" href="#manage-roles" role="tab" aria-controls="manage-roles" aria-selected="false">Manage Roles & Permissions</a>
+          </li>
+        </ul>
+
+        <div class="tab-content mt-4" id="userManagementContent">
+          <!-- View All Users Tab -->
+          <div class="tab-pane fade show active" id="view-users" role="tabpanel" aria-labelledby="view-users-tab">
+            <h4 class="card-title">All Users</h4>
+            <table class="table table-striped mt-3">
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Email</th>
+                  <th>Contact</th>
+                  <th>Role</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                <!-- Example Data for Users -->
+                <tr>
+                  <td>John Doe</td>
+                  <td>john.doe@example.com</td>
+                  <td>+1234567890</td>
+                  <td>Admin</td>
+                  <td>
+                    <i class="fas fa-ice-cream text-primary" data-bs-toggle="modal" data-bs-target="#userBookingDetailsModal" style="cursor: pointer;" title="View Booking Details"></i>
+                    <button class="btn btn-danger btn-sm ms-2">Delete</button>
+                  </td>
+                </tr>
+                <tr>
+                  <td>Jane Smith</td>
+                  <td>jane.smith@example.com</td>
+                  <td>+9876543210</td>
+                  <td>User</td>
+                  <td>
+                    <i class="fas fa-ice-cream text-primary" data-bs-toggle="modal" data-bs-target="#userBookingDetailsModal" style="cursor: pointer;" title="View Booking Details"></i>
+                    <button class="btn btn-danger btn-sm ms-2">Delete</button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          
+          <!-- User Booking Details Modal -->
+          <div class="modal fade" id="userBookingDetailsModal" tabindex="-1" aria-labelledby="userBookingDetailsModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="userBookingDetailsModalLabel">User Booking Details</h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                  <p><strong>Name:</strong> John Doe</p>
+                  <p><strong>Email:</strong> john.doe@example.com</p>
+                  <p><strong>Contact:</strong> +1234567890</p>
+                  <h6>Booking Details</h6>
+                  <table class="table table-striped">
+                    <thead>
+                      <tr>
+                        <th>#</th>
+                        <th>Booking ID</th>
+                        <th>Date</th>
+                        <th>Status</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td>1</td>
+                        <td>BK12345</td>
+                        <td>2023-12-25</td>
+                        <td>Confirmed</td>
+                      </tr>
+                      <tr>
+                        <td>2</td>
+                        <td>BK12346</td>
+                        <td>2023-12-26</td>
+                        <td>Pending</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+
+          <!-- Add User Tab -->
+          <div class="tab-pane fade" id="add-user" role="tabpanel" aria-labelledby="add-user-tab">
+            <h4 class="card-title">Add User</h4>
+            <form id="user-form">
+              <div class="row">
+                <div class="col-md-4">
+                  <div class="form-group">
+                    <label for="userName">Name</label>
+                    <input type="text" class="form-control" id="userName" placeholder="Enter Name" required>
+                  </div>
+                </div>
+                <div class="col-md-4">
+                  <div class="form-group">
+                    <label for="userEmail">Email</label>
+                    <input type="email" class="form-control" id="userEmail" placeholder="Enter Email" required>
+                  </div>
+                </div>
+                <div class="col-md-4">
+                  <div class="form-group">
+                    <label for="userPhone">Contact Number</label>
+                    <input type="tel" class="form-control" id="userPhone" placeholder="Enter Contact Number" required>
+                  </div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-md-4">
+                  <div class="form-group">
+                    <label for="userImage">Upload Image</label>
+                    <input type="file" class="form-control" id="userImage" accept="image/*" required>
+                  </div>
+                </div>
+                <div class="col-md-4">
+                  <div class="form-group">
+                    <label for="userRole">Role</label>
+                    <select class="form-control" id="userRole" required>
+                      <option value="Admin">Admin</option>
+                      <option value="User">User</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+              <button type="submit" class="btn btn-primary mt-3">Add User</button>
+            </form>
+          </div>
+
+          <!-- Edit User Tab -->
+          <div class="tab-pane fade" id="edit-user" role="tabpanel" aria-labelledby="edit-user-tab">
+            <h4 class="card-title">Edit Users</h4>
+            <table class="table table-striped mt-3">
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Email</th>
+                  <th>Contact</th>
+                  <th>Role</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                <!-- Dynamic rows for editable users -->
+                <tr>
+                  <td>Jane Smith</td>
+                  <td>jane.smith@example.com</td>
+                  <td>+0987654321</td>
+                  <td>User</td>
+                  <td>
+                    <button class="btn btn-primary btn-sm">Edit</button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Manage Roles & Permissions Tab -->
+          <div class="tab-pane fade" id="manage-roles" role="tabpanel" aria-labelledby="manage-roles-tab">
+            <h4 class="card-title">Manage Roles & Permissions</h4>
+            <table class="table table-striped mt-3">
+              <thead>
+                <tr>
+                  <th>Role</th>
+                  <th>Permission</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Admin</td>
+                  <td>Full Access</td>
+                  <td>
+                    <button class="btn btn-secondary btn-sm">Edit Permissions</button>
+                  </td>
+                </tr>
+                <tr>
+                  <td>User</td>
+                  <td>View Only</td>
+                  <td>
+                    <button class="btn btn-secondary btn-sm">Edit Permissions</button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+{% endblock %}
+
+{% block extra_scripts %}>E
+<!-- JavaScript to Handle Form Submission -->
+
+</script>
+
+{% endblock %}

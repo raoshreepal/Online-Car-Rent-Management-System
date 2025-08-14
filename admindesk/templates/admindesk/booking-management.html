@@ -1,0 +1,293 @@
+{% extends "admindesk/admin-base.html" %}
+{% load static %}
+{% block title %}Booking Management{% endblock%}
+{% block content %}
+
+<div class="container mt-5">
+  
+    <div class="page-inner">
+      <div>
+        <h3></h3>
+        
+      <h2>Booking Management</h2>
+      <div>
+  
+        <button id="showAvailable" class="btn btn-info">Confirm</button>
+        <button id="showPending" class="btn btn-warning">Cancled</button>
+        <button id="showNotAvailable" class="btn btn-danger">Pending</button>
+        <button id="clearFilter" class="btn btn-info" style="display: none;">clear</button>
+
+
+    </div>
+      <div class="d-flex justify-content-between align-items-center mb-5">
+        <button style="margin-left:86%;" class="btn btn-primary" id="addCarButton">Add New Bookng</button>
+        
+      </div>
+      
+      <div class="table-responsive">
+          <table class="table table-striped">
+            <thead>
+              <tr>
+                <th>Booking ID</th>
+                <th>Image</th>
+                <th>Number</th>
+                <th>Model</th>
+                <th>Pickup Location</th>
+                <th>Pickup date</th>
+                <th>Drop Date</th>
+                <th>Ammount</th>
+                <th>Booking Status</th>
+                <th>Payment Status</th>
+
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="carTableBody" >
+  
+              {% for book in all_booking %}
+              <tr class="car-record {{ book.booking_status }}">
+            
+  
+                  <td>{{ book.id }}</td>
+                  <td   title="view and update image "id="hovertd" style="text-align:center">
+                    <img class="car-thumbnail" src="{{ book.car.image.url }}" alt="{{ car.model }}" style="width: 100px; height: 70px; object-fit: cover; border-radius: 20%; cursor: pointer;" data-car-id="{{ car.id }}">
+                      <br><span style="cursor:pointer" data-car-id="{{ car.id }}">{{car.make}}</span>
+                  </td>
+                <td>{{ book.car.number }}</td>
+                  <td>{{ book.car.make }}</td>
+                  <td>{{ book.pickup_location }} {{book.city}} <br>{{book.state}}  {{book.country}}</td>
+                  <td>{{ book.pickup_date}} {{book.pickup_time}}</td>
+                  <td>{{ book.drop_date}} {{book.drop_time}}</td>
+               
+                  <td>₹{{book.receipt_amount}}</td>
+                  
+             
+                {% if book.booking_status != "pending" %}
+                  <td class="car-status" id="hovertd" >
+                    {{book.booking_status}}
+                 </td>
+                 {% else %}
+                 <td class="car-status" id="hovertd" >
+                    <button class="btn btn-icon btn-link op-8 me-1 openModal" data-id="{{  book.id  }}">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="50" height="50" fill="currentColor" class="bi bi-check" viewBox="0 0 16 16">
+                          <path d="M10.97 4.97a.75.75 0 0 1 1.07 1.05l-3.99 4.99a.75.75 0 0 1-1.08.02L4.324 8.384a.75.75 0 1 1 1.06-1.06l2.094 2.093 3.473-4.425z"/>
+                        </svg>
+                      </button>               
+                      <div class="modal fade" id="employeeModal" tabindex="-1" aria-labelledby="employeeModalLabel" aria-hidden="true">
+                        <div class="modal-dialog">
+                          <div class="modal-content">
+                            <div class="modal-header">
+                              <h5 class="modal-title" id="employeeModalLabel">Select Employee</h5>
+                              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                              <select id="employeeSelect" class="form-select">
+                              </select>
+                            </div>
+                            <div class="modal-footer">
+                              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                              <button type="button" class="btn btn-primary" id="confirmBooking">Confirm</button>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                <button class="btn btn-icon btn-link btn-danger op-8 openCancelModal" data-id="{{  book.id  }}">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-ban" viewBox="0 0 16 16">
+                        <path d="M15 8a6.97 6.97 0 0 0-1.71-4.584l-9.874 9.875A7 7 0 0 0 15 8M2.71 12.584l9.874-9.875a7 7 0 0 0-9.874 9.874ZM16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0"/>
+                      </svg>   
+                </button>
+                <div class="modal fade" id="cancelModal" tabindex="-1" aria-labelledby="cancelModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="cancelModalLabel">Cancel Booking</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                Are you sure you want to cancel this booking?
+                                <!-- Hidden CSRF form -->
+                                <form id="csrfForm" style="display:none;">
+                                    {% csrf_token %}
+                                </form>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No</button>
+                                <button type="button" class="btn btn-danger" id="cancelBooking">Yes</button>
+                            </div>
+                        </div>
+                    </div>
+                  </div>
+
+            </td>
+
+                 {% endif %}
+                <td class="car-status" id="hovertd">
+                    {{ book.payment_status }}
+                </td>
+                
+               
+                
+                <td>
+                      <button class="btn view-car"  data-user-id="{{book.id}}"> <i class="fas fa-eye text-primary " style="cursor: pointer;" title="View Details"></i>
+                      </button></td> <!-- Delete icon -->
+  
+                 </tr>
+                 <!-- Modal to show booking details -->
+                  <!-- Modal to show booking details -->
+                    <div class="modal fade" id="viewCarModal" tabindex="-1" aria-labelledby="viewCarModalLabel" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="viewCarModalLabel">Booking Details</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body" id="modalBody">
+                                    <!-- Booking details will be populated here -->
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+              {% empty %}
+              <tr>
+                <td colspan="10" class="text-center">No cars available</td>
+              </tr>
+          {% endfor %}
+            </tbody>
+              <!-- More Rows Dynamically Added -->
+          </table>
+        </div>
+        <!-- Button to trigger the popup -->
+
+<!-- Modal Popup -->
+<div class="modal fade" id="addBookingModal" tabindex="-1" aria-labelledby="addBookingModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addBookingModalLabel">Add New Booking</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <!-- Booking Form -->
+                <form id="addBookingForm" method="POST">
+                    {% csrf_token %}
+                    
+                    <div class="row mb-3">
+                        <div class="col-md-4">
+                            <label for="carSelect" class="form-label">Car</label>
+                            {{ booking_form.car }}
+                        </div>
+                        <div class="col-md-4">
+                            <label for="userSelect" class="form-label">User</label>
+                            {{ booking_form.user }}
+                        </div>
+                        <div class="col-md-4">
+                            <label for="setDriver" class="form-label">Driver</label>
+                            {{ booking_form.driver }}
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-4">
+                            <label for="pickupLocation" class="form-label">Pickup Location</label>
+                            {{ booking_form.pickup_location }}
+                        </div>
+                        <div class="col-md-4">
+                            <label for="citySelect" class="form-label">City</label>
+                            {{ booking_form.city }}
+                        </div>
+                        <div class="col-md-4">
+                            <label for="stateSelect" class="form-label">State</label>
+                            {{ booking_form.state }}
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-4">
+                            <label for="countrySelect" class="form-label">Country</label>
+                            {{ booking_form.country }}
+                        </div>
+                        <div class="col-md-4">
+                            <label for="pickupDate" class="form-label">Pickup Date</label>
+                            {{ booking_form.pickup_date }}
+                        </div>
+                        <div class="col-md-4">
+                            <label for="pickupTime" class="form-label">Pickup Time</label>
+                            {{ booking_form.pickup_time }}
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-4">
+                            <label for="dropDate" class="form-label">Drop Date</label>
+                            {{ booking_form.drop_date }}
+                        </div>
+                        <div class="col-md-4">
+                            <label for="dropTime" class="form-label">Drop Time</label>
+                            {{ booking_form.drop_time }}
+                        </div>
+                        <div class="col-md-4">
+                            <label for="receiptAmmount" class="form-label">Receipt Amount</label>
+                            {{ booking_form.receipt_amount }}
+                        </div>
+                    </div>
+                    <div class="mt-4">
+                    
+                        
+                        <!-- Price Display Table -->
+                        <table class="table table-bordered mt-3">
+                            <thead>
+                                <tr>
+                                    <th>Rate Per Hour</th>
+                                    <th>Rate Per Day</th>
+                                    <th>Rate Per Month</th>
+                                    <th>Discount Price</th>
+                                    <th>Duration (Hrs/Days/Months)</th>
+                                    <th>Total Cost</th>
+
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td id="pricePerHour">-</td>
+                                    <td id="pricePerDay">-</td>
+                                    <td id="pricePerMonth">-</td>
+                                    <td id="discountPrice">-</td>
+                                    <td id="duration">-</td>
+                                    <td id="totalCost">-</td>
+
+                                </tr>
+                            </tbody>
+                        </table>
+                        
+                    </div>
+                    
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Save Booking</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+    </div>
+
+{% endblock%}
+{% block extra_scripts %}
+<script>
+    var user_details_url="{% url 'get_car_price' car_id=0 %}";
+    var bokoing_details= "{% url 'get_booking_details' %}";  // URL to fetch booking details
+    var employee_url="{% url 'get_employee' %}";
+
+</script>
+<script src="{% static 'js/booking-management.js'%}"></script>
+{% endblock %}

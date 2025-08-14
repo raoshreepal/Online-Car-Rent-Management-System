@@ -1,0 +1,542 @@
+{% extends "admindesk/admin-base.html" %}
+{% load static %}
+{% block title %}Car Management{% endblock%}
+
+
+{% block head%}
+<style>
+
+
+  #hovertd:hover{
+    box-shadow: 5px 10px 20px ;
+    cursor: pointer;
+    
+    
+  }
+  .car-record-container {
+    width: 100%;
+    overflow: hidden;
+    position: relative;
+}
+
+.car-records {
+    display: flex;
+    transition: transform 0.5s ease; /* Smooth transition for sliding effect */
+}
+
+.car-record {
+    min-width: 100%; /* Ensure each record takes up full width */
+}
+
+.pagination {
+    display: flex;
+    justify-content: center;
+    margin-top: 10px;
+}
+.table-responsive {
+  max-height: 500px; /* Adjust the height as needed */
+  overflow-y: auto;
+}
+
+.table-responsive::-webkit-scrollbar {
+  width: 8px;
+}
+
+.table-responsive::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 10px;
+}
+
+.table-responsive::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 10px;
+}
+
+.table-responsive::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+</style>
+{% endblock %}
+{% block content %}
+<div class="container mt-5">
+  
+  <div class="page-inner">
+    <div>
+      <h3>Total Car Status</h3>
+      <div>
+
+        <button id="showAvailable" class="btn btn-info">Show Available Cars</button>
+        <button id="showPending" class="btn btn-warning">Show Pending Cars</button>
+        <button id="showNotAvailable" class="btn btn-danger">Show Not Available Cars</button>
+        <button id="showONServices" class="btn btn-danger">On Services  Cars</button><br>
+        <button id="clearFilter" class="btn btn-info" style="display: none;">clear</button>
+
+
+    </div>
+    <h2>Car Management</h2>
+    <div class="d-flex justify-content-between align-items-center mb-5">
+      <input type="text" class="form-control w-50" id="searchBar" placeholder="Search by car number or status..." />
+      <button class="btn btn-primary" id="addCarButton">Add Car</button>
+    </div>
+    <div class="table-responsive">
+
+        <table class="table table-striped">
+          <thead>
+            <tr>
+              <th>Car ID</th>
+              <th>Image</th>
+              <th>Number</th>
+              <th>Model</th>
+              <th>Year</th>
+              <th>Mileage</th>
+              <th>Type</th>
+              <th>Rent Ammount</th>
+              <th>Car Status </th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="carTableBody" >
+
+            {% for car in car_records %}
+            <tr class="car-record {{car.status}}"> 
+                <td>{{ car.id }}</td>
+                <td   title="view and update image "id="hovertd" style="text-align:center">
+                  <img class="car-thumbnail" src="{{ car.image.url }}" alt="{{ car.model }}" style="width: 100px; height: 70px; object-fit: cover; border-radius: 20%; cursor: pointer;" data-car-id="{{ car.id }}">
+                    <br><span style="cursor:pointer" data-car-id="{{ car.id }}">{{car.make}}</span>
+                </td>
+              <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+
+              <!-- Modal -->
+              <div class="modal" id="imageModal" tabindex="-1" role="dialog" aria-labelledby="imageModalLabel" aria-hidden="true">
+                  <div class="modal-dialog" role="document">
+                      <div class="modal-content">
+                          <div class="modal-header">
+                              <h5 class="modal-title" id="imageModalLabel">Update Car Image<h5>
+                              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="cancelButton"></button>
+                          </div>
+                          <div class="modal-body">
+                              <img id="fullImage" src="{{ car.image.url }}" alt="{{ car.model }}" style="width: 100%; height: auto;"/>
+                              <br><br>
+                              <label for="imageUpload">Choose a new car image:</label>
+                              <input type="file" id="imageUpload" name="image" accept="image/*" class="form-control">
+                          </div>
+                          <div class="modal-footer">
+                              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" id="cancelButton">Cancel</button>
+                              <!-- Set the data-car-id dynamically here -->
+                              <button type="button" class="btn btn-primary" id="updateImageBtn" data-car-id="{{ car.id }}">Update Image</button>
+                          </div>
+                      </div>
+                  </div>
+              </div>
+              
+              
+            
+              <td>{{ car.number }}</td>
+                <td>{{ car.make }}</td>
+                <td>{{ car.year }}</td>
+                <td>{{ car.mileage}}</td>
+                <td>{{ car.type }}</td>
+                <td class="edit-price" id="hovertd" data-car-id="{{ car.id }}">
+                  <div class="car-discount">
+                    <strong>Discount:</strong> <span id="car-discount-{{ car.id }}">{{ car.discount }}</span> &#x25;
+                  </div>
+                  <div>
+                    <strong>Hourly Rate:</strong> ₹<span id="car-par-hour-rent-{{ car.id }}">{{ car.price_per_hour }}</span>
+                  </div>
+                  <div>
+                    <strong>Daily Rate:</strong> ₹<span id="car-par-day-rent-{{ car.id }}">{{ car.price_per_day }}</span>
+                  </div>
+                  <div>
+                    <b>Monthly Rate:</b> ₹  <span id="car-par-month-rent-{{ car.id }}">{{ car.price_per_month }}</span>
+                  </div>
+                </td>
+                
+                
+                
+                <div class="modal fade" id="editCarRentModal" tabindex="-1" aria-labelledby="editCarRentModalLabel" aria-hidden="true">
+                  <div class="modal-dialog">
+                      <div class="modal-content">
+                          <div class="modal-header">
+                              <h5 class="modal-title" id="editCarRentModalLabel">Edit Car Rent </h5>
+                              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                          </div>
+                          <div class="modal-body">
+                              <!-- Form for updating rent details -->
+                              <form id="editRentForm">
+                                {% csrf_token %}
+                                  <div class="mb-3">
+                                      <label for="edit-par-hour-rent" class="form-label">Price per Hour</label>
+                                      <input type="number" class="form-control" id="edit-par-hour-rent" step="0.01">
+                                  </div>
+                                  <div class="mb-3">
+                                    <label for="edit-discount" class="form-label">Discount (%)</label>
+                                    <input type="number" class="form-control" id="edit-discount" step="0.01" min="0" max="100">
+                                </div>
+                                  <div class="mb-3">
+                                      <label for="edit-par-day-rent" class="form-label">Price per Day</label>
+                                      <input type="number" class="form-control" id="edit-par-day-rent" step="0.01">
+                                  </div>
+                                  <div class="mb-3">
+                                      <label for="edit-par-month-rent" class="form-label">Price per Month</label>
+                                      <input type="number" class="form-control" id="edit-par-month-rent" step="0.01">
+                                  </div>
+                               
+                                  <button type="submit" class="btn btn-primary">Update Rent</button>
+                              </form>
+                          </div>
+                      </div>
+                  </div>
+              </div>  
+
+                <td class="car-status" id="hovertd" data-car-id="{{ car.id }}" title="Change status">
+                  {{ car.status }}
+              </td>
+              
+              <div class="modal" id="statusModal" tabindex="-1" role="dialog" aria-labelledby="statusModalLabel" aria-hidden="true">
+                  <div class="modal-dialog" role="document">
+                      <div class="modal-content">
+                          <div class="modal-header">
+                              <h5 class="modal-title" id="statusModalLabel">Update Car Status</h5>
+                              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                          </div>
+                          <div class="modal-body">
+                              <p>Choose the new status:</p>
+                              <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+
+                              <select id="statusSelect" class="form-control">
+                                  <option value="pending">Pending</option>
+                                  <option value="not_available">Not Available</option>
+                                  <option value="available">Available</option>
+                                  <option value="services">Services</option>
+                              </select>
+                          </div>
+                          <div class="modal-footer">
+                              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                              <button type="button" class="btn btn-primary" id="updateStatusBtn">Update Status</button>
+                          </div>
+                      </div>
+                  </div>
+              </div>
+              
+              <td>
+                    <!-- View Icon -->
+                    <i class="fas fa-eye text-primary view-car" data-user-id="{{car.id}}" style="cursor: pointer;" title="View Details"></i>
+                    <i class="fas fa-edit text-primary ms-2 edit-car" data-car-id="{{car.id}}" style="cursor: pointer;" title="Edit Car"></i>
+                    <i class="fas fa-trash text-danger ms-2 delete-user" data-user-id="{{car.id}}" style="cursor: pointer;" title="Delete User"></i> 
+                  </td> <!-- Delete icon -->
+
+            </tr>
+            {% empty %}
+            <tr>
+              <td colspan="10" class="text-center">No cars available</td>
+            </tr>
+        {% endfor %}
+          </tbody>
+            <!-- More Rows Dynamically Added -->
+        </table>
+      </div>
+</div>
+  <!-- Modal to Display Full Image and Update -->
+
+
+<!-- Modal Structure -->
+<div class="modal fade" id="carDetailsModal" tabindex="-1" aria-labelledby="carDetailsModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+      <div class="modal-content">
+          <div class="modal-header">
+              <h5 class="modal-title" id="carDetailsModalLabel">Car Details</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+              <!-- Car details will be populated here -->
+              <p><strong>ID:</strong> <span id="car-id"></span></p>
+              <p><strong>Make:</strong> <span id="car-make"></span></p>
+              <p><strong>Model:</strong> <span id="car-model"></span></p>
+              <p><strong>Year:</strong> <span id="car-year"></span></p>
+              <p><strong>number:</strong> <span id="car-number"></span></p>
+              <p><strong>mileage:</strong> <span id="car-mileage"></span></p>
+              <p><strong>Type</strong> <span id="car-type"></span></p>
+              <p><strong>Seats</strong> <span id="car-seats"></span></p>
+
+              <p><strong>status:</strong> <span id="car-status"></span></p>
+              <hr> 
+              <h3><strong> Car Rent Details with <span id="carRentdiscount"> </span></strong></h3>
+              <table class="table">
+                <thead>
+                  <tr >
+                    <th><p><strong>  Hour</strong></th>
+                    <th> <p><strong>  Day</strong></th>
+                    <th><p><strong>  Month</strong></th>
+                  <tr>
+                </thead>
+                  <tbody>     
+                    <tr>
+                      <td id="car-par-hour-rent"></td>
+                     <td id="car-par-day-rent"></td>
+                      <td id="car-par-month-rent"></td>
+                  
+                    </tr>
+             </tbody>  
+            </table>
+
+              <!-- Add more fields as needed -->
+          </div>
+          <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          </div>
+      </div>
+  </div>
+</div>
+
+
+
+<!-- Add Car Modal -->
+<div class="modal fade"   id="addCarModal" tabindex="-1" aria-labelledby="addCarModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg" style="width: 150%; height: 110vh;">
+      <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="addCarModalLabel">Add New Car</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body" >
+          <form method="post" enctype="multipart/form-data" class="container">
+            {% csrf_token %}
+            
+
+            <div class="row mb-3">
+              <div class="col-md-4">
+                <label for="addCarNumber" class="form-label">Number</label>
+                {{ add_new_car.number }}
+              </div>
+              <div class="col-md-4">
+                <label for="addCarMake" class="form-label">Make</label>
+                {{ add_new_car.make }}
+              </div>
+              <div class="col-md-4">
+                <label for="addCarModel" class="form-label">Model</label>
+                {{ add_new_car.model }}
+              </div>
+            </div>
+
+            <!-- Group 2: 3 fields per row -->
+            <div class="row mb-3">
+              <div class="col-md-4">
+                <label for="addCarYear" class="form-label">Year</label>
+                {{ add_new_car.year }}
+              </div>
+              <div class="col-md-4">
+                <label for="addCarMileage" class="form-label">Mileage</label>
+                {{ add_new_car.mileage }}
+              </div>
+              <div class="col-md-4">
+                <label for="addCarType" class="form-label">Type</label>
+                {{ add_new_car.type }}
+              </div>
+            </div>
+
+            <!-- Group 3: 3 fields per row -->
+            <div class="row mb-3">
+              <div class="col-md-4">
+                <label for="addCarPricingPerHour" class="form-label">Seats</label>
+                {{ add_new_car.seats }}
+              </div>
+             
+              <div class="col-md-4">
+                <label for="addCarPricingPerHour" class="form-label">Car Price Per Hour</label>
+                {{ add_new_car.price_per_hour }}
+              </div>
+              <div class="col-md-4">
+                <label for="discount" class="form-label">Discount Percentage</label>
+                {{ add_new_car.discount }}  
+              
+              </div>
+            </div>
+
+            <!-- Group 4: Discount and pricing fields -->
+            <div class="row mb-3">
+              
+              <div class="col-md-4">
+                <label for="addCarPricingPerDay" class="form-label">Car Price Per Day</label>
+                {{ add_new_car.price_per_day }}
+              </div>
+              <div class="col-md-4">
+                <label for="addCarPricingPerMonth" class="form-label">Car Price per Month</label>
+                {{ add_new_car.price_per_month }}
+              </div>
+              <div class="col-md-4">
+                <label for="addCarPricingPerHour" class="form-label">Car Price Per Hour</label>
+                {{ add_new_car.image }}
+              </div>
+            </div>
+            <div class="col-md-4">
+              <label for="addCarPricingPerHour" class="form-label">Car Status</label>
+              {{ add_new_car.status }}
+            </div>
+            <button type="submit" class="btn btn-primary" >Add Car</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- update car details -->
+<div class="modal fade" id="updateCarModal" tabindex="-1" aria-labelledby="updateCarModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg">  <!-- modal-lg gives a larger but not full-screen size -->
+      <div class="modal-content">
+          <div class="modal-header">
+              <h5 class="modal-title" id="updateCarModalLabel">Update Car Details</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+              </button>
+          </div>
+          <form id="updateCarForm" enctype="multipart/form-data">
+              {% csrf_token %}
+              <div class="modal-body">
+                  <!-- Hidden field to hold the car ID -->
+                  <input type="hidden" id="updateCarId" name="id">
+
+                  <!-- Group 1: 3 fields per row -->
+                  <div class="row mb-3">
+                      <div class="col-md-4">
+                          <label for="updateCarNumber" class="form-label">Number</label>
+                          <input type="text" id="updateCarNumber" name="number" class="form-control" placeholder="Enter car number">
+                      </div>
+                      <div class="col-md-4">
+                          <label for="updateCarMake" class="form-label">Make</label>
+                          <input type="text" id="updateCarMake" name="make" class="form-control" placeholder="Enter car make">
+                      </div>
+                      <div class="col-md-4">
+                          <label for="updateCarModel" class="form-label">Model</label>
+                          <input type="text" id="updateCarModel" name="model" class="form-control" placeholder="Enter car model">
+                      </div>
+                  </div>
+
+                  <!-- Group 2: 3 fields per row -->
+                  <div class="row mb-3">
+                      <div class="col-md-4">
+                          <label for="updateCarYear" class="form-label">Year</label>
+                          <input type="number" id="updateCarYear" name="year" class="form-control" placeholder="Enter car year">
+                      </div>
+                      <div class="col-md-4">
+                          <label for="updateCarMileage" class="form-label">Mileage</label>
+                          <input type="text" id="updateCarMileage" name="mileage" class="form-control" placeholder="Enter car mileage">
+                      </div>
+                      <div class="col-md-4">
+                          <label for="updateCarType" class="form-label">Type</label>
+                          <select id="updateCarType" name="type" class="form-control">
+                              <option value="EV">EV</option>
+                              <option value="CNG">CNG</option>
+                              <option value="Petrol">Petrol</option>
+                              <option value="Diesel">Diesel</option>
+
+                          </select>
+                      </div>
+                      <div class="col-md-4">
+                        <label for="updateCarMileage" class="form-label">Seats</label>
+                        <input type="number" id="updateCarSeats" name="seats" class="form-control" placeholder="Enter car mileage">
+                    </div>
+                  </div>
+
+              </div>
+              <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                  <button type="submit" class="btn btn-primary">Update Car</button>
+              </div>
+          </form>
+      </div>
+  </div>
+</div>
+
+
+
+
+
+
+
+
+{% endblock %}
+{% block extra_scripts %}
+
+<script>
+    // Define the base URL for car details (with a placeholder for the car ID)
+    var viewCarUrl = "{% url 'car_details' car_id=0 %}"; 
+    var carImageUpdate = "{% url 'car_image_update' car_id=0 %}";
+    var carStatusUpdate= "{% url 'car_status_update' car_id=0 %}";
+    var update_car_ret_price="{% url 'update_car_ret_price' car_id=0 %}";
+    var car_update="{% url 'car_update_details' car_id=0 %}";
+    var upate_car="{% url 'update_car_record' car_id=0 %}";
+      $(document).ready(function() {
+        // Select all elements with the class 'car-status'
+        $('.car-status').each(function() {
+            // Get the current text and convert it to uppercase
+            const upperCaseStatus = $(this).text().toUpperCase().replace("_","-");
+            // Set the text content back to the element
+            $(this).text(upperCaseStatus);
+        });
+    });
+      // Set the number of records per page
+      
+     
+        // Show the first page of records
+        
+        $(document).ready(function() {
+          const $pricePerHourInput = $('#price_per_hour');
+          const $pricePerDayInput = $('#price_per_day');
+          const $pricePerMonthInput = $('#price_per_month');
+          const $discountInput = $('#discountInput');
+      
+          // Function to calculate price per day and month with discount
+          function calculatePrices() {
+              const pricePerHour = parseFloat($pricePerHourInput.val()) || 0;
+              const discount = parseFloat($discountInput.val()) || 0;
+      
+              // Calculate daily price with discount
+              const pricePerDay = pricePerHour * 24 * (1 - (discount / 100)); // Discount applied
+              $pricePerDayInput.val(pricePerDay.toFixed(2));
+      
+              // Calculate monthly price with discount
+              const pricePerMonth = pricePerDay * 30 * (1 - (discount / 100)); // Discount applied
+              $pricePerMonthInput.val(pricePerMonth.toFixed(2));
+          }
+      
+          // Listen for input changes in the price per hour and discount fields
+          $pricePerHourInput.on('input', calculatePrices);
+          $discountInput.on('input', calculatePrices);
+      
+          // Initial calculation on page load
+          calculatePrices();
+});
+$(document).ready(function() {
+  function calculatePrices() {
+    // Get the values from the form fields
+    var pricePerHour = parseFloat($('#price_per_hour').val()) || 0;
+    var discountRate = parseFloat($('#discount').val()) || 0;
+
+    // Calculate the discount factor
+    var discountFactor = (100 - discountRate) / 100;
+
+    // Calculate the price per day (24 hours) with the discount
+    var pricePerDay = pricePerHour * 24 * discountFactor;
+    $('#price_per_day').val(pricePerDay.toFixed(2));
+
+    // Calculate the price per month (30 days) with the discount
+    var pricePerMonth = pricePerDay * 30;
+    $('#price_per_month').val(pricePerMonth.toFixed(2));
+  }
+
+  // Listen for input changes in the price per hour and discount fields
+  $('#price_per_hour, #discount').on('input', calculatePrices);
+});
+  
+      
+  
+</script>
+<script src="{% static 'js/car-management.js' %}"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+
+{% endblock %}
+
